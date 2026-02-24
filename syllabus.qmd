@@ -1,0 +1,154 @@
+---
+title: "Silabus kolegija"
+---
+
+## Kontekst kolegija
+
+| | |
+|---|---|
+| **Kolegij** | Osnove statistike |
+| **Studij** | Komunikologija, HKS |
+| **Godina** | 2. godina preddiplomskog studija |
+| **Semestar** | Ljetni semestar 2024/2025 |
+| **ECTS** | 6 |
+| **Opterećenje** | 30 sati predavanja + 30 sati seminara |
+| **Nositelj** | prof. dr. sc. Luka Šikić |
+
+## Narativ kolegija
+
+Statistika je jezik podataka, a podaci su danas svugdje — od metrika društvenih mreža do rezultata istraživanja javnog mnijenja. Ovaj kolegij osmišljen je tako da studente komunikologije opremi alatima za razumijevanje i korištenje podataka u profesionalnom kontekstu.
+
+Kolegij prati logiku postupnog građenja znanja. Počinjemo s pitanjem zašto komunikolog uopće treba statistiku, upoznajemo se s R-om kao alatom za analizu podataka, učimo organizirati i vizualizirati podatke, a zatim prelazimo na inferencijalne metode koje nam omogućuju donošenje zaključaka na temelju uzoraka. Svaki tjedan gradi se na prethodnom, a svi primjeri dolaze iz svijeta medija i komunikacija.
+
+Sadržajna okosnica kolegija inspirirana je knjigom "Learning Statistics with R" autorice Danielle Navarro (CC BY-SA 4.0), ali prilagođena za komunikologe i modernizirana korištenjem tidyverse pristupa u R-u.
+
+---
+
+## Opis tjedana
+
+### Tjedan 1: Zašto statistika? Uvod u istraživački dizajn
+
+Kolegij započinje temeljnim pitanjem: zašto bi komunikolog trebao razumjeti statistiku? Kroz primjere poput Simpsonovog paradoksa u medijskim anketama, studenti se upoznaju s važnošću rigoroznog pristupa podacima. Obrađuju se osnove istraživačkog dizajna — mjerenje, skale, pouzdanost, te razlike između eksperimentalnog i neeksperimentalnog pristupa na primjerima iz medijskih istraživanja.
+
+### Tjedan 2: Uvod u R i tidyverse
+
+Studenti instaliraju R i Positron te odmah kreću s tidyverse pristupom. Umjesto klasičnog base R sučelja, od početka se koriste tibbleovi, pipe operator i readr za učitavanje podataka. Na kraju tjedna studenti samostalno učitavaju i pregledavaju dataset o korištenju društvenih mreža.
+
+### Tjedan 3: Rad s podacima u tidyverse
+
+Ovaj tjedan posvećen je praktičnom radu s podacima koristeći dplyr (filter, select, mutate, summarise, group_by) i tidyr (pivot_longer, pivot_wider). Studenti čiste i transformiraju podatke iz ankete o medijskim navikama, stječući vještine koje će koristiti kroz cijeli kolegij.
+
+### Tjedan 4: Deskriptivna statistika
+
+Fokus je na mjerama centralne tendencije (prosjek, medijan, mod) i varijabilnosti (standardna devijacija, IQR), sve izračunato pomoću summarise() i group_by(). Uvodi se i korelacija. Primjer: opisivanje distribucije vremena provedenog na TikToku po dobnim skupinama.
+
+### Tjedan 5: Vizualizacija podataka s ggplot2
+
+Studenti uče gramatiku grafike — kako ggplot2 razmišlja o vizualizaciji kroz slojeve (aes, geom, facet, theme). Izrađuju histograme, boxplotove, scatterplotove i bar chartove koristeći podatke iz medijskih anketa.
+
+### Tjedan 6: Programiranje u R (osnove)
+
+Lagani uvod u programerske koncepte: skripte, funkcije i uvjetne naredbe. Fokus nije na pretvaranju studenata u programere, već na pisanju čistih, ponovljivih analiza. Tjedan je osmišljen kao praktičan vodič za organizaciju koda.
+
+### Tjedan 7: Uvod u vjerojatnost
+
+Što je vjerojatnost? Obrađuju se frekvencijski i bayesijanski pristup, binomna i normalna distribucija. Primjeri uključuju vjerojatnost viralnog sadržaja i distribuciju broja dijeljenja objava na društvenim mrežama.
+
+### Tjedan 8: Kolokvij
+
+Provjera znanja iz prvih sedam tjedana kolegija. Kolokvij pokriva konceptualno razumijevanje, čitanje R koda, interpretaciju rezultata i osnovnu analizu podataka.
+
+### Tjedan 9: Uzorkovanje, procjena i intervali pouzdanosti
+
+Povratak novim temama: razlika između uzorka i populacije, zakon velikih brojeva, centralni granični teorem i intervali pouzdanosti. Primjeri uključuju anketiranje publike, marginu pogreške u istraživanjima medija i zašto su online ankete problematične.
+
+### Tjedan 10: Testiranje hipoteza
+
+Uvod u nultu i alternativnu hipotezu, greške tipa I i II, p-vrijednost te veličinu učinka i snagu testa. Primjer: testiranje razlike u angažmanu između dva formata objave na Instagramu.
+
+### Tjedan 11: Kategorički podaci: hi-kvadrat testovi
+
+Obrađuju se goodness-of-fit test i test nezavisnosti, te Fisherov egzaktni test. Primjer: postoji li veza između tipa medija (TV, web, podcast) i dobne skupine publike?
+
+### Tjedan 12: Usporedba prosjeka: t-testovi
+
+Jednosmjerni, dvosmjerni i upareni t-test, Welchova korekcija i Cohenov d kao mjera veličine učinka. Provjera normalnosti distribucija. Primjer: usporedba vremena čitanja članaka s i bez vizuala.
+
+### Tjedan 13: Usporedba više grupa: ANOVA
+
+Jednosmjerna ANOVA s post-hoc testovima (Tukey) i provjerom pretpostavki (homogenost varijance, normalnost). Primjer: razlika u percipiranoj vjerodostojnosti vijesti ovisno o izvoru (TV, portal, društvena mreža).
+
+### Tjedan 14: Linearna regresija
+
+Jednostavna i višestruka regresija, R-kvadrat, dijagnostika modela. Primjer: predviđanje angažmana objave na temelju duljine teksta, vremena objave i broja hashtagova.
+
+### Tjedan 15: Prezentacije projekata i pogled naprijed
+
+Studentske prezentacije praktičnih projekata. Kratki pregled faktorske ANOVA-e i bayesijanskog pristupa kao alternativnog okvira za statističko zaključivanje. Osvrt na kolegij i smjernice za daljnje učenje.
+
+---
+
+## Seminarske aktivnosti
+
+| Tjedan | Aktivnost |
+|:------:|-----------|
+| 1 | Diskusija: primjeri loše interpretacije statistike u medijima |
+| 2 | Radionica: instalacija R-a i Positrona, prvi koraci |
+| 3 | Vježba: čišćenje i transformacija dataseta |
+| 4 | Vježba: izračun deskriptivnih statistika za medijski dataset |
+| 5 | Radionica: izrada vizualizacija u ggplot2 |
+| 6 | Vježba: pisanje vlastite funkcije za analizu podataka |
+| 7 | Vježba: računanje vjerojatnosti i rad s distribucijama u R-u |
+| 8 | Kolokvij |
+| 9 | Vježba: računanje intervala pouzdanosti za medijske podatke |
+| 10 | Vježba: provođenje i interpretacija testova hipoteza |
+| 11 | Vježba: hi-kvadrat testovi na podacima o medijskim preferencijama |
+| 12 | Vježba: provedba t-testova i interpretacija rezultata |
+| 13 | Vježba: ANOVA analiza na podacima o percepciji medija |
+| 14 | Radionica: izgradnja regresijskog modela za medijske podatke |
+| 15 | Prezentacije projekata |
+
+---
+
+## Popis literature
+
+### Osnovna literatura
+
+- Navarro, D. (2018). *Learning Statistics with R: A tutorial for psychology students and other beginners* (Version 0.6). [Besplatno dostupno online](https://learningstatisticswithr.com/) [O]
+- Wickham, H. & Grolemund, G. (2023). *R for Data Science* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r4ds.hadley.nz/) [O]
+
+### Statistika — konceptualni uvod
+
+- Field, A. (2017). *Discovering Statistics Using IBM SPSS Statistics* (5th edition). Sage.
+- Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition). [Besplatno dostupno online](https://www.openintro.org/book/os/)
+
+### R i tidyverse
+
+- Ismay, C. & Kim, A. Y. (2019). *Statistical Inference via Data Science: A ModernDive into R and the Tidyverse*. [Besplatno dostupno online](https://moderndive.com/)
+- Chang, W. (2018). *R Graphics Cookbook* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r-graphics.org/)
+
+### Komunikologija i medijska istraživanja
+
+- Berger, A. A. (2020). *Media and Communication Research Methods* (5th edition). Sage.
+- Holbert, R. L. & Hardy, B. W. (2009). *Political Communication Research Methods*. Routledge.
+
+---
+
+## Ocjenjivanje
+
+| Komponenta | Udio | Opis |
+|------------|:----:|------|
+| Kolokvij | 30% | Provjera znanja iz tjedana 1–7 (tjedan 8) |
+| Seminarske vježbe | 20% | Aktivno sudjelovanje i predaja vježbi |
+| Praktični projekt | 40% | Samostalna analiza podataka s izvještajem |
+| Sudjelovanje | 10% | Dolasci i aktivnost na nastavi |
+
+### Skala ocjenjivanja
+
+| Ocjena | Postotak |
+|:------:|:--------:|
+| Izvrstan (5) | 90–100% |
+| Vrlo dobar (4) | 80–89% |
+| Dobar (3) | 65–79% |
+| Dovoljan (2) | 50–64% |
+| Nedovoljan (1) | < 50% |

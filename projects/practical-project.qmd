@@ -1,0 +1,86 @@
+---
+title: "Praktični projekt"
+---
+
+## Pregled zadatka
+
+Praktični projekt je završni rad kolegija u kojem samostalno (ili u paru) provodite statističku analizu podataka iz komunikološkog konteksta. Cilj je primijeniti znanja stečena tijekom semestra na stvarni istraživački problem.
+
+Projekt čini **40% ukupne ocjene** kolegija.
+
+---
+
+## Scenariji
+
+Odaberite jedan od ponuđenih scenarija ili predložite vlastiti (uz odobrenje nositelja):
+
+### Scenarij A: Analiza medijskih navika studenata
+
+Provedite anketu među kolegama o njihovim medijskim navikama (korištenje platformi, povjerenje u izvore informacija, vrijeme provedeno na društvenim mrežama). Analizirajte prikupljene podatke koristeći deskriptivnu statistiku, vizualizaciju i barem jedan inferencijalni test.
+
+### Scenarij B: Analiza angažmana na društvenim mrežama
+
+Koristeći javno dostupne podatke (ili simulirani dataset), analizirajte čimbenike koji utječu na angažman objava na odabranoj platformi. Istražite odnos između karakteristika sadržaja (duljina, tip, vrijeme objave) i metrika angažmana (lajkovi, komentari, dijeljenja).
+
+### Scenarij C: A/B test u digitalnim medijima
+
+Dizajnirajte i analizirajte A/B test za komunikološki problem (npr. dva formata naslova članka, dvije verzije newsletter emaila, dva pristupa u objavi na društvenim mrežama). Koristite odgovarajući statistički test za usporedbu grupa.
+
+---
+
+## Što se predaje
+
+1. **Quarto izvještaj (.qmd)** — narativni izvještaj s ugrađenim R kodom koji se reproducibilno renderira
+2. **Renderirana HTML verzija** — finalni izvještaj u HTML formatu
+3. **Dataset** — podatci korišteni u analizi (CSV format)
+4. **Kratka prezentacija** — 10–15 minuta za prezentaciju na zadnjem tjednu nastave
+5. **Samoprocjena** — kratki odlomak o tome što ste naučili i što biste napravili drugačije
+
+---
+
+## Rubrika
+
+| Kriterij | Izvrsno (5) | Zadovoljavajuće (3) | Nedovoljno (1) |
+|----------|-------------|---------------------|----------------|
+| **Istraživačko pitanje** | Jasno formulirano, relevantno za komunikologiju, statistički testirano | Formulirano ali nedovoljno specifično | Nejasno ili netestirano |
+| **Analiza podataka** | Korektna primjena odgovarajućih metoda, tidyverse pristup, čist i komentiran kod | Uglavnom korektna analiza s manjim propustima | Značajne pogreške u analizi ili neodgovarajuće metode |
+| **Vizualizacija** | Informativne ggplot2 grafike s jasnim oznakama, naslovima i interpretacijom | Osnovne grafike koje prenose informaciju | Nejasne, netočne ili neprimjerene grafike |
+| **Interpretacija** | Točna interpretacija rezultata u kontekstu istraživačkog pitanja, svjesnost ograničenja | Uglavnom točna interpretacija s manjim propustima | Netočna ili površna interpretacija |
+| **Reproducibilnost** | Kod se izvršava bez grešaka, dobro organiziran, komentiran | Kod se izvršava uz manje prilagodbe | Kod se ne može reproducirati |
+| **Prezentacija** | Jasna, strukturirana, vizualno privlačna, odgovara na pitanja | Prenosi ključne nalaze ali nedostaje struktura | Neorganizirana ili nepripremljena |
+
+---
+
+## Rokovi
+
+| Stavka | Rok |
+|--------|:---:|
+| Odabir scenarija i formiranje grupa | TBD |
+| Predaja nacrta (istraživačko pitanje + plan analize) | TBD |
+| Predaja finalnog izvještaja | TBD |
+| Prezentacije (tjedan 15) | TBD |
+
+---
+
+## Često postavljana pitanja
+
+**Mogu li raditi sam/sama?**
+Da, projekt možete raditi samostalno ili u paru. Grupe od troje ili više nisu dozvoljene.
+
+**Moram li prikupiti vlastite podatke?**
+Ne morate. Možete koristiti simulirane datasete s kolegija, javno dostupne podatke ili vlastitu anketu. Preporučujemo korištenje podataka s kojima ste upoznati.
+
+**Koliko R koda treba biti u izvještaju?**
+Izvještaj treba sadržavati R kod koji reproducira vašu analizu — od učitavanja podataka do finalnih rezultata. Fokus je na čistoći i razumljivosti koda, ne na količini.
+
+**Koji statistički testovi su minimalno potrebni?**
+Barem jedan inferencijalni test (t-test, hi-kvadrat, ANOVA ili regresija) i deskriptivna statistika. Odaberite test koji odgovara vašim podacima i istraživačkom pitanju.
+
+**Što ako moji rezultati nisu statistički značajni?**
+To je sasvim u redu! Neznačajan rezultat je jednako valjan kao značajan. Važno je da ga ispravno interpretirate i razmotrite moguće razloge.
+
+::: {.callout-tip}
+## Savjet za uspjeh
+
+Počnite rano, birajte temu koja vas zanima, i redovito provjeravajte radi li vam kod. Najčešći problem na projektima nije statistika — nego odugovlačenje s početkom rada.
+:::

@@ -1,0 +1,44 @@
+---
+title: "Tjedan 15: Prezentacije projekata i pogled naprijed"
+subtitle: "Što smo naučili i kamo dalje"
+date: 2025-02-01
+categories: [prezentacije, bayesijanska statistika, ANOVA]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Prezentirati rezultate vlastite statističke analize
+2. Razumjeti osnove faktorske ANOVA-e
+3. Opisati bayesijanski pristup kao alternativu frekvencijskom
+4. Identificirati područja za daljnje učenje statistike
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- Studentske prezentacije projekata
+- Kratki pregled faktorske ANOVA-e
+- Bayesijanska statistika kao alternativni pristup (pregled bez tehničkih detalja)
+- Što dalje? Resursi za nastavak učenja
+:::
+
+## Raspored prezentacija
+
+Raspored prezentacija bit će objavljen nakon što se formiraju projektne grupe.
+
+::: {.callout-tip}
+## Format prezentacije
+
+- Trajanje: 10–15 minuta po grupi
+- Sadržaj: opis problema, podataka, metode, rezultata i zaključaka
+- Vizualizacije: barem 2–3 ggplot2 grafike
+- Pitanja: 5 minuta za pitanja nakon svake prezentacije
+:::

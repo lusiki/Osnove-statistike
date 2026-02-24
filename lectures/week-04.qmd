@@ -1,0 +1,33 @@
+---
+title: "Tjedan 4: Deskriptivna statistika"
+subtitle: "Mjere centralne tendencije, varijabilnosti i korelacije"
+date: 2025-02-01
+categories: [deskriptivna statistika, prosjek, korelacija]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Izračunati i interpretirati prosjek, medijan i mod
+2. Razumjeti i koristiti standardnu devijaciju i IQR
+3. Koristiti summarise() i group_by() za deskriptivne statistike
+4. Izračunati i interpretirati korelaciju
+5. Opisati distribuciju varijable koristeći odgovarajuće mjere
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- Mjere centralne tendencije (prosjek, medijan, mod)
+- Mjere varijabilnosti (standardna devijacija, varijanca, IQR)
+- Korelacija
+- Sve kroz summarise() i group_by()
+- Primjer: distribucija vremena provedenog na TikToku po dobnim skupinama
+:::

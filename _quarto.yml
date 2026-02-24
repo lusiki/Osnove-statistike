@@ -1,0 +1,74 @@
+project:
+  type: website
+  output-dir: _site
+
+execute:
+  freeze: auto
+
+website:
+  title: "Osnove statistike | HKS"
+  navbar:
+    background: "#1a1a2e"
+    foreground: "#e6e6e6"
+    left:
+      - href: index.qmd
+        text: Početna
+      - href: syllabus.qmd
+        text: Silabus
+      - href: schedule.qmd
+        text: Raspored
+      - text: Predavanja
+        menu:
+          - href: lectures/week-01.qmd
+            text: "Tjedan 1: Zašto statistika?"
+          - href: lectures/week-02.qmd
+            text: "Tjedan 2: Uvod u R i tidyverse"
+          - href: lectures/week-03.qmd
+            text: "Tjedan 3: Rad s podacima"
+          - href: lectures/week-04.qmd
+            text: "Tjedan 4: Deskriptivna statistika"
+          - href: lectures/week-05.qmd
+            text: "Tjedan 5: Vizualizacija podataka"
+          - href: lectures/week-06.qmd
+            text: "Tjedan 6: Programiranje u R"
+          - href: lectures/week-07.qmd
+            text: "Tjedan 7: Uvod u vjerojatnost"
+          - href: lectures/week-08.qmd
+            text: "Tjedan 8: Kolokvij"
+          - href: lectures/week-09.qmd
+            text: "Tjedan 9: Uzorkovanje i procjena"
+          - href: lectures/week-10.qmd
+            text: "Tjedan 10: Testiranje hipoteza"
+          - href: lectures/week-11.qmd
+            text: "Tjedan 11: Hi-kvadrat testovi"
+          - href: lectures/week-12.qmd
+            text: "Tjedan 12: T-testovi"
+          - href: lectures/week-13.qmd
+            text: "Tjedan 13: ANOVA"
+          - href: lectures/week-14.qmd
+            text: "Tjedan 14: Linearna regresija"
+          - href: lectures/week-15.qmd
+            text: "Tjedan 15: Prezentacije i pogled naprijed"
+      - text: Resursi
+        menu:
+          - href: resources/reading-list.qmd
+            text: Popis literature
+          - href: resources/tools.qmd
+            text: Alati
+      - href: projects/practical-project.qmd
+        text: Projekt
+  search: true
+  page-footer:
+    left: "Osnove statistike | HKS 2024/2025"
+    right: "Izrađeno pomoću [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 3
+
+lang: hr

@@ -1,0 +1,46 @@
+---
+title: "Osnove statistike"
+---
+
+Dobrodošli na stranicu kolegija **Osnove statistike**! Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka.
+
+Kroz 15 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija — od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
+
+::: {.callout-note}
+## Osnovni podaci o kolegiju
+
+| | |
+|---|---|
+| **Studij** | Komunikologija, HKS |
+| **Semestar** | Ljetni semestar 2024/2025 |
+| **ECTS** | 6 |
+| **Opterećenje** | 30P + 30S |
+| **Nositelj** | prof. dr. sc. Luka Šikić ([lsikic@hks.hr](mailto:lsikic@hks.hr)) |
+| **Konzultacije** | Prema dogovoru putem emaila |
+:::
+
+## Struktura kolegija
+
+Kolegij je organiziran u tri cjeline:
+
+**Cjelina 1: Temelji (tjedni 1–7).** Upoznajete se sa statističkim razmišljanjem, naučite koristiti R i tidyverse za rad s podacima, ovladate deskriptivnom statistikom i vizualizacijom, te se upoznajete s temeljima teorije vjerojatnosti.
+
+**Cjelina 2: Inferencijalna statistika (tjedni 9–14).** Nakon kolokvija u 8. tjednu, prelazite na testiranje hipoteza, hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — sve uz primjere iz komunikologije.
+
+**Cjelina 3: Sinteza (tjedan 15).** Prezentirate svoje projekte i dobivate pregled naprednih metoda koje vas čekaju u budućnosti.
+
+## Brzi pristup
+
+| Resurs | Opis |
+|--------|------|
+| [Silabus](syllabus.qmd) | Cjelokupni plan kolegija s opisima tjedana |
+| [Raspored](schedule.qmd) | Tjedni raspored s datumima i statusom |
+| [Popis literature](resources/reading-list.qmd) | Obavezna i preporučena literatura |
+| [Alati](resources/tools.qmd) | Softver i platforme za kolegij |
+| [Praktični projekt](projects/practical-project.qmd) | Upute i rubrika za završni projekt |
+
+## Obavijesti
+
+::: {.announcement-box}
+**Kolegij je u pripremi.** Sadržaj predavanja bit će objavljen postupno kako kolegij bude napredovao. Pratite ovu stranicu za ažuriranja.
+:::

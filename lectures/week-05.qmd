@@ -1,0 +1,34 @@
+---
+title: "Tjedan 5: Vizualizacija podataka s ggplot2"
+subtitle: "Gramatika grafike i principi dobre vizualizacije"
+date: 2025-02-01
+categories: [ggplot2, vizualizacija, grafike]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Objasniti gramatiku grafike (aes, geom, facet, theme)
+2. Izraditi histograme, boxplotove, scatterplotove i bar chartove
+3. Prilagoditi izgled grafika (naslovi, boje, teme)
+4. Koristiti faceting za usporedbu grupa
+5. Odabrati odgovarajuću vrstu vizualizacije za različite tipove podataka
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- Gramatika grafike: slojevi u ggplot2
+- Histogrami i distribucije
+- Boxplotovi za usporedbu grupa
+- Scatterplotovi i korelacije
+- Bar chartovi za kategoričke podatke
+- Primjer: vizualizacija rezultata medijske ankete
+:::

@@ -1,0 +1,32 @@
+---
+title: "Tjedan 3: Rad s podacima u tidyverse"
+subtitle: "dplyr, tidyr i umijeće transformacije podataka"
+date: 2025-02-01
+categories: [dplyr, tidyr, manipulacija podataka]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Koristiti filter(), select(), mutate(), summarise() i group_by()
+2. Transformirati podatke s pivot_longer() i pivot_wider()
+3. Učitavati podatke iz različitih formata (CSV, Excel)
+4. Čistiti i pripremati podatke za analizu
+5. Kombinirati više dplyr operacija u jednom pipelineu
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- dplyr glagoli: filter, select, mutate, summarise, group_by
+- tidyr funkcije: pivot_longer, pivot_wider
+- readr i readxl za učitavanje podataka
+- Primjer: čišćenje podataka iz ankete o medijskim navikama studenata
+:::

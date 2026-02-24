@@ -1,0 +1,95 @@
+/* ===== Statusne oznake za raspored ===== */
+
+.badge-completed {
+  background-color: #28a745;
+  color: white;
+  padding: 0.25em 0.6em;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-upcoming {
+  background-color: #6c757d;
+  color: white;
+  padding: 0.25em 0.6em;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-current {
+  background-color: #007bff;
+  color: white;
+  padding: 0.25em 0.6em;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* ===== Stilovi za stranice predavanja ===== */
+
+.learning-objectives {
+  border-left: 4px solid #007bff;
+  padding-left: 1em;
+  margin: 1.5em 0;
+}
+
+.key-takeaways {
+  border-left: 4px solid #28a745;
+  padding-left: 1em;
+  margin: 1.5em 0;
+}
+
+.next-week-preview {
+  border-left: 4px solid #ffc107;
+  padding-left: 1em;
+  margin: 1.5em 0;
+}
+
+/* ===== Općenite prilagodbe ===== */
+
+.content {
+  max-width: 960px;
+}
+
+/* Ljepše tablice */
+table {
+  width: 100%;
+  margin: 1em 0;
+}
+
+table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+table td, table th {
+  padding: 0.5em 0.75em;
+}
+
+/* Navigacija - prilagodbe */
+.navbar {
+  font-weight: 500;
+}
+
+/* Callout blokovi - manja prilagodba */
+.callout {
+  margin: 1.5em 0;
+}
+
+/* Obavijesti na početnoj stranici */
+.announcement-box {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1em 1.5em;
+  margin: 0.5em 0;
+  background-color: #f8f9fa;
+}

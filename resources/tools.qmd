@@ -1,0 +1,60 @@
+---
+title: "Alati i platforme"
+---
+
+Pregled softvera i platformi koje koristimo na kolegiju.
+
+---
+
+## Programiranje i analiza
+
+| Alat | Namjena | Pristup |
+|------|---------|---------|
+| [R](https://cran.r-project.org/) | Programski jezik za statističku analizu | Besplatno, open-source |
+| [Positron](https://github.com/posit-dev/positron) | IDE za R (razvojno okruženje) | Besplatno, open-source |
+| [RStudio](https://posit.co/download/rstudio-desktop/) | Alternativni IDE za R | Besplatno (Desktop verzija) |
+
+## R paketi
+
+| Paket | Namjena | Instalacija |
+|-------|---------|-------------|
+| tidyverse | Ekosustav za rad s podacima (ggplot2, dplyr, tidyr, readr...) | `install.packages("tidyverse")` |
+| broom | Pretvaranje statističkih modela u tidy tablice | `install.packages("broom")` |
+| janitor | Čišćenje naziva stupaca i tablice frekvencija | `install.packages("janitor")` |
+| scales | Formatiranje osi grafika | `install.packages("scales")` |
+| patchwork | Kombiniranje više grafika | `install.packages("patchwork")` |
+
+## Pisanje i dokumenti
+
+| Alat | Namjena | Pristup |
+|------|---------|---------|
+| [Quarto](https://quarto.org/) | Sustav za izradu dokumenata s kodom | Besplatno, open-source |
+| [Google Docs](https://docs.google.com/) | Kolaborativno pisanje | Besplatno s Google računom |
+
+## Upravljanje podacima
+
+| Alat | Namjena | Pristup |
+|------|---------|---------|
+| [Google Sheets](https://sheets.google.com/) | Jednostavne tablice i unos podataka | Besplatno s Google računom |
+| [Google Forms](https://forms.google.com/) | Izrada anketa | Besplatno s Google računom |
+
+## Komunikacija
+
+| Alat | Namjena | Pristup |
+|------|---------|---------|
+| Email | Komunikacija s nositeljem kolegija | [lsikic@hks.hr](mailto:lsikic@hks.hr) |
+| Merlin / LMS | Materijali i obavijesti | Pristup putem AAI@EduHr |
+
+---
+
+::: {.callout-tip}
+## Studentski računi i besplatne razine
+
+Mnogi alati nude besplatne verzije ili posebne pogodnosti za studente:
+
+- **GitHub Student Developer Pack** — besplatni Pro račun i pristup raznim alatima ([education.github.com](https://education.github.com/pack))
+- **Posit Cloud** — besplatna online verzija RStudia, korisna ako imate problema s lokalnom instalacijom ([posit.cloud](https://posit.cloud/))
+- **Google Workspace for Education** — besplatni Google alati putem fakultetskog računa
+
+Za sve alate na kolegiju koristimo isključivo **besplatne verzije**. Ne trebate ništa kupovati.
+:::

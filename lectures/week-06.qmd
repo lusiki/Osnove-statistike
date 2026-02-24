@@ -1,0 +1,33 @@
+---
+title: "Tjedan 6: Programiranje u R (osnove)"
+subtitle: "Skripte, funkcije i uvjetne naredbe za čiste analize"
+date: 2025-02-01
+categories: [R, programiranje, funkcije]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Pisati i pokretati R skripte
+2. Definirati vlastite funkcije
+3. Koristiti uvjetne naredbe (if/else)
+4. Organizirati kod za ponovljivu analizu
+5. Razumjeti kada i zašto pisati vlastite funkcije
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- R skripte i organizacija koda
+- Pisanje vlastitih funkcija
+- Uvjetne naredbe (if/else)
+- Koliko programiranja komunikolog treba?
+- Fokus na čiste, ponovljive analize
+:::

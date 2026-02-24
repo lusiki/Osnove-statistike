@@ -1,0 +1,33 @@
+---
+title: "Tjedan 10: Testiranje hipoteza"
+subtitle: "P-vrijednosti, greške i snaga testa — što zapravo znače"
+date: 2025-02-01
+categories: [testiranje hipoteza, p-vrijednost, veličina učinka]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Formulirati nultu i alternativnu hipotezu
+2. Objasniti greške tipa I i tipa II
+3. Interpretirati p-vrijednost (i znati što ona NIJE)
+4. Razumjeti veličinu učinka i snagu testa
+5. Provesti jednostavan test hipoteze u R-u
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- Nulta i alternativna hipoteza
+- Greške tipa I i II
+- P-vrijednost: što jest i što nije
+- Veličina učinka i snaga testa
+- Primjer: testiranje razlike u angažmanu između dva formata objave na Instagramu
+:::

@@ -1,0 +1,34 @@
+---
+title: "Tjedan 13: Usporedba više grupa: ANOVA"
+subtitle: "Jednosmjerna ANOVA, post-hoc testovi i provjera pretpostavki"
+date: 2025-02-01
+categories: [ANOVA, post-hoc, Tukey]
+draft: false
+---
+
+::: {.callout-note}
+## Ishodi učenja
+
+Nakon ovog predavanja moći ćete:
+
+1. Objasniti logiku ANOVA-e (usporedba varijance između i unutar grupa)
+2. Provesti jednosmjernu ANOVA-u u R-u
+3. Interpretirati F-statistiku i p-vrijednost iz ANOVA-e
+4. Provesti Tukeyev post-hoc test
+5. Provjeriti pretpostavke ANOVA-e (homogenost varijance, normalnost)
+:::
+
+::: {.callout-warning}
+## Sadržaj u pripremi
+
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+
+**Planirane teme:**
+
+- Zašto ne možemo koristiti više t-testova?
+- Jednosmjerna ANOVA
+- F-statistika i p-vrijednost
+- Post-hoc testovi (Tukey HSD)
+- Provjera pretpostavki
+- Primjer: percepcija vjerodostojnosti vijesti ovisno o izvoru (TV, portal, društvena mreža)
+:::
