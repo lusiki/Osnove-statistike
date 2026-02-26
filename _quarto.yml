@@ -34,7 +34,7 @@ website:
           - href: lectures/week-07.qmd
             text: "Tjedan 7: Uvod u vjerojatnost"
           - href: lectures/week-08.qmd
-            text: "Tjedan 8: Kolokvij"
+            text: "Tjedan 8: Distribucije vjerojatnosti"
           - href: lectures/week-09.qmd
             text: "Tjedan 9: Uzorkovanje i procjena"
           - href: lectures/week-10.qmd

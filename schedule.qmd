@@ -13,7 +13,7 @@ title: "Tjedni raspored"
 | 5 | TBD | [Vizualizacija podataka s ggplot2](lectures/week-05.qmd) | Radionica: vizualizacije u ggplot2 | [Uskoro]{.badge-upcoming} |
 | 6 | TBD | [Programiranje u R (osnove)](lectures/week-06.qmd) | Vježba: pisanje vlastite funkcije | [Uskoro]{.badge-upcoming} |
 | 7 | TBD | [Uvod u vjerojatnost](lectures/week-07.qmd) | Vježba: vjerojatnost i distribucije u R-u | [Uskoro]{.badge-upcoming} |
-| 8 | TBD | [Kolokvij](lectures/week-08.qmd) | Kolokvij | [Uskoro]{.badge-upcoming} |
+| 8 | TBD | [Distribucije vjerojatnosti](lectures/week-08.qmd) | Vježba: normalna distribucija i z-vrijednosti u R-u | [Uskoro]{.badge-upcoming} |
 | 9 | TBD | [Uzorkovanje, procjena i intervali pouzdanosti](lectures/week-09.qmd) | Vježba: intervali pouzdanosti | [Uskoro]{.badge-upcoming} |
 | 10 | TBD | [Testiranje hipoteza](lectures/week-10.qmd) | Vježba: testovi hipoteza | [Uskoro]{.badge-upcoming} |
 | 11 | TBD | [Kategorički podaci: hi-kvadrat testovi](lectures/week-11.qmd) | Vježba: hi-kvadrat testovi | [Uskoro]{.badge-upcoming} |
@@ -29,7 +29,6 @@ title: "Tjedni raspored"
 | Događaj | Datum |
 |---------|:-----:|
 | Početak nastave | TBD |
-| Kolokvij (tjedan 8) | TBD |
 | Predaja praktičnog projekta | TBD |
 | Prezentacije projekata (tjedan 15) | TBD |
 | Kraj nastave | TBD |

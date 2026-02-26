@@ -15,7 +15,7 @@ Kroz 15 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 | **Semestar** | Ljetni semestar 2024/2025 |
 | **ECTS** | 6 |
 | **Opterećenje** | 30P + 30S |
-| **Nositelj** | prof. dr. sc. Luka Šikić ([lsikic@hks.hr](mailto:lsikic@hks.hr)) |
+| **Nositelj** | doc. dr. sc. Luka Šikić ([luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr)) |
 | **Konzultacije** | Prema dogovoru putem emaila |
 :::
 
@@ -23,11 +23,11 @@ Kroz 15 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 
 Kolegij je organiziran u tri cjeline:
 
-**Cjelina 1: Temelji (tjedni 1–7).** Upoznajete se sa statističkim razmišljanjem, naučite koristiti R i tidyverse za rad s podacima, ovladate deskriptivnom statistikom i vizualizacijom, te se upoznajete s temeljima teorije vjerojatnosti.
+**Cjelina 1: Deskriptivna statistika (tjedni 1–5).** Upoznajete se sa statističkim razmišljanjem, naučite koristiti R i tidyverse za rad s podacima, ovladate deskriptivnom statistikom i vizualizacijom.
 
-**Cjelina 2: Inferencijalna statistika (tjedni 9–14).** Nakon kolokvija u 8. tjednu, prelazite na testiranje hipoteza, hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — sve uz primjere iz komunikologije.
+**Cjelina 2: Statistička teorija (tjedni 6–10).** Učite programirati u R-u, upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem i temeljima testiranja hipoteza.
 
-**Cjelina 3: Sinteza (tjedan 15).** Prezentirate svoje projekte i dobivate pregled naprednih metoda koje vas čekaju u budućnosti.
+**Cjelina 3: Inferencijalna statistika (tjedni 11–15).** Primjenjujete inferencijalne metode — hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — na primjerima iz komunikologije, te prezentirate vlastite projekte.
 
 ## Brzi pristup
 

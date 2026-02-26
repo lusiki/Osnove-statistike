@@ -1,3 +1,9 @@
 toc: true
 toc-depth: 3
 number-sections: true
+
+format:
+  html: default
+  pdf: default
+  docx: default
+format-links: [pdf, docx]

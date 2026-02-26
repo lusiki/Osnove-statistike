@@ -42,7 +42,7 @@ Pregled softvera i platformi koje koristimo na kolegiju.
 
 | Alat | Namjena | Pristup |
 |------|---------|---------|
-| Email | Komunikacija s nositeljem kolegija | [lsikic@hks.hr](mailto:lsikic@hks.hr) |
+| Email | Komunikacija s nositeljem kolegija | [luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr) |
 | Merlin / LMS | Materijali i obavijesti | Pristup putem AAI@EduHr |
 
 ---

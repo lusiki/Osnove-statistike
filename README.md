@@ -14,16 +14,15 @@ Kolegij *Osnove statistike* pruža temeljna znanja iz statistike prilagođena st
 
 Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke koristeći programski jezik **R** i **tidyverse** ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija.
 
-**Nositelj kolegija:** prof. dr. sc. Luka Šikić ([lsikic@hks.hr](mailto:lsikic@hks.hr))
+**Nositelj kolegija:** doc. dr. sc. Luka Šikić ([luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr))
 
 ## Struktura kolegija
 
 | Cjelina | Tjedni | Sadržaj |
 |---------|:------:|---------|
-| **Temelji** | 1–7 | Uvod u statistiku, R i tidyverse, rad s podacima, deskriptivna statistika, vizualizacija, programiranje, vjerojatnost |
-| **Kolokvij** | 8 | Provjera znanja iz tjedana 1–7 |
-| **Inferencijalna statistika** | 9–14 | Uzorkovanje i procjena, testiranje hipoteza, hi-kvadrat, t-testovi, ANOVA, linearna regresija |
-| **Sinteza** | 15 | Prezentacije projekata i pogled naprijed |
+| **Deskriptivna statistika** | 1–5 | Uvod u statistiku, R i tidyverse, rad s podacima, deskriptivna statistika, vizualizacija |
+| **Statistička teorija** | 6–10 | Programiranje u R, vjerojatnost, distribucije vjerojatnosti, uzorkovanje i procjena, testiranje hipoteza |
+| **Inferencijalna statistika** | 11–15 | Hi-kvadrat testovi, t-testovi, ANOVA, linearna regresija, prezentacije projekata |
 
 ## Tjedni pregled predavanja
 
@@ -36,7 +35,7 @@ Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke 
 | 5 | Vizualizacija podataka s ggplot2 |
 | 6 | Programiranje u R |
 | 7 | Uvod u vjerojatnost |
-| 8 | Kolokvij |
+| 8 | Distribucije vjerojatnosti |
 | 9 | Uzorkovanje, procjena i intervali pouzdanosti |
 | 10 | Testiranje hipoteza |
 | 11 | Kategorički podaci: hi-kvadrat testovi |
@@ -49,10 +48,9 @@ Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke 
 
 | Komponenta | Udio |
 |------------|:----:|
-| Kolokvij | 30% |
-| Seminarske vježbe | 20% |
-| Praktični projekt | 40% |
-| Sudjelovanje | 10% |
+| Seminarske vježbe | 30% |
+| Praktični projekt | 50% |
+| Sudjelovanje | 20% |
 
 ## Potrebni alati
 
@@ -75,7 +73,7 @@ install.packages(c("tidyverse", "broom", "janitor", "scales", "patchwork"))
 
 ## Kontakt
 
-Za pitanja o kolegiju obratite se na [lsikic@hks.hr](mailto:lsikic@hks.hr). Konzultacije su prema dogovoru putem emaila.
+Za pitanja o kolegiju obratite se na [luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr). Konzultacije su prema dogovoru putem emaila.
 
 ---
 

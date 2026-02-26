@@ -1,38 +1,33 @@
 ---
-title: "Tjedan 8: Kolokvij"
-subtitle: "Provjera znanja iz tjedana 1–7"
+title: "Tjedan 8: Distribucije vjerojatnosti"
+subtitle: "Normalna distribucija, centralni granični teorem i primjene"
 date: 2025-02-01
-categories: [kolokvij, provjera znanja]
+categories: [vjerojatnost, distribucije, normalna distribucija, CLT]
 draft: false
 ---
 
-## Kolokvij
+::: {.callout-note}
+## Ishodi učenja
 
-Ovaj tjedan rezerviran je za **kolokvij** koji pokriva gradivo iz prvih sedam tjedana kolegija.
+Nakon ovog predavanja moći ćete:
 
-### Što pokriva kolokvij?
+1. Opisati svojstva normalne distribucije i njezinu primjenu u medijskim podacima
+2. Objasniti centralni granični teorem i zašto je važan za statističko zaključivanje
+3. Koristiti z-vrijednosti za standardizaciju i usporedbu podataka
+4. Razlikovati diskretne i kontinuirane distribucije vjerojatnosti
+5. Primijeniti distribucije vjerojatnosti na primjerima iz komunikologije
+:::
 
-Kolokvij pokriva sljedeće teme:
+::: {.callout-warning}
+## Sadržaj u pripremi
 
-1. **Istraživački dizajn** (tjedan 1) — mjerenje, skale, tipovi istraživanja
-2. **R i tidyverse** (tjedan 2) — osnovni koncepti, tibble, pipe operator
-3. **Manipulacija podacima** (tjedan 3) — dplyr i tidyr operacije
-4. **Deskriptivna statistika** (tjedan 4) — mjere centralne tendencije i varijabilnosti
-5. **Vizualizacija** (tjedan 5) — ggplot2 i gramatika grafike
-6. **Programiranje** (tjedan 6) — funkcije i skripte
-7. **Vjerojatnost** (tjedan 7) — distribucije i osnovni koncepti
+Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima iz komunikologije, R kodom i vježbama bit će objavljen prije početka nastave.
 
-### Format kolokvija
+**Planirane teme:**
 
-- Trajanje: 90 minuta
-- Kombinacija pitanja: konceptualna pitanja, čitanje i interpretacija R koda, interpretacija rezultata
-- Otvorene bilješke: smijete koristiti vlastite bilješke (jedna A4 stranica)
-
-::: {.callout-tip}
-## Kako se pripremiti
-
-- Ponovite ključne pojmove iz pojmovnika svakog tjedna
-- Riješite vježbe sa seminara
-- Prođite kroz R kod iz predavanja i provjerite razumijete li svaki korak
-- Fokusirajte se na **razumijevanje**, ne na memoriranje formula
+- Normalna distribucija i njezina svojstva
+- Centralni granični teorem (CLT)
+- z-vrijednosti i standardizacija
+- Diskretne vs. kontinuirane distribucije
+- Primjena na medijskim podacima
 :::
