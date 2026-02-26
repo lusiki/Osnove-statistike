@@ -1,34 +1,329 @@
 ---
 title: "Tjedan 1: Zašto statistika? Uvod u istraživački dizajn"
-subtitle: "Zašto komunikolog treba podatke i kako ih ispravno prikupljati"
-date: 2025-02-01
-categories: [uvod, istraživački dizajn, mjerenje]
+subtitle: "Kako podaci mijenjaju način na koji razumijemo medije i komunikaciju"
+date: 2025-02-22
+categories: [uvod, istraživački dizajn, mjerenje, varijable]
 draft: false
 ---
 
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete:
+Nakon ovog predavanja moći ćete
 
-1. Objasniti zašto je statistička pismenost važna za komunikologe
-2. Opisati razliku između eksperimentalnog i neeksperimentalnog dizajna
-3. Identificirati različite skale mjerenja (nominalna, ordinalna, intervalna, omjerna)
-4. Prepoznati Simpsonov paradoks i objasniti zašto je opasan
-5. Razlikovati pouzdanost i valjanost mjerenja
+1. Objasniti zašto su statističke metode neophodne u istraživanjima komunikacije i medija, čak i kad se problemi čine intuitivno jasnima.
+2. Prepoznati situacije u kojima zdravorazumsko zaključivanje vodi na krivi trag i objasniti Simpsonov paradoks na primjeru medijskih podataka.
+3. Razlikovati četiri razine mjerenja (nominalna, ordinalna, intervalna, omjerna) i prepoznati kojoj razini pripadaju tipične varijable u komunikološkim istraživanjima.
+4. Objasniti pojmove pouzdanosti i valjanosti mjerenja te navesti primjere za svaki tip.
+5. Razlikovati eksperimentalni i neeksperimentalni istraživački dizajn te objasniti prednosti i ograničenja svakog pristupa u kontekstu medijskih istraživanja.
+6. Definirati ključne pojmove: varijabla, nezavisna i zavisna varijabla, operacionalizacija, konfundirajuća varijabla, interna i eksterna valjanost.
+7. Kritički procijeniti jednostavna istraživačka izvješća i prepoznati potencijalne prijetnje valjanosti zaključaka.
 :::
 
-::: {.callout-warning}
-## Sadržaj u pripremi
+## Imate li uopće izbora?
 
-Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima iz komunikologije, R kodom i vježbama bit će objavljen prije početka nastave.
+Zamislite da radite u novinarskoj redakciji i da vam šef kaže: naš portal gubi čitatelje, trebamo promijeniti pristup. Vi pitate što točno ne valja, a on odgovara: ljudi ne klikaju na naše članke. I onda doda: mislim da su naslovi previše dosadni. Promijenite stil naslova, stavite više clickbaita, i sve će biti u redu.
 
-**Planirane teme:**
+Zvuči uvjerljivo. Ali razmislite na trenutak. Otkud šefu to znanje? Možda je u pravu. Možda su naslovi zaista problem. Ali možda je problem nešto sasvim drugo: vrijeme objave, duljina članaka, tematika, konkurentski portali koji su lansirali novu aplikaciju, ili činjenica da je ljeto i ljudi su na moru umjesto za računalom. Bez podataka, ova rasprava je čisto nagađanje. Svatko ima svoju teoriju, svi su uvjereni u svoje, a odluka se na kraju donosi na temelju toga tko je najglasnije govorio na sastanku.
 
-- Zašto komunikolog treba statistiku?
-- Simpsonov paradoks na primjeru medijskih anketa
-- Mjerenje i skale
-- Pouzdanost i valjanost
-- Eksperimentalni vs. neeksperimentalni dizajn
-- Primjeri iz medijskih istraživanja
+Statistika postoji upravo zato da bismo izbjegli ovakve situacije. Njezin temeljni cilj nije komplicirati vam život formulama i grčkim slovima (iako se ponekad čini tako). Cilj je pružiti alate kojima se od gomile podataka dolazi do zaključaka u koje se možemo pouzdati, barem više nego u nagađanje šefa na jutarnjem sastanku. I tu dolazimo do pitanja iz naslova: imate li uopće izbora? Trebate li vi, kao budući komunikolog, zaista učiti statistiku?
+
+Kratak odgovor je da. Duži odgovor zaslužuje objašnjenje.
+
+---
+
+## Zašto komunikolog treba statistiku
+
+Komunikologija je empirijska znanost. To znači da se njezine tvrdnje moraju temeljiti na dokazima, a ne samo na teoretskim razmatranjima ili osobnom iskustvu. Kad istraživač tvrdi da TikTok negativno utječe na pažnju adolescenata, ili da negativne vijesti generiraju više klikova od pozitivnih, ili da je povjerenje u medije palo nakon pandemije, te tvrdnje moraju biti podržane podacima. A podaci bez statističke analize su samo hrpa brojki.
+
+Ali potreba za statistikom u komunikologiji ide dublje od akademskog istraživanja. Moderna medijska industrija je u potpunosti prožeta podacima. Svaki klik na web stranici, svako otvaranje newslettera, svaka sekunda provedena na video sadržaju se bilježi i analizira. Društvene mreže generiraju enormne količine podataka o ponašanju korisnika. Oglašivačka industrija troši milijarde na temelju statističkih modela koji predviđaju koji će oglas izazvati reakciju kod koje publike. Ako ne razumijete kako ti podaci nastaju, kako se analiziraju i što njihovi rezultati zapravo znače (i ne znače!), ne možete se ravnopravno uključiti u rasprave koje oblikuju medijski krajolik.
+
+Navarro u svojoj knjizi, koja služi kao temelj za ovaj kolegij, koristi zgodnu analogiju. Kaže da je statistika pomalo poput učenja kuharskog recepta. Na prvu, čini se kao skup mehaničkih koraka: dodaj ovo, izmiješaj ono, stavi u pećnicu na toliko stupnjeva. Ali kad počnete razumjeti zašto svaki korak postoji, zašto se maslac dodaje hladan a ne topao, zašto se tijesto ostavlja da odmara, odjednom prestajete pratiti recept i počinjete kuhati. Isto je sa statistikom: na početku izgleda kao skup formula i pravila, ali kad shvatite logiku iza toga, dobivate alat za razmišljanje koji mijenja način na koji gledate na bilo koju tvrdnju, u akademskom radu ili u svakodnevnom životu.
+
+---
+
+## Kad nas intuicija iznevjeri
+
+Jedan od najvažnijih razloga za učenje statistike jest taj da je naša intuicija o podacima i vjerojatnostima nevjerojatno nepouzdana. Ljudski mozak je izvanredno dobar u prepoznavanju uzoraka, ali taj isti mehanizam nas navodi da vidimo uzorke tamo gdje ih nema i da donosimo zaključke na temelju nedovoljnih ili pristrano odabranih informacija.
+
+Razmislite o sljedećim primjerima.
+
+**Slučajnost ne izgleda onako kako mislimo.** Zamislite da bacate novčić deset puta i dobijete ovakav niz: P G P G P G P G P G (pismo i grb se savršeno izmjenjuju). Većina ljudi bi rekla da ovo ne izgleda slučajno, da je previše pravilno. I bili bi u pravu, taj niz bi bio prilično neobičan. Ali pogledajte ovaj niz: P P P G P G G P P G. Većina ljudi bi rekla da ovo izgleda slučajno. A zapravo, svaki specifični niz od deset bacanja ima potpuno istu vjerojatnost. Ono što naš mozak radi jest to da uspoređuje niz s mentalnim modelom slučajnosti koji je netočan. Mi očekujemo da slučajnost izgleda ravnomjerno, ali slučajnost je zapravo neuredna.
+
+**Anegdota nije dokaz.** Vaš susjed je počeo koristiti novu aplikaciju za vijesti i kaže da je sada puno bolje informiran. Čuli ste sličnu priču od dva kolege na fakultetu. Je li to dokaz da aplikacija zaista poboljšava informiranost? Naravno da nije. Tri osobe nisu reprezentativni uzorak. Možda su te tri osobe ionako bile natprosječno zainteresirane za vijesti. Možda bi se jednako dobro osjećale da su počele koristiti bilo koju novu aplikaciju. Možda je to jednostavno placebo efekt noviteta. Ali ljudski mozak, suočen s tri konzistentne priče, automatski zaključuje da mora biti nečeg u tome. To se u psihologiji zove heuristika dostupnosti: informacije koje su nam lako dostupne u sjećanju (poput živopisnih anegdota) percipiramo kao reprezentativnije nego što jesu.
+
+**Korelacija zavodi.** Portali koji objavljuju više članaka dnevno imaju više ukupnih klikova. Znači li to da bismo trebali objavljivati više? Možda. Ali možda veći portali imaju i više novinara, veći budžet za marketing, stariju i lojalniju čitateljsku bazu, i jednostavno više resursa koji privlače čitatelje neovisno o broju članaka. Korelacija između broja članaka i broja klikova ne znači da jedno uzrokuje drugo. Ovo je toliko čest logički skok da se u statistici za njega koristi posebna fraza: korelacija nije kauzalnost. Do ovog pojma ćemo se vraćati tijekom cijelog kolegija jer je toliko važan i toliko se često zanemaruje.
+
+### Simpsonov paradoks: kad podaci lažu {#sec-simpson}
+
+Postoji jedan fenomen koji savršeno ilustrira zašto nam je statistika potrebna, a zove se **Simpsonov paradoks**. To je situacija u kojoj trend koji vidite u ukupnim podacima potpuno nestane ili se čak preokrene kad podatke razbijete po grupama. Zvuči apstraktno, pa pogledajmo konkretan primjer iz svijeta medija.
+
+Zamislite da analizirate podatke o tome koji format vijesti generira više angažmana na dva medijska portala. Portal A i Portal B oba objavljuju vijesti u dva formata: tekst i video. Gledate ukupne podatke i vidite da Portal A ima veći prosječni angažman po članku nego Portal B. Zaključak je, čini se, očigledan: Portal A radi nešto bolje.
+
+Ali onda razbijete podatke po formatu. I otkrijete nešto zapanjujuće: za tekstualne članke, Portal B ima veći prosječni angažman. Za video sadržaje, Portal B opet ima veći prosječni angažman. Kako je to moguće? Kako Portal A može biti bolji ukupno, a Portal B bolji u svakoj pojedinoj kategoriji?
+
+Odgovor leži u proporcijama. Portal A objavljuje pretežno video sadržaj (koji općenito ima veći angažman), dok Portal B objavljuje pretežno tekstualni sadržaj (koji općenito ima manji angažman). Kad gledate ukupni prosjek, Portal A izgleda bolje jer ima veći udio visoko angažirajućeg formata (videa), ne zato što je zapravo bolji u bilo čemu.
+
+Evo istog principa s brojevima. Portal A objavi 100 videa s prosječnim angažmanom 200 i 10 tekstualnih članaka s prosječnim angažmanom 50. Ukupni prosjek Portala A je (100 puta 200 plus 10 puta 50) podijeljeno sa 110, dakle oko 186. Portal B objavi 10 videa s prosječnim angažmanom 220 i 100 tekstualnih članaka s prosječnim angažmanom 60. Ukupni prosjek Portala B je (10 puta 220 plus 100 puta 60) podijeljeno sa 110, dakle oko 75.
+
+Portal A ima ukupni prosjek 186, Portal B ima 75. Ali Portal B je bolji i u videu (220 naprema 200) i u tekstu (60 naprema 50). Ukupni prosjek zavodi jer ne uzima u obzir drastičnu razliku u proporcijama formata.
+
+Simpsonov paradoks nije egzotična statistička kurioznost. Pojavljuje se u stvarnom životu češće nego što biste očekivali. Klasičan primjer iz akademskog svijeta je slučaj pristupa na sveučilište Berkeley iz 1970ih, gdje su ukupni podaci sugerirali diskriminaciju žena, ali kad su se podaci razbili po odjelima, žene su zapravo imale veću stopu prijema u većini pojedinih odjela. Problem je bio u tome što su se žene više prijavljivale na kompetitivnije odjele s nižom stopom prijema za sve.
+
+Za komunikologe, Simpsonov paradoks je posebno relevantan jer medijska istraživanja redovito uključuju podatke koji se mogu raščlaniti na više načina: po platformi, po dobnoj skupini publike, po vremenu dana, po tipu sadržaja. Svaki put kad gledate agregirane podatke bez raščlambe, riskirate da donesete zaključak koji je ne samo netočan, nego dijametralno suprotan stvarnosti.
+
+> Statistika nije skup trikova za impresioniranje publike brojevima. Statistika je disciplinirani način razmišljanja koji vas štiti od donošenja krivih zaključaka, uključujući zaključke koji se na prvi pogled čine savršeno logičnima.
+
+---
+
+## Što je uopće mjerenje? {#sec-mjerenje}
+
+Prije nego što uopće počnemo razmišljati o statističkim metodama, moramo se zapitati nešto fundamentalnije: što znači mjeriti nešto? Ovo pitanje zvuči trivijalno kad govorimo o fizičkim veličinama. Mjeriti visinu osobe znači staviti metar uz nju i pročitati broj. Ali što znači mjeriti povjerenje u medije? Ili angažman korisnika na društvenim mrežama? Ili kvalitetu novinarstva?
+
+U komunikologiji, kao i u drugim društvenim znanostima, većina stvari koje želimo mjeriti su apstraktni koncepti (teoretski konstrukti) koje ne možemo izravno vidjeti ili dotaknuti. Povjerenje u medije je mentalno stanje. Kvaliteta novinarstva je procjena koja ovisi o kriterijima. Angažman korisnika je složeni fenomen koji se može manifestirati na mnogo načina: klikom, komentarom, dijeljenjem, vremenom provedenim na stranici.
+
+Proces pretvaranja apstraktnog koncepta u nešto mjerljivo zove se **operacionalizacija**. Kad kažemo da ćemo mjeriti povjerenje u medije, moramo točno definirati kako ćemo to napraviti. Hoćemo li pitati ljude koliko vjeruju pojedinim medijima na skali od 1 do 10? Ili ćemo im dati tvrdnje poput "vjerujem informacijama koje pročitam na portalu X" i zamoliti ih da izraze stupanj slaganja? Ili ćemo mjeriti ponašanje, na primjer koliko često dijele članke s određenog portala?
+
+Svaka od ovih operacionalizacija zahvaća nešto malo drugačije. Skala od 1 do 10 daje grubu procjenu općeg osjećaja. Tvrdnje sa stupnjem slaganja daju precizniju sliku o specifičnim aspektima povjerenja. Dijeljenje članaka mjeri ponašanje, a ne stav, i na njega utječu mnogi drugi faktori (poput toga koliko su članci zanimljivi, koliko je osoba aktivna na društvenim mrežama općenito, i tako dalje).
+
+::: {.callout-important}
+## Važna napomena
+
+Operacionalizacija je jedan od najkritičnijih koraka u svakom istraživanju. Dva istraživanja koja istražuju isti koncept (recimo, utjecaj društvenih mreža na političku polarizaciju) mogu doći do potpuno suprotnih zaključaka jednostavno zato što su koristila različite operacionalizacije. Jedno je mjerilo polarizaciju kao razliku u stavovima između pristaša različitih stranaka, a drugo kao učestalost negativnih izjava o političkim protivnicima. Kad čitate istraživačke rezultate, uvijek provjerite kako su ključni pojmovi operacionalizirani. To vam govori što je istraživanje zapravo mjerilo, a ne samo što tvrdi da je mjerilo.
 :::
+
+### Varijable i opažanja
+
+Sve što mjerimo u istraživanju nazivamo **varijablom**. Varijabla je bilo koje svojstvo koje se može razlikovati od jednog mjerenja do drugog, od jednog ispitanika do drugog. Dob je varijabla jer ljudi imaju različite godine. Spol je varijabla jer se ispitanici razlikuju po spolu. Dnevno vrijeme provedeno na TikToku je varijabla jer svatko provodi različitu količinu vremena. Čak i tip medija kojeg netko najčešće koristi je varijabla jer su odgovori različiti.
+
+Svako pojedinačno mjerenje varijable nazivamo **opažanjem** (observation). Ako ispitamo 300 ljudi o tome koliko minuta dnevno provode na TikToku, imamo 300 opažanja jedne varijable. Ako svakom ispitaniku postavimo 10 pitanja, imamo 300 opažanja za svaku od 10 varijabli.
+
+Navarro u knjizi naglašava jednu stvar koja se studentima čini očitom ali je zapravo duboka: razlikovanje između onoga što nas zanima (teoretski konstrukt) i onoga što zapravo mjerimo (opažanja). Povjerenje u medije je teoretski konstrukt. Odgovor na pitanje "na skali od 1 do 10, koliko vjerujete portalu Index.hr" je opažanje. Te dvije stvari nisu iste, i kvaliteta vašeg istraživanja uvelike ovisi o tome koliko dobro vaša opažanja odražavaju konstrukt koji vas zapravo zanima.
+
+---
+
+## Razine mjerenja {#sec-razine-mjerenja}
+
+Nije svaka varijabla iste prirode, i način na koji varijablu mjerimo određuje što smijemo raditi s njom statistički. Američki psiholog S. S. Stevens je 1946. godine predložio klasifikaciju razina mjerenja koja se koristi do danas. Postoje četiri razine, i svaka dopušta drugačije statističke operacije.
+
+### Nominalna razina
+
+Na nominalnoj razini, brojevi (ili oznake) služe samo za imenovanje kategorija. Nema nikakve prirodne hijerarhije ili redoslijeda između kategorija. U komunikološkim istraživanjima tipične nominalne varijable su: spol (muški, ženski, ostalo), tip medija (televizija, radio, web portal, društvena mreža, podcast), politička opcija, država prebivališta, ime platforme.
+
+Jedino što možemo smisleno napraviti s nominalnim podacima jest prebrojati koliko opažanja pripada svakoj kategoriji i izračunati proporcije. Ne možemo ih zbrajati, oduzimati ili izračunavati prosjek. "Prosječni spol" nema smisla. "Prosječni tip medija" također ne.
+
+### Ordinalna razina
+
+Ordinalna razina dodaje informaciju o redoslijedu. Kategorije imaju prirodan poredak, ali razmaci između njih nisu nužno jednaki. Klasičan primjer su odgovori na Likertovoj skali: "uopće se ne slažem" (1), "ne slažem se" (2), "niti se slažem niti ne" (3), "slažem se" (4), "potpuno se slažem" (5). Znamo da je 4 više od 3 i 3 više od 2, ali ne možemo tvrditi da je razlika između "ne slažem se" i "niti se slažem niti ne" jednaka razlici između "slažem se" i "potpuno se slažem".
+
+Drugi primjeri ordinalnih varijabli u komunikologiji: rangiranje omiljenih medija (prvi, drugi, treći izbor), obrazovna razina (osnovna škola, srednja škola, prvostupnik, magistar, doktor), rang na ljestvici najčitanijih članaka.
+
+S ordinalnim podacima možemo raditi sve što i s nominalnim (prebrojavanje, proporcije), plus možemo govoriti o redoslijedu i izračunavati medijan. Ali prosjek je, strogo govoreći, problematičan jer pretpostavlja jednake razmake. U praksi se prosjeci Likertovih skala ipak računaju gotovo svugdje, i to je jedna od onih situacija u kojima se stroga metodološka čistoća sukobljava s praktičnošću. Vrijedi biti svjestan da je to kompromis.
+
+### Intervalna razina
+
+Na intervalnoj razini, razmaci između vrijednosti su jednaki i smisleni, ali nulta točka je proizvoljno određena. Klasičan primjer je temperatura u Celzijevim stupnjevima: razlika između 20 i 30 stupnjeva jednaka je razlici između 30 i 40 stupnjeva, ali 0 stupnjeva ne znači "nema temperature" (to je samo točka na kojoj se voda ledi). Zbog toga ne možemo reći da je 40 stupnjeva dvostruko toplije od 20 stupnjeva.
+
+U komunikologiji su prave intervalne skale relativno rijetke. Mnogi istraživači tretiraju Likertove skale kao intervalne (pod pretpostavkom da su razmaci između odgovora psihološki jednaki), ali to je pretpostavka, ne činjenica. Standardizirani testovi znanja o medijskoj pismenosti ili indeksi poput nekih kompozitnih mjera medijskog pluralizma mogu se opravdano tretirati kao intervalni.
+
+S intervalnim podacima možemo raditi sve dosad navedeno plus izračunavati aritmetičku sredinu i standardnu devijaciju, što otvara vrata većini statističkih metoda.
+
+### Omjerna razina
+
+Omjerna (ratio) razina ima sve karakteristike intervalne, plus ima apsolutnu nultu točku koja znači potpuno odsustvo mjerne veličine. Vrijeme provedeno na platformi je omjerna varijabla: 0 minuta zaista znači da osoba uopće nije koristila platformu, a 60 minuta je zaista dvostruko više od 30 minuta. Broj dijeljenja objave, broj pratitelja, prihod od oglašavanja, stopa klikanja (click through rate), sve su to omjerne varijable.
+
+S omjernim podacima možemo raditi apsolutno sve: zbrajati, oduzimati, množiti, dijeliti, izračunavati omjere. Izjava "Portal A ima dvostruko više čitatelja od Portala B" ima smisla jer je broj čitatelja omjerna varijabla.
+
+### Diskretne i kontinuirane varijable
+
+Osim razina mjerenja, postoji još jedna važna razlika: varijable mogu biti **diskretne** ili **kontinuirane**. Diskretna varijabla može poprimiti samo određene, odvojene vrijednosti. Broj komentara na članak je diskretan jer ne možete imati 3.7 komentara. Kontinuirana varijabla može teoretski poprimiti bilo koju vrijednost unutar nekog raspona. Vrijeme provedeno na stranici je kontinuirano jer možete provesti 3 minute i 27.438 sekundi.
+
+Ova razlika je važna jer utječe na izbor grafičkih prikaza (histogrami za kontinuirane, stupičasti grafikoni za diskretne) i na izbor statističkih testova. U praksi, mnoge varijable koje su tehnički diskretne tretiramo kao kontinuirane kad imaju dovoljno velik raspon mogućih vrijednosti. Na primjer, broj bodova na testu od 0 do 100 je tehnički diskretan, ali razlika između susjednih vrijednosti je toliko mala da ga bez problema tretiramo kao kontinuiranog.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Kad kreirate anketu ili instrument za istraživanje, razina mjerenja varijabli nije nešto što se naknadno određuje. Morate unaprijed razmisliti o tome kakve podatke želite i kakve statističke analize planirate provoditi. Ako želite izračunavati prosjeke i korelacije, trebate barem intervalne podatke. Ako samo želite znati distribuciju po kategorijama, nominalni podaci su dovoljni. Ovaj korak planiranja vas štedi od situacije u kojoj imate prikupljene podatke ali ne možete s njima napraviti analizu koja vas zanima.
+:::
+
+---
+
+## Pouzdanost mjerenja {#sec-pouzdanost}
+
+Zamislite da imate vagu koja svaki put kad stanete na nju pokazuje drugačiji broj: jednom 72 kg, sljedeći put 78 kg, pa opet 65 kg. Očito, ta vaga je beskorisna. Ne zato što ne mjeri težinu, nego zato što njezina mjerenja nisu **pouzdana** (reliable). Pouzdanost mjerenja odnosi se na stupanj u kojem dobivamo konzistentne rezultate kad ponovimo isto mjerenje pod istim uvjetima.
+
+U komunikologiji je pouzdanost posebno važna jer mjerimo apstraktne koncepte koje ne možemo izravno vidjeti. Kad mjerimo povjerenje u medije putem upitnika, moramo se pitati: bi li ispitanik dao iste odgovore da smo ga ispitali tjedan dana kasnije? Bi li dva različita istraživača koja čitaju isti članak i kodiraju ga prema istim kriterijima dodijelila iste kodove?
+
+Navarro u knjizi opisuje pet tipova pouzdanosti, a za komunikologe su relevantna osobito tri.
+
+**Pouzdanost ponovljenog mjerenja (test-retest reliability)** mjeri konzistentnost rezultata kroz vrijeme. Ako danas mjerite stavove studenata o pouzdanosti televizijskih vijesti i ponovite isto mjerenje za dva tjedna, rezultati bi trebali biti slični (pretpostavljajući da se u međuvremenu nije dogodilo ništa dramatično). Ako se rezultati drastično razlikuju bez očitog razloga, vaš instrument nije pouzdan.
+
+Problem s ovim tipom pouzdanosti u komunikologiji jest to da se stavovi prema medijima zaista mogu brzo promijeniti. Ako se između dva mjerenja dogodi veliki medijski skandal, promjena u odgovorima nije znak nepouzdanog instrumenta, nego stvarne promjene u stavovima. Zato je važno razlikovati nepouzdanost instrumenta od stvarne varijabilnosti u onome što mjerite.
+
+**Pouzdanost između procjenjivača (inter-rater reliability)** posebno je važna u analizi sadržaja, jednoj od temeljnih metoda u komunikologiji. Kad dva ili više kodera analiziraju isti medijski sadržaj, moraju se slagati u svojim procjenama. Ako jedan koder ocijeni članak kao "neutralan", a drugi isti članak kao "negativno pristrasan", imate problem s pouzdanošću. Mjere poput Cohenove kappa i Krippendorffove alpha koriste se za kvantificiranje razine slaganja između kodera, i standardni su dio metodološkog izvještaja u analizi sadržaja.
+
+**Interna konzistentnost** mjeri koliko su pitanja u upitniku konzistentna jedno s drugim. Ako imate upitnik o medijskoj pismenosti s 15 pitanja, sva bi trebala mjeriti isti konstrukt. Ako jedno pitanje ne korelira s ostalima, možda mjeri nešto drugo, ili je loše formulirano. Cronbachov alfa koeficijent je daleko najčešća mjera interne konzistentnosti u društvenim znanostima, i gotovo sigurno ćete ga susresti u svakom metodološkom dijelu akademskog rada koji koristi upitnike. Vrijednosti iznad 0.70 se obično smatraju prihvatljivima, iako je i ta granica predmet rasprave.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Kad čitate akademski rad iz komunikologije, obratite pažnju na dio u kojem autori opisuju pouzdanost svojih mjera. Ako koriste upitnik, trebali bi navesti Cronbachov alfa za svaku skalu. Ako rade analizu sadržaja, trebali bi navesti mjeru slaganja između kodera. Odsutnost ovih informacija je ozbiljan metodološki propust i razlog za oprez pri tumačenju rezultata.
+:::
+
+---
+
+## Valjanost mjerenja {#sec-valjanost}
+
+Pouzdanost je nužan, ali ne i dovoljan uvjet za dobro mjerenje. Mjerenje može biti savršeno pouzdano (daje isti rezultat svaki put), a potpuno besmisleno. Zamislite da mjerite kvalitetu novinarstva brojem zareza u članku. Ovaj instrument bi bio izuzetno pouzdan (zareze je lako prebrojati i dva procjenjivača će gotovo uvijek dati isti rezultat), ali potpuno nevaljan, jer broj zareza očito nema nikakve veze s kvalitetom novinarstva.
+
+**Valjanost** (validity) mjerenja odnosi se na pitanje mjeri li instrument zaista ono što bi trebao mjeriti. To je konceptualno jednostavno ali praktički vrlo zahtjevno pitanje, osobito u društvenim znanostima.
+
+Postoji nekoliko tipova valjanosti koji su relevantni za komunikološka istraživanja.
+
+**Valjanost sadržaja (content validity)** odnosi se na to pokriva li instrument sve relevantne aspekte konstrukta koji mjerimo. Ako mjerite medijsku pismenost, a vaš upitnik sadrži samo pitanja o televiziji i ništa o digitalnim medijima, valjanost sadržaja je niska jer ste propustili važan aspekt suvremene medijske pismenosti.
+
+**Konstruktna valjanost (construct validity)** odnosi se na to mjeri li instrument zaista teoretski konstrukt koji namjeravamo mjeriti, a ne nešto drugo. Ovo je najkompleksniji tip valjanosti jer zahtijeva dokaze iz više izvora. Jedanaest mjera medijskog angažmana (klikovi, dijeljenja, komentari, vrijeme na stranici) moglo bi se sve nazvati mjerama angažmana, ali zapravo mjere različite stvari. Klikovi mjere početni interes, vrijeme na stranici mjeri dubinu čitanja, komentari mjere motivaciju za javno izražavanje mišljenja. Sve su to aspekti angažmana, ali nisu međusobno zamjenjivi.
+
+**Ekološka valjanost (ecological validity)** pita koliko se rezultati iz kontroliranih uvjeta (laboratorija, online eksperimenta) mogu generalizirati na stvarni svijet. Ako testirate kako ljudi reagiraju na lažne vijesti tako da im u laboratorijskom okruženju pokažete članke na bijelom ekranu bez ikakvih drugih distrakcija, vaši rezultati možda ne vrijede za situaciju u kojoj ista osoba na svom telefonu prolazi kroz feed na Facebooku s desecima konkurentskih sadržaja, notifikacijama i porukama prijatelja.
+
+---
+
+## Varijable u istraživanju: nezavisne i zavisne {#sec-varijable}
+
+U svakom istraživanju postoje varijable koje nas primarno zanimaju i varijable kojima manipuliramo ili ih promatramo da bismo razumjeli one prve. Standardna terminologija koristi dva ključna pojma.
+
+**Nezavisna varijabla** (independent variable, IV) je varijabla za koju pretpostavljamo (ili testiramo hipotezu) da ima utjecaj na nešto. U eksperimentu, to je varijabla kojom istraživač manipulira. Na primjer, ako testirate dva različita formata naslova (neutralni naprema senzacionalistički) da vidite koji generira više klikova, format naslova je nezavisna varijabla.
+
+**Zavisna varijabla** (dependent variable, DV) je varijabla koja mjeri ishod ili rezultat. To je ono što promatramo da bismo vidjeli je li nezavisna varijabla imala efekt. U primjeru s naslovima, broj klikova je zavisna varijabla.
+
+Ova terminologija može zbuniti jer u neeksperimentalnim istraživanjima nema prave manipulacije. Kad proučavate vezu između dobi i korištenja društvenih mreža, ne manipulirate ničijom dobi. U takvim situacijama neki autori preferiraju termine **prediktor** (predictor) umjesto nezavisne varijable i **kriterij** ili **ishod** (outcome) umjesto zavisne varijable. U ovom kolegiju koristit ćemo oba skupa termina, ovisno o kontekstu.
+
+### Konfundirajuće varijable
+
+Jedna od najopasnijih prijetnji valjanosti istraživanja su **konfundirajuće varijable** (confounding variables, ili kraće konfaunderi). To su varijable koje utječu i na nezavisnu i na zavisnu varijablu, stvarajući lažni dojam da između njih postoji uzročna veza.
+
+Zamislite da istražujete vezu između korištenja Instagrama i samopoštovanja adolescenata. Rezultati pokazuju negativnu korelaciju: oni koji više koriste Instagram imaju niže samopoštovanje. Ali pričekajte. Adolescenti koji imaju niže samopoštovanje možda provode više vremena na društvenim mrežama jer traže potvrdu. Ili pak treća varijabla, poput socijalne izolacije, uzrokuje i više korištenja Instagrama i niže samopoštovanje. Bez kontrole konfundirajućih varijabli, ne možete znati što uzrokuje što.
+
+Navarro u knjizi koristi termin "treća varijabla" (third variable problem) i naglašava da je to razlog zbog kojeg korelacija ne implicira kauzalnost. Mi ćemo se na ovu temu vraćati mnogo puta tijekom kolegija. Zapamtite je od prvog dana: kad god vidite da netko tvrdi da X uzrokuje Y na temelju korelacijskih podataka, pitajte se postoji li varijabla Z koja bi mogla objasniti vezu.
+
+---
+
+## Eksperimentalni istraživački dizajn {#sec-eksperiment}
+
+Kako onda možemo utvrditi da jedna stvar zaista uzrokuje drugu, a ne samo da su povezane? Odgovor je eksperiment. Eksperiment je istraživački dizajn u kojem istraživač aktivno **manipulira** nezavisnom varijablom i promatra učinak te manipulacije na zavisnu varijablu, uz kontrolu svih ostalih relevantnih čimbenika.
+
+Zamislite klasičan primjer iz komunikologije: A/B test naslova na web portalu. Istraživač pripremi dva naslova za isti članak: jedan neutralan ("Rezultati istraživanja o utjecaju društvenih mreža na mlade") i jedan senzacionalistički ("Šokantan nalaz: društvene mreže uništavaju generaciju Z"). Zatim nasumično odabere koji čitatelji će vidjeti koji naslov. Nakon određenog vremena, mjeri stopu klikanja za svaki naslov.
+
+Ovaj dizajn ima tri ključna svojstva pravog eksperimenta.
+
+**Manipulacija nezavisnom varijablom.** Istraživač odlučuje koji ispitanici dobivaju koji naslov. Ne promatra što se prirodno događa, nego aktivno intervenira u situaciju.
+
+**Nasumična dodjela (randomizacija).** Ispitanici su nasumično dodijeljeni grupama. Ovo je apsolutno ključno jer nasumična dodjela osigurava da se grupe ne razlikuju sustavno ni po jednoj varijabli osim nezavisne. Ako biste umjesto nasumične dodjele pustili da čitatelji sami odaberu naslov, oni koji biraju senzacionalistički naslov možda su ionako skloniji klikanju, i ne biste mogli znati je li razlika u klikanju posljedica naslova ili predispozicije čitatelja.
+
+**Kontrola ostalih varijabli.** Sve ostalo osim nezavisne varijable treba biti jednako za obje grupe. Isti članak, isto vrijeme objave, ista pozicija na stranici. Ako se grupe razlikuju po nečemu osim naslova, taj nešto postaje konfundirajuća varijabla.
+
+Kad su ova tri uvjeta ispunjena, logika eksperimenta je jednostavna i snažna: ako se grupe razlikuju u zavisnoj varijabli, a jedina razlika između grupa je nezavisna varijabla, onda nezavisna varijabla mora biti uzrok te razlike. Ovo je jedini istraživački dizajn koji dopušta kauzalne zaključke.
+
+::: {.callout-important}
+## Važna napomena
+
+U komunikologiji, pravi eksperimenti su mogući ali imaju ograničenja. Mnoge stvari koje nas zanimaju ne možemo manipulirati: ne možemo nasumično dodijeliti ljude različitim razinama medijske pismenosti, ne možemo kontrolirati koliko netko koristi društvene mreže u svakodnevnom životu, ne možemo manipulirati ničijim socioekonomskim statusom. Za takva pitanja moramo koristiti neeksperimentalne dizajne, uz puno veći oprez pri donošenju zaključaka.
+:::
+
+### Interna valjanost eksperimenta
+
+**Interna valjanost** je stupanj u kojem možemo biti sigurni da je opažena razlika između grupa zaista uzrokovana nezavisnom varijablom, a ne nečim drugim. Prijetnje internoj valjanosti su sve one situacije u kojima se u istraživanje uvlači neka neplanirana sustavna razlika između grupa.
+
+Navarro u knjizi navodi nekoliko prijetnji internoj valjanosti. U kontekstu medijskih istraživanja, neke su posebno relevantne.
+
+**Efekti povijesti** nastaju kad se između početka i kraja istraživanja dogodi nešto što utječe na rezultate. Ako mjerite povjerenje u medije prije i poslije neke intervencije, a u međuvremenu se dogodi veliki medijski skandal, promjena u povjerenju može biti posljedica skandala, ne vaše intervencije.
+
+**Gubitak ispitanika (attrition)** je problem kad ispitanici napuštaju istraživanje, i to neravnomjerno po grupama. Ako u vašem eksperimentu o utjecaju clickbait naslova čitatelji koji su dobili neutralne naslove češće napuštaju stranicu (jer ih naslovi nisu privukli), preostali ispitanici u toj grupi možda nisu reprezentativni, i usporedba postaje iskrivljena.
+
+**Efekt očekivanja** (demand characteristics) nastaje kad ispitanici shvate (ili misle da shvaćaju) što istraživač očekuje i ponašaju se u skladu s tim. U anketama o medijskoj pismenosti, ispitanici možda daju odgovore koji ih prikazuju kao kritičnije i medijski pismenije nego što zaista jesu, jer osjećaju da je to "pravi" odgovor.
+
+---
+
+## Neeksperimentalni istraživački dizajn {#sec-neeksperimentalni}
+
+U praksi, većina istraživanja u komunikologiji nije eksperimentalna. Razlog je jednostavan: mnoge varijable koje nas zanimaju ne možemo kontrolirati niti njima manipulirati. Ne možemo nasumično odrediti tko će gledati televiziju a tko čitati portale. Ne možemo kontrolirati koji će sadržaj postati viralan. Ne možemo manipulirati kulturalnim kontekstom u kojem netko konzumira medije.
+
+### Opažajne (korelacijske) studije
+
+Najčešći tip neeksperimentalnog istraživanja u komunikologiji je **opažajna studija** u kojoj istraživač mjeri varijable onakve kakve jesu, bez ikakve intervencije. Primjer: anketno ispitivanje 500 studenata o tome koliko koriste društvene mreže, koliko vjeruju vijestima koje tamo pronalaze i koliko su politički informirani. Istraživač mjeri tri varijable i analizira veze između njih.
+
+Problem s opažajnim studijama, koji smo već nagovijestili, jest nemogućnost kauzalnog zaključivanja. Ako nađete negativnu korelaciju između korištenja društvenih mreža i političke informiranosti, to može značiti tri stvari: (1) društvene mreže smanjuju informiranost, (2) manje informirani ljudi više koriste društvene mreže, ili (3) treća varijabla (poput obrazovanja ili dobi) utječe na oboje. Bez eksperimenta, ne možete razlikovati ove mogućnosti.
+
+Ipak, opažajne studije su izuzetno korisne i čine osnovu komunikološkog istraživanja. One nam omogućuju proučavanje fenomena u njihovom prirodnom kontekstu, s velikim i reprezentativnim uzorcima, i bez etičkih ograničenja koja bi nam onemogućila eksperimentalnu manipulaciju.
+
+### Kvazieksperimenti
+
+**Kvazieksperiment** zauzima srednje mjesto između eksperimenta i opažajne studije. U kvazieksperimentu, istraživač uspoređuje grupe koje se prirodno razlikuju po nekoj varijabli, ali tu varijablu nije sam manipulirao i ispitanike nije nasumično dodijelio grupama.
+
+Na primjer, istraživač uspoređuje stavove o privatnosti podataka između korisnika koji su doživjeli curenje osobnih podataka (data breach) i onih koji nisu. Naravno, istraživač nije uzrokovao curenje podataka i nije nasumično odredio tko će ga doživjeti. Ali može usporediti dvije grupe i pokušati kontrolirati što više konfundirajućih varijabli (dob, spol, razina digitalne pismenosti) da dobije što čistiju sliku.
+
+Kvazieksperimenti su korisni kad eksperiment nije moguć, ali kauzalni zaključci iz njih moraju biti formulirani puno opreznije. Umjesto "X uzrokuje Y" kažemo "X je povezan s Y, čak i nakon kontrole varijabli Z1, Z2 i Z3, što sugerira mogući uzročni odnos".
+
+### Studije slučaja i kvalitativna istraživanja
+
+Na drugom kraju spektra nalaze se **studije slučaja** (case studies) koje detaljno proučavaju jedan ili mali broj primjera. Studija slučaja o tome kako je jedna medijska kuća provela digitalnu transformaciju može pružiti bogat uvid u procese i mehanizme koji stoje iza promjene, ali ne može generalizirati na sve medijske kuće. U komunikologiji, studije slučaja se često koriste za istraživanje novih fenomena (poput pojave novog tipa medijskog sadržaja ili platforme) gdje još nemamo dovoljno znanja za postavljanje hipoteza koje bi testirali kvantitativno.
+
+Kvalitativna istraživanja općenito (dubinski intervjui, fokus grupe, etnografija medijskih praksi) pružaju dubinu koju kvantitativna istraživanja ne mogu postići, ali ne koriste statistiku u tradicionalnom smislu. Na ovom kolegiju fokusiramo se na kvantitativne metode, ali vrijedi znati da su kvalitativne i kvantitativne metode komplementarne, a ne konkurentne.
+
+---
+
+## Eksterna valjanost: možemo li generalizirati? {#sec-eksterna-valjanost}
+
+Čak i kad imamo savršeno dizajniran eksperiment s visokom internom valjanošću, ostaje pitanje: vrijede li naši rezultati izvan specifičnog konteksta u kojem smo ih dobili? To je pitanje **eksterne valjanosti**.
+
+Eksterna valjanost se pojavljuje u nekoliko oblika.
+
+**Generalizacija na populaciju.** Ako ste testirali učinak naslova na studente komunikologije u Zagrebu, vrijede li rezultati i za čitatelje u Splitu? Za starije čitatelje? Za čitatelje u Srbiji koji čitaju iste portale?
+
+**Generalizacija na kontekst.** Eksperiment je proveden u kontroliranim uvjetima na web stranici. Vrijede li rezultati i na mobilnoj aplikaciji? U situaciji kad čitatelj prolazi kroz feed društvene mreže umjesto da namjerno posjećuje portal?
+
+**Generalizacija kroz vrijeme.** Medijski krajolik se brzo mijenja. Rezultat iz 2020. o tome kako ljudi konzumiraju vijesti možda ne vrijedi 2025. jer su se u međuvremenu pojavile nove platforme, promijenile navike i dogodile velike društvene promjene.
+
+U komunikologiji je eksterna valjanost poseban izazov jer su medijska ponašanja izuzetno kontekstualno ovisna. Algoritmi društvenih mreža se mijenjaju, nove platforme nastaju i nestaju, kulturalne norme oko medijske konzumacije variraju između zemalja i generacija. Rezultati jednog istraživanja provedenog na jednoj platformi, u jednoj zemlji, u jednom trenutku, ne bi se trebali nekritički generalizirati na sve ostale situacije.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Kad čitate istraživačke rezultate u medijima (ili u akademskim radovima), uvijek se pitajte: tko su bili ispitanici? Gdje i kada je istraživanje provedeno? Na kojoj platformi ili u kojem kontekstu? Ova pitanja vam pomažu procijeniti koliko je opravdano generalizirati nalaze na situaciju koja vas zanima. Izjava "istraživanje je pokazalo da..." gotovo nikad ne znači "ovo vrijedi uvijek i svugdje".
+:::
+
+---
+
+## Pregled istraživačkih dizajna u komunikologiji {#sec-pregled-dizajna}
+
+Da rezimiramo dizajne koje smo obradili, vrijedi ih sagledati kao spektar od veće do manje kontrole, s pripadajućim prednostima i ograničenjima.
+
+Na jednom kraju spektra stoje **eksperimenti** (uključujući A/B testove u digitalnim medijima). Oni pružaju najveću kontrolu i dopuštaju kauzalne zaključke, ali su ograničeni u tome što mogu testirati (jer mnoge varijable ne mogu biti manipulirane) i mogu imati nisku ekološku valjanost (jer se provode u kontroliranim uvjetima).
+
+U sredini su **kvazieksperimenti** i **opažajne studije s kontrolom varijabli**. Oni proučavaju fenomene bliže prirodnom kontekstu, ali kauzalni zaključci su slabiji jer uvijek postoji mogućnost konfundirajućih varijabli.
+
+Na drugom kraju su **deskriptivne studije**, **studije slučaja** i **kvalitativna istraživanja**. Ona pružaju bogat kontekstualni uvid i mogu generirati hipoteze, ali ne testiraju kauzalne odnose.
+
+U praksi, najbolja istraživanja kombiniraju više pristupa. Na primjer, možete započeti kvalitativnim intervjuima da identificirate relevantne varijable, zatim provesti opažajnu studiju na velikom uzorku da utvrdite korelacije, i na kraju dizajnirati eksperiment da testirate kauzalni odnos za najvažnije nalaze. Ovaj pristup, poznat kao mješovite metode (mixed methods), sve je popularniji u suvremenoj komunikologiji.
+
+---
+
+::: {.callout-important}
+## Ključni zaključci
+
+1. Statistika je disciplinirani način razmišljanja koji nas štiti od krivih zaključaka temeljenih na intuiciji, anegdotama i prividnim korelacijama.
+
+2. Simpsonov paradoks pokazuje da agregirani podaci mogu potpuno zavarati i da je raščlamba po relevantnim grupama neophodna za ispravne zaključke.
+
+3. Operacionalizacija je proces pretvaranja apstraktnog koncepta u mjerljivu varijablu. Različite operacionalizacije istog koncepta mogu dati različite rezultate.
+
+4. Četiri razine mjerenja (nominalna, ordinalna, intervalna, omjerna) određuju koje statističke operacije smijemo primjenjivati na podatke.
+
+5. Pouzdanost mjerenja (konzistentnost rezultata) je nužan ali ne i dovoljan uvjet za valjanost (mjeri li instrument ono što bi trebao).
+
+6. Eksperimentalni dizajn s nasumičnom dodjelom ispitanika grupama jedini dopušta kauzalne zaključke, ali mnoge komunikološke varijable ne mogu biti eksperimentalno manipulirane.
+
+7. Neeksperimentalni dizajni (opažajne studije, kvazieksperimenti) omogućuju proučavanje fenomena u prirodnom kontekstu, ali zahtijevaju oprez pri kauzalnom zaključivanju zbog mogućih konfundirajućih varijabli.
+
+8. Eksterna valjanost (mogućnost generalizacije rezultata) poseban je izazov u komunikologiji jer su medijska ponašanja visoko ovisna o platformi, kulturi i vremenu.
+
