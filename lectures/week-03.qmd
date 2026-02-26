@@ -1,32 +1,1678 @@
 ---
 title: "Tjedan 3: Rad s podacima u tidyverse"
-subtitle: "dplyr, tidyr i umijeće transformacije podataka"
-date: 2025-02-01
-categories: [dplyr, tidyr, manipulacija podataka]
+subtitle: "Od sirovih podataka do analizi spremnog dataseta"
+date: 2025-03-08
+categories: [dplyr, tidyr, manipulacija podataka, čišćenje podataka]
 draft: false
 ---
+
+```{r}
+#| label: setup
+#| echo: true
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(janitor)
+```
 
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete:
+Nakon ovog predavanja moći ćete
 
-1. Koristiti filter(), select(), mutate(), summarise() i group_by()
-2. Transformirati podatke s pivot_longer() i pivot_wider()
-3. Učitavati podatke iz različitih formata (CSV, Excel)
-4. Čistiti i pripremati podatke za analizu
-5. Kombinirati više dplyr operacija u jednom pipelineu
+1. Objasniti zašto je čišćenje i transformacija podataka najvažniji (i najdugotrajniji) korak u svakoj analizi.
+2. Koristiti `clean_names()` za standardizaciju imena stupaca i prepoznati zašto je to važno za ponovljivost.
+3. Koristiti `filter()` za odabir redova po jednom ili više uvjeta, uključujući kombinacije logičkih operatora i rad s nedostajućim vrijednostima.
+4. Koristiti `select()` za odabir, preimenovanje i preuređivanje stupaca, uključujući pomoćne funkcije poput `starts_with()`, `ends_with()` i `contains()`.
+5. Koristiti `mutate()` za kreiranje novih varijabli, transformaciju postojećih i rekodiranje vrijednosti pomoću `case_when()` i `if_else()`.
+6. Koristiti `arrange()` za sortiranje podataka po jednom ili više stupaca u uzlaznom i silaznom redoslijedu.
+7. Kombinirati dplyr glagole u pipeline koristeći pipe operator za složene transformacije podataka.
+8. Prepoznati tipične probleme u sirovim podacima (nekonzistentno kodiranje, mješoviti tipovi, nedostajuće vrijednosti) i primijeniti odgovarajuće strategije čišćenja.
 :::
+
+## Prljava tajna analize podataka
+
+Postoji jedna stvar o kojoj vam udžbenici statistike rijetko govore. Otvorite bilo koji udžbenik i vidjet ćete poglavlje o t-testu, poglavlje o regresiji, poglavlje o ANOVA-i. Sve lijepo i uredno. Ali nitko vam ne kaže da ćete 80% vremena u bilo kojoj analizi provesti na nečemu što se ne pojavljuje ni u jednom od tih poglavlja: na čišćenju i pripremi podataka.
+
+Ovo nije pretjerivanje. Stvarni podaci su gotovo uvijek neuredni. Anketa prikupljena putem Google Formsa dolazi s imenima stupaca poput "Koliko često pratite vijesti na društvenim mrežama? (odaberite jedan odgovor)". Ispitanici u polje za spol upisuju "Ženski", "ženski", "Ž", "female" i "Zensko", a sve to treba biti ista kategorija. Stupac koji bi trebao sadržavati brojeve sadrži i tekst poput "ne gledam" ili prazne ćelije. Neki ispitanici imaju 19 godina, a jedan ima 199 jer mu je prst skliznuo na tipkovnici.
+
+Sve ovo morate riješiti prije nego što možete izračunati ijedan prosjek ili napraviti ijedno testiranje hipoteza. I upravo zato je ovaj tjedan posvećen manipulaciji podacima. Naučit ćemo pet temeljnih funkcija iz paketa dplyr (`filter()`, `select()`, `mutate()`, `summarise()`, `group_by()`) plus alate za čišćenje i preoblikovanje iz paketa tidyr i janitor. Ove funkcije, spojene pipe operatorom u elegantne pipeline, čine okosnicu svake analize podataka u R-u.
+
+Navarro u knjizi (poglavlja 4 i 7) pokriva sličan teren, ali u base R sintaksi. Mi ćemo koristiti tidyverse pristup koji je čitljiviji i konzistentniji. Kad ste jednom naučili logiku dplyr glagola, ista logika se primjenjuje na svaki dataset, svaki problem, svaku analizu.
+
+---
+
+## Naši podaci: anketa o medijskim navikama studenata {#sec-podaci}
+
+Na ovom predavanju koristit ćemo simulirani dataset koji oponaša ono što biste zaista dobili kad biste proveli online anketu među studentima. Dataset je namjerno neuredan jer želimo vježbati čišćenje podataka na realističnom primjeru.
+
+Učitajmo podatke i pogledajmo s čime se suočavamo.
+
+```{r}
+#| label: ucitavanje-podataka
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- read_csv("../resources/datasets/media_habits_raw.csv")
+glimpse(raw)
+```
+
+Već na prvi pogled vidimo nekoliko problema. Imena stupaca sadrže razmake, zagrade i dijakritičke znakove, što otežava rad u R-u. Stupci poput `Spol` imaju nekonzistentne vrijednosti. Stupac `TV (min/dan)` sadrži i brojeve i tekst ("ne gledam") i prazne ćelije, pa ga je R učitao kao tekst umjesto broja.
+
+Pogledajmo prvih nekoliko redova detaljnije.
+
+```{r}
+#| label: prvih-redova
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  head(10)
+```
+
+Ovo je tipičan izgled sirovih podataka iz ankete. Prije bilo kakve analize, moramo napraviti čišćenje. Krenimo redom.
+
+---
+
+## Korak nula: čišćenje imena stupaca {#sec-clean-names}
+
+Prva stvar koju radimo sa svakim novim datasetom je standardizacija imena stupaca. Imena poput `TV (min/dan)` i `Povjerenje društvene mreže (1-10)` su problematična jer sadrže razmake, zagrade i specijalne znakove. Kad ih želite koristiti u kodu, morate ih stavljati u obrnute navodnike: `` `TV (min/dan)` ``. To je neugodno, nečitljivo i podložno greškama.
+
+Paket janitor ima funkciju `clean_names()` koja automatski pretvara sva imena u snake_case format: mala slova, razmaci zamijenjeni podvlakama, specijalni znakovi uklonjeni.
+
+```{r}
+#| label: clean-names
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- raw |>
+  clean_names()
+
+names(raw)
+```
+
+Usporedite ova imena s originalnima. Umjesto `Povjerenje društvene mreže (1-10)` sada imamo `povjerenje_drustvene_mreze_1_10`. Duže jest, ali potpuno funkcionalno u R kodu bez ikakvih navodnika ili zagrada. Ovo je mala investicija koja štedi mnogo frustracije.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Navikajte se da `clean_names()` bude prva stvar koju pozovete nakon `read_csv()`. Možete to čak staviti u isti pipeline: `raw <- read_csv("datoteka.csv") |> clean_names()`. Ovo je toliko standardna praksa da mnogi R korisnici to rade automatski za svaki dataset, čak i kad su imena stupaca već uredna. Bolje spriječiti nego liječiti.
+:::
+
+Sad kad imamo čista imena, možemo krenuti s pravim poslom. Pogledajmo strukturu nakon čišćenja.
+
+```{r}
+#| label: glimpse-clean
+#| echo: true
+#| message: false
+#| warning: false
+
+glimpse(raw)
+```
+
+---
+
+## filter(): odabir redova po uvjetu {#sec-filter}
+
+Funkcija `filter()` je dplyr glagol za odabir redova koji zadovoljavaju jedan ili više uvjeta. Rezultat je tibble koji sadrži samo retke za koje su svi uvjeti TRUE. Redovi za koje je uvjet FALSE ili NA se odbacuju.
+
+### Osnovni uvjeti
+
+```{r}
+#| label: filter-osnovni
+#| echo: true
+#| message: false
+#| warning: false
+
+# Samo ispitanici iz Zagreba
+raw |>
+  filter(grad == "Zagreb") |>
+  nrow()
+
+# Ispitanici mlađi od 21
+raw |>
+  filter(dob < 21) |>
+  head(5)
+```
+
+Svaki poziv `filter()` zapravo evaluira logički izraz za svaki redak. Za prvi primjer, R prolazi kroz svaki od 250 redova i provjerava je li vrijednost u stupcu `grad` jednaka "Zagreb". Retci za koje je odgovor TRUE ostaju, ostali nestaju.
+
+### Kombiniranje uvjeta
+
+Snaga `filter()` dolazi do izražaja kad kombinirate više uvjeta. Unutar jednog `filter()` poziva, uvjeti odvojeni zarezom automatski se kombiniraju s I operatorom (`&`).
+
+```{r}
+#| label: filter-kombinirani
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ispitanici iz Zagreba mlađi od 22
+# Zarez između uvjeta je ekvivalentan &
+raw |>
+  filter(grad == "Zagreb", dob < 22) |>
+  nrow()
+
+# Isto kao:
+raw |>
+  filter(grad == "Zagreb" & dob < 22) |>
+  nrow()
+```
+
+Oba pristupa daju identičan rezultat. Zarez je kraći za pisanje, `&` je eksplicitniji. Koristite što vam je čitljivije.
+
+Za ILI uvjete, morate eksplicitno koristiti `|` operator.
+
+```{r}
+#| label: filter-ili
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ispitanici iz Zagreba ILI Splita
+raw |>
+  filter(grad == "Zagreb" | grad == "Split") |>
+  count(grad)
+
+# Elegantnije s %in%
+raw |>
+  filter(grad %in% c("Zagreb", "Split", "Rijeka")) |>
+  count(grad, sort = TRUE)
+```
+
+Operator `%in%` smo upoznali prošli tjedan. U kontekstu `filter()` je izuzetno koristan jer zamjenjuje dugačke nizove ILI uvjeta jednim kompaktnim izrazom. Kad imate više od dvije kategorije, uvijek koristite `%in%`.
+
+### Filtriranje numeričkih raspona
+
+```{r}
+#| label: filter-raspon
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ispitanici koji koriste društvene mreže između 60 i 180 minuta dnevno
+raw |>
+  filter(drustvene_mreze_min_dan >= 60, drustvene_mreze_min_dan <= 180) |>
+  nrow()
+
+# Alternativa s between()
+raw |>
+  filter(between(drustvene_mreze_min_dan, 60, 180)) |>
+  nrow()
+```
+
+Funkcija `between(x, left, right)` je kratica za `x >= left & x <= right`. Oba pristupa daju isti rezultat, ali `between()` je čitljiviji kad filtrirate po rasponu.
+
+### Filtriranje teksta
+
+Za tekstualne stupce, osim točnog podudaranja (`==`) i pripadnosti skupu (`%in%`), koristimo funkciju `str_detect()` iz paketa stringr (dio tidyverse) za pretraživanje po uzorku.
+
+```{r}
+#| label: filter-tekst
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ispitanici čije platforme uključuju "Instagram" (bilo gdje u tekstu)
+raw |>
+  filter(str_detect(koje_platforme_koristi, "Instagram")) |>
+  nrow()
+
+# Ispitanici koji prate vijesti barem jednom dnevno
+raw |>
+  filter(str_detect(koliko_cesto_prati_vijesti, "dnevno")) |>
+  count(koliko_cesto_prati_vijesti)
+```
+
+Funkcija `str_detect()` vraća TRUE ako tekstualni uzorak postoji bilo gdje u vrijednosti. Ovo je mnogo fleksibilnije od `==` jer ne zahtijeva točno podudaranje. Na primjer, `str_detect(x, "dnevno")` hvata i "više puta dnevno" i "jednom dnevno".
+
+### filter() i nedostajuće vrijednosti
+
+Važno svojstvo `filter()` je da **automatski odbacuje retke s NA u uvjetu**. Ovo je uglavnom poželjno ponašanje, ali morate biti svjesni da se događa.
+
+```{r}
+#| label: filter-na
+#| echo: true
+#| message: false
+#| warning: false
+
+# Koliko redova imamo ukupno?
+nrow(raw)
+
+# Koliko ima NA u stupcu radio_min_dan?
+sum(is.na(raw$radio_min_dan))
+
+# filter s numeričkim uvjetom na stupcu s NA
+raw |>
+  filter(radio_min_dan > 0) |>
+  nrow()
+```
+
+Rezultat ne uključuje retke s NA u stupcu `radio_min_dan`. Ako želite eksplicitno zadržati retke s NA, morate to navesti.
+
+```{r}
+#| label: filter-zadrzi-na
+#| echo: true
+#| message: false
+#| warning: false
+
+# Zadrži retke gdje je radio > 0 ILI je NA
+raw |>
+  filter(radio_min_dan > 0 | is.na(radio_min_dan)) |>
+  nrow()
+
+# Zadrži SAMO retke s NA
+raw |>
+  filter(is.na(radio_min_dan)) |>
+  nrow()
+
+# Izbaci retke s NA (zadrži samo kompletne)
+raw |>
+  filter(!is.na(radio_min_dan)) |>
+  nrow()
+```
+
+Kombinacija `filter(!is.na(stupac))` je način da zadržite samo retke s poznatim vrijednostima u tom stupcu. Alternativno, funkcija `drop_na()` iz paketa tidyr uklanja retke koji imaju NA u bilo kojem stupcu (ili u specificiranim stupcima).
+
+```{r}
+#| label: drop-na
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ukloni retke s NA u specifičnom stupcu
+raw |>
+  drop_na(radio_min_dan) |>
+  nrow()
+
+# Ukloni retke s NA u BILO KOJEM stupcu (agresivno!)
+raw |>
+  drop_na() |>
+  nrow()
+```
+
+Primijetite drastičnu razliku. Kad koristimo `drop_na()` bez argumenata, gubimo mnogo redova jer se uklanjaju svi retci koji imaju NA u ijednom stupcu. U praksi, `drop_na()` bez argumenata se rijetko koristi jer je previše agresivan. Bolje je ciljano raditi s NA u stupcima koji vas zapravo zanimaju.
+
+::: {.callout-important}
+## Važna napomena
+
+Svaki put kad koristite `filter()` ili `drop_na()`, dokumentirajte koliko redova ste izgubili i zašto. Ako ste od 250 ispitanika zadržali samo 150, to je informacija koju morate navesti u metodološkom dijelu rada. Čitatelj mora znati na koliko se opažanja vaši rezultati temelje i zašto su neka isključena.
+:::
+
+---
+
+## select(): odabir i preimenovanje stupaca {#sec-select}
+
+Dok `filter()` radi s redovima, `select()` radi sa stupcima. Koristi se za tri svrhe: odabir stupaca koji vam trebaju, uklanjanje stupaca koji vam ne trebaju i preimenovanje stupaca.
+
+### Odabir po imenu
+
+```{r}
+#| label: select-osnovno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Odabir specifičnih stupaca
+raw |>
+  select(id_respondenta, dob, spol, grad) |>
+  head(5)
+
+# Odabir raspona stupaca (od do)
+raw |>
+  select(id_respondenta:godina_studija) |>
+  head(5)
+```
+
+Stupce navodite po imenu, bez navodnika. Operator `:` bira sve stupce između dva navedena, uključujući oba krajnja. Ovo je praktično kad su relevantni stupci jedan do drugoga u datasetu.
+
+### Uklanjanje stupaca
+
+Minus ispred imena stupca znači "sve osim ovoga".
+
+```{r}
+#| label: select-uklanjanje
+#| echo: true
+#| message: false
+#| warning: false
+
+# Sve osim timestampa i ID-a
+raw |>
+  select(-timestamp, -id_respondenta) |>
+  names()
+
+# Uklanjanje raspona
+raw |>
+  select(-(povjerenje_tv_1_10:povjerenje_drustvene_mreze_1_10)) |>
+  names()
+```
+
+### Pomoćne funkcije za odabir
+
+Kad imate mnogo stupaca, ručno nabrajanje postaje nepraktično. dplyr nudi pomoćne funkcije za pametni odabir.
+
+```{r}
+#| label: select-pomocne
+#| echo: true
+#| message: false
+#| warning: false
+
+# Stupci čije ime počinje s "povjerenje"
+raw |>
+  select(starts_with("povjerenje")) |>
+  head(3)
+
+# Stupci čije ime završava s "dan"
+raw |>
+  select(ends_with("dan")) |>
+  head(3)
+
+# Stupci čije ime sadrži "min"
+raw |>
+  select(contains("min")) |>
+  head(3)
+
+# Samo numerički stupci
+raw |>
+  select(where(is.numeric)) |>
+  head(3)
+```
+
+Funkcija `starts_with()` bira stupce čije ime počinje zadanim tekstom. `ends_with()` bira po završetku. `contains()` traži tekst bilo gdje u imenu. `where()` prima funkciju za provjeru tipa i bira stupce koji zadovoljavaju taj uvjet. Ove funkcije postaju neprocjenjive kad radite s datasetima koji imaju 50 ili 100 stupaca (što nije neuobičajeno u anketnim istraživanjima).
+
+### Preimenovanje stupaca
+
+Unutar `select()` možete preimenovati stupac sintaksom `novo_ime = staro_ime`. Ili koristite zasebnu funkciju `rename()` koja preimenu stupce ali zadrži sve ostale.
+
+```{r}
+#| label: rename-stupaca
+#| echo: true
+#| message: false
+#| warning: false
+
+# Preimenovanje unutar select (odabire SAMO navedene stupce)
+raw |>
+  select(
+    id = id_respondenta,
+    dob,
+    spol,
+    sm_minuta = drustvene_mreze_min_dan
+  ) |>
+  head(3)
+
+# rename() mijenja imena ali zadržava sve stupce
+raw |>
+  rename(
+    id = id_respondenta,
+    sm_minuta = drustvene_mreze_min_dan
+  ) |>
+  names()
+```
+
+Razlika je važna. `select()` s preimenovanjem zadržava samo stupce koje ste naveli. `rename()` zadržava sve stupce i samo mijenja imena onih koje ste specificirali. U praksi, `rename()` je sigurniji izbor kad želite samo promijeniti ime jednog ili dva stupca bez gubitka ostalih.
+
+### Preuređivanje stupaca
+
+Funkcija `relocate()` premješta stupce na drugu poziciju u datasetu.
+
+```{r}
+#| label: relocate
+#| echo: true
+#| message: false
+#| warning: false
+
+# Premjesti grad na početak (odmah nakon ID-a)
+raw |>
+  relocate(grad, .after = id_respondenta) |>
+  head(3)
+
+# Premjesti sve numeričke stupce na kraj
+raw |>
+  relocate(where(is.numeric), .after = last_col()) |>
+  head(3)
+```
+
+`relocate()` ne dodaje niti uklanja stupce, samo ih premješta. Ovo je korisno za organizaciju dataseta kad želite da relevantni stupci budu jedni do drugih.
+
+---
+
+## mutate(): kreiranje i transformacija varijabli {#sec-mutate}
+
+Funkcija `mutate()` je najsvestraniji dplyr glagol. Služi za kreiranje novih stupaca na temelju postojećih, transformaciju postojećih stupaca i rekodiranje vrijednosti. Rezultat je tibble s istim brojem redova ali potencijalno novim ili izmijenjenim stupcima.
+
+### Kreiranje novih varijabli
+
+```{r}
+#| label: mutate-novo
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ukupno dnevno korištenje medija (portal + društvene mreže)
+raw |>
+  mutate(
+    ukupno_digital = portali_min_dan + drustvene_mreze_min_dan
+  ) |>
+  select(id_respondenta, portali_min_dan, drustvene_mreze_min_dan, ukupno_digital) |>
+  head(8)
+```
+
+`mutate()` evaluira izraz na desnoj strani znaka jednakosti za svaki redak i rezultat pohranjuje u novi stupac nazvan imenom na lijevoj strani. Kao i kod vektoriziranih operacija, R automatski primjenjuje operaciju redak po redak.
+
+Možete kreirati više stupaca u jednom `mutate()` pozivu, i kasniji stupci mogu koristiti ranije definirane.
+
+```{r}
+#| label: mutate-vise
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  mutate(
+    ukupno_digital = portali_min_dan + drustvene_mreze_min_dan,
+    ukupno_sati = ukupno_digital / 60,
+    iznad_2_sata = ukupno_sati > 2
+  ) |>
+  select(id_respondenta, ukupno_digital, ukupno_sati, iznad_2_sata) |>
+  head(8)
+```
+
+Primijetite da smo u istom `mutate()` pozivu najprije izračunali `ukupno_digital`, zatim ga koristili za izračun `ukupno_sati`, a onda `ukupno_sati` za logički stupac `iznad_2_sata`. Ova mogućnost referiranja na upravo kreirane stupce čini `mutate()` izuzetno moćnim.
+
+### Transformacija postojećih stupaca
+
+`mutate()` može i prepisati postojeći stupac.
+
+```{r}
+#| label: mutate-transformacija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Zaokruži portal minute na desetice (prepisuje stupac)
+raw |>
+  mutate(
+    portali_min_dan = round(portali_min_dan, -1)
+  ) |>
+  select(id_respondenta, portali_min_dan) |>
+  head(8)
+```
+
+Kad date mutate stupcu isto ime kao postojeći stupac, novi vrijednosti zamjenjuju stare. Ovo je korisno za čišćenje podataka (na primjer, pretvorbu teksta u mala slova), ali budite oprezni jer originalne vrijednosti nestaju. Dobra praksa je raditi transformacije na kopiji dataseta, ne na originalu.
+
+### Čišćenje stupca spol: str_to_lower() i case_when() {#sec-case-when}
+
+Pogledajmo koliko je neuredan stupac `spol` u našim podacima.
+
+```{r}
+#| label: spol-neuredan
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  count(spol, sort = TRUE)
+```
+
+Imamo dvanaestak varijanti istih dviju kategorija. "Ženski", "ženski", "Ž", "ž", "Zensko", "female" bi sve trebalo biti jedna kategorija. Ovo je klasičan problem u anketnim podacima i jedan od najčešćih razloga za čišćenje.
+
+Funkcija `case_when()` je najfleksibilniji alat za rekodiranje. Radi kao niz IF-THEN pravila: za svaki redak, R provjerava uvjete redom i dodjeljuje vrijednost prvog uvjeta koji je ispunjen.
+
+```{r}
+#| label: cistenje-spol
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- raw |>
+  mutate(
+    spol_clean = case_when(
+      str_to_lower(spol) %in% c("ženski", "ž", "zensko", "female") ~ "ženski",
+      str_to_lower(spol) %in% c("muški", "m", "musko", "male") ~ "muški",
+      .default = "ostalo"
+    )
+  )
+
+raw |>
+  count(spol_clean)
+```
+
+Raščlanimo ovaj kod. Funkcija `str_to_lower()` pretvara tekst u mala slova, čime eliminiramo razliku između "Ženski" i "ženski". Zatim `%in%` provjerava pripada li vrijednost jednom od navedenih oblika. Ako da, dodjeljuje standardizirani oblik. Argument `.default` hvata sve što ne odgovara nijednom uvjetu.
+
+Rezultat je čist stupac `spol_clean` s tri konzistentne kategorije umjesto dvanaest neujednačenih varijanti.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Kad čistite tekstualne podatke, uvijek najprije pretvorite u mala slova pomoću `str_to_lower()`. Ovo odmah eliminira najčešći izvor nekonzistentnosti (razliku u kapitalizaciji) i smanjuje broj slučajeva koje morate pokriti u `case_when()`. Redoslijed je važan: najprije `str_to_lower()`, pa onda provjere.
+:::
+
+### Rekodiranje numeričkih varijabli u kategorije
+
+Čest zadatak u komunikologiji je pretvaranje kontinuirane varijable u kategorije. Na primjer, umjesto točne dobi, želimo dobne skupine.
+
+```{r}
+#| label: dobne-skupine
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- raw |>
+  mutate(
+    dobna_skupina = case_when(
+      dob < 20 ~ "18-19",
+      dob < 22 ~ "20-21",
+      dob < 24 ~ "22-23",
+      dob >= 24 ~ "24+"
+    )
+  )
+
+raw |>
+  count(dobna_skupina)
+```
+
+Redoslijed uvjeta u `case_when()` je bitan. R provjerava uvjete odozgo prema dolje i dodjeljuje vrijednost prvog ispunjenog uvjeta. Ako osoba ima 19 godina, prvi uvjet (`dob < 20`) je TRUE i dodjeljuje se "18-19". R ne provjerava preostale uvjete. Zato uvjete postavljamo od najspecifičnijeg prema najopćenitijem.
+
+### if_else(): binarno rekodiranje
+
+Za jednostavne da/ne situacije, `if_else()` je kraći od `case_when()`.
+
+```{r}
+#| label: if-else
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- raw |>
+  mutate(
+    visoko_koristenje_sm = if_else(drustvene_mreze_min_dan > 120, "visoko", "nisko/umjereno"),
+    prati_vijesti_cesto = if_else(
+      koliko_cesto_prati_vijesti %in% c("više puta dnevno", "jednom dnevno"),
+      TRUE,
+      FALSE
+    )
+  )
+
+raw |>
+  count(visoko_koristenje_sm)
+```
+
+Funkcija `if_else()` prima tri argumenta: uvjet, vrijednost za TRUE i vrijednost za FALSE. Prednost nad base R `ifelse()` je što `if_else()` strogo provjerava tipove i daje razumljivije greške kad nešto ne štima.
+
+### Čišćenje stupca godina studija
+
+Pogledajmo još jedan neuredan stupac.
+
+```{r}
+#| label: godina-neuredna
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  count(godina_studija, sort = TRUE)
+```
+
+Imamo "1", "1.", "prva", "2", "2.", "druga" i tako dalje. Sve to treba svesti na konzistentne brojeve.
+
+```{r}
+#| label: cistenje-godine
+#| echo: true
+#| message: false
+#| warning: false
+
+raw <- raw |>
+  mutate(
+    godina_clean = case_when(
+      str_to_lower(godina_studija) %in% c("1", "1.", "prva") ~ 1,
+      str_to_lower(godina_studija) %in% c("2", "2.", "druga") ~ 2,
+      str_to_lower(godina_studija) %in% c("3", "3.", "treća", "treca") ~ 3,
+      str_to_lower(godina_studija) %in% c("4", "4.", "četvrta", "cetvrta") ~ 4,
+      str_to_lower(godina_studija) %in% c("5", "5.", "peta") ~ 5,
+      .default = NA_real_
+    )
+  )
+
+raw |>
+  count(godina_clean)
+```
+
+Ovaj put smo neprepoznate vrijednosti kodirali kao `NA_real_` (NA numeričkog tipa) umjesto tekstualne kategorije. To je ispravniji pristup kad očekujemo numerički rezultat. Ako neka vrijednost ne odgovara nijednom poznatom obrascu, bolje je eksplicitno reći "ne znam" (NA) nego nagađati.
+
+### Rad s problematičnim numeričkim stupcima
+
+Prisjetimo se da je stupac `tv_min_dan` učitan kao tekst jer sadrži i brojeve i tekst ("ne gledam") i prazne ćelije. Moramo ga pretvoriti u broj.
+
+```{r}
+#| label: tv-cistenje
+#| echo: true
+#| message: false
+#| warning: false
+
+# Pogledajmo problematične vrijednosti
+raw |>
+  count(tv_min_dan, sort = TRUE) |>
+  head(15)
+```
+
+```{r}
+#| label: tv-pretvorba
+#| echo: true
+#| message: false
+#| warning: false
+
+# "ne gledam" tretiramo kao 0, prazne kao NA
+raw <- raw |>
+  mutate(
+    tv_minuta = case_when(
+      tv_min_dan == "ne gledam" ~ 0,
+      tv_min_dan == "" ~ NA_real_,
+      .default = as.numeric(tv_min_dan)
+    )
+  )
+
+# Provjera
+raw |>
+  select(tv_min_dan, tv_minuta) |>
+  filter(is.na(tv_minuta) | tv_minuta == 0) |>
+  head(10)
+```
+
+Sada imamo čist numerički stupac `tv_minuta` u kojem je "ne gledam" pretvoreno u 0 (jer osoba zaista ne gleda TV, dakle 0 minuta), a prazne ćelije su NA (jer ne znamo koliko ta osoba gleda TV).
+
+Ova razlika između 0 i NA je konceptualno važna i vraća nas na tipove nedostajućih vrijednosti koje smo spominjali u tjednu 2. Nula znači "znamo odgovor, i odgovor je ništa". NA znači "ne znamo odgovor".
+
+---
+
+## arrange(): sortiranje podataka {#sec-arrange}
+
+Funkcija `arrange()` sortira retke po vrijednostima jednog ili više stupaca. Po defaultu sortira uzlazno (od najmanjeg prema najvećem ili abecedno). Za silazno sortiranje koristimo `desc()`.
+
+```{r}
+#| label: arrange-osnovno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Sortirano po dobi (najmlađi prvi)
+raw |>
+  select(id_respondenta, dob, grad, drustvene_mreze_min_dan) |>
+  arrange(dob) |>
+  head(8)
+
+# Sortirano po korištenju društvenih mreža (najviše korištenja prvo)
+raw |>
+  select(id_respondenta, dob, grad, drustvene_mreze_min_dan) |>
+  arrange(desc(drustvene_mreze_min_dan)) |>
+  head(8)
+```
+
+### Sortiranje po više stupaca
+
+Kad sortirate po više stupaca, prvi stupac ima prioritet. Unutar istih vrijednosti prvog stupca, koristi se drugi za razrješenje.
+
+```{r}
+#| label: arrange-vise-stupaca
+#| echo: true
+#| message: false
+#| warning: false
+
+# Sortiraj po gradu (abecedno), unutar grada po dobi (silazno)
+raw |>
+  select(id_respondenta, grad, dob, drustvene_mreze_min_dan) |>
+  arrange(grad, desc(dob)) |>
+  head(12)
+```
+
+Vidimo da su najprije svi ispitanici iz Dubrovnika (abecedno prvi), unutar kojih je najstariji na vrhu. Zatim dolazi Karlovac, pa dalje.
+
+### Gdje se NA pojavljuje pri sortiranju?
+
+```{r}
+#| label: arrange-na
+#| echo: true
+#| message: false
+#| warning: false
+
+# NA vrijednosti uvijek idu na kraj, bez obzira na smjer
+raw |>
+  select(id_respondenta, radio_min_dan) |>
+  arrange(radio_min_dan) |>
+  tail(8)
+```
+
+R stavlja NA na kraj sortiranog dataseta, neovisno o tome sortirate li uzlazno ili silazno. Ovo je korisno znati jer ćete ponekad htjeti vidjeti retke s nedostajućim vrijednostima, a oni su uvijek na dnu.
+
+---
+
+## Kombiniranje glagola u pipeline {#sec-pipeline}
+
+Prava snaga dplyr-a nije u pojedinačnim glagolima nego u njihovoj kombinaciji. Pipe operator (`|>`) omogućuje ulančavanje operacija u jednu koherentnu sekvencu koja čita dataseta od početka do kraja, korak po korak.
+
+Pogledajmo realistični primjer. Želimo odgovoriti na pitanje: koji gradovi imaju studente koji najviše koriste društvene mreže?
+
+```{r}
+#| label: pipeline-primjer-1
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  filter(dob >= 18, dob <= 25) |>
+  select(grad, drustvene_mreze_min_dan) |>
+  group_by(grad) |>
+  summarise(
+    n = n(),
+    prosjek = round(mean(drustvene_mreze_min_dan), 1),
+    .groups = "drop"
+  ) |>
+  filter(n >= 5) |>
+  arrange(desc(prosjek))
+```
+
+Čitamo odozgo prema dolje. Uzmi sirove podatke. Zadrži samo ispitanike između 18 i 25 godina. Odaberi samo stupce za grad i minute korištenja. Grupiraj po gradu. Izračunaj broj ispitanika i prosječno korištenje za svaki grad. Zadrži samo gradove s barem 5 ispitanika (da prosjeci budu smisleni). Sortiraj po prosječnom korištenju od najvišeg prema najnižem.
+
+Svaki korak je sam za sebe jasan, a zajedno tvore kompletnu analizu. Ovo je radni obrazac koji ćete koristiti stotine puta.
+
+Pogledajmo drugi primjer. Želimo profil tipičnog korisnika koji često prati vijesti.
+
+```{r}
+#| label: pipeline-primjer-2
+#| echo: true
+#| message: false
+#| warning: false
+
+raw |>
+  filter(prati_vijesti_cesto == TRUE) |>
+  summarise(
+    n = n(),
+    prosjek_dob = round(mean(dob), 1),
+    prosjek_sm_min = round(mean(drustvene_mreze_min_dan), 1),
+    prosjek_portal_min = round(mean(portali_min_dan), 1),
+    prosjek_trust_portal = round(mean(povjerenje_portali_1_10), 1),
+    prosjek_trust_sm = round(mean(povjerenje_drustvene_mreze_1_10), 1)
+  )
+```
+
+Ljudi koji prate vijesti barem jednom dnevno provode određen broj minuta na portalima i društvenim mrežama te imaju specifičan profil povjerenja u različite medije. Ova tablica daje bogat uvid u jednom pipeline.
+
+### Pipeline za čišćenje podataka
+
+Uobičajena praksa je napisati jedan veliki pipeline za čišćenje koji pretvara sirove podatke u analizi spreman dataset. Evo kako bi to izgledalo za naše podatke.
+
+```{r}
+#| label: pipeline-cistenje
+#| echo: true
+#| message: false
+#| warning: false
+
+clean <- raw |>
+  # Preimenovanje stupaca za čitljivost
+  rename(
+    id = id_respondenta,
+    sm_min = drustvene_mreze_min_dan,
+    portal_min = portali_min_dan,
+    trust_tv = povjerenje_tv_1_10,
+    trust_portal = povjerenje_portali_1_10,
+    trust_sm = povjerenje_drustvene_mreze_1_10,
+    n_platformi = broj_platformi,
+    vijesti_frekvencija = koliko_cesto_prati_vijesti
+  ) |>
+  # Korištenje već očišćenih stupaca
+  select(
+    id, dob, spol_clean, grad, godina_clean,
+    tv_minuta, portal_min, sm_min, radio_min_dan, podcast_min_dan,
+    trust_tv, trust_portal, trust_sm,
+    n_platformi, vijesti_frekvencija,
+    dobna_skupina, visoko_koristenje_sm, prati_vijesti_cesto
+  ) |>
+  # Završno preimenovanje čistih stupaca
+  rename(
+    spol = spol_clean,
+    godina = godina_clean,
+    radio_min = radio_min_dan,
+    podcast_min = podcast_min_dan
+  )
+
+glimpse(clean)
+```
+
+Sada imamo čist dataset `clean` s razumljivim imenima stupaca, konzistentnim kodiranjem spola i godine studija, numeričkim stupcem za TV minute i binarnim varijablama za visoko korištenje i praćenje vijesti. Ovaj dataset je spreman za deskriptivnu statistiku i vizualizaciju.
+
+> U svakom projektu analize podataka, trebali biste imati jasnu granicu između sirovih podataka (koje nikad ne mijenjate) i čistih podataka (koje kreirate skriptom iz sirovih). Skripta za čišćenje je vaš zapis svakog koraka, i svaki korišten uvjet mora biti dokumentiran komentarima.
+
+---
+
+## Brzi pregled očišćenog dataseta {#sec-pregled}
+
+Provjerimo da je čišćenje uspjelo i iskoristimo priliku da povežemo sve naučene glagole.
+
+```{r}
+#| label: pregled-cistog
+#| echo: true
+#| message: false
+#| warning: false
+
+# Distribucija po spolu
+clean |>
+  count(spol)
+
+# Distribucija po gradu (top 5)
+clean |>
+  count(grad, sort = TRUE) |>
+  head(5)
+
+# Prosječno korištenje medija po dobnim skupinama
+clean |>
+  group_by(dobna_skupina) |>
+  summarise(
+    n = n(),
+    sm_prosjek = round(mean(sm_min), 1),
+    portal_prosjek = round(mean(portal_min), 1),
+    tv_prosjek = round(mean(tv_minuta, na.rm = TRUE), 1),
+    .groups = "drop"
+  )
+```
+
+Tablica pokazuje jasne razlike. Studenti različitih dobnih skupina imaju različite obrasce korištenja medija. Najmlađi (18 do 19) provode najviše vremena na društvenim mrežama, dok je korištenje portala ravnomjernije raspoređeno. TV je konzistentno najniži oblik medijske konzumacije u svim skupinama, što je očekivano za studentsku populaciju.
+
+```{r}
+#| label: pregled-povjerenje
+#| echo: true
+#| message: false
+#| warning: false
+
+# Povjerenje u medije: tko kome vjeruje?
+clean |>
+  summarise(
+    trust_tv_prosjek = round(mean(trust_tv), 1),
+    trust_portal_prosjek = round(mean(trust_portal), 1),
+    trust_sm_prosjek = round(mean(trust_sm), 1)
+  )
+
+# Povjerenje po spolu
+clean |>
+  group_by(spol) |>
+  summarise(
+    n = n(),
+    trust_sm = round(mean(trust_sm), 1),
+    trust_portal = round(mean(trust_portal), 1),
+    .groups = "drop"
+  )
+```
+
+Studenti u prosjeku najviše vjeruju portalima, zatim televiziji, a najmanje društvenim mrežama. Ovo je zanimljiv nalaz jer istovremeno na društvenim mrežama provode daleko najviše vremena. Provode li ljudi najviše vremena na medijima kojima najmanje vjeruju? Ili se povjerenje gradi korištenjem? Ovo su pitanja na koja ćemo se vraćati kad budemo radili korelacije i regresiju u kasnijim tjednima.
+
+---
+
+## group_by() i summarise(): statistike po grupama {#sec-group-by}
+
+Kombinaciju `group_by()` i `summarise()` smo već koristili u dosadašnjim primjerima, ali zaslužuje detaljniju obradu jer je ovo daleko najvažniji obrazac u cijelom tidyverse radnom toku. Gotovo svaka analiza u komunikologiji uključuje usporedbu između grupa: razlikuju li se muškarci i žene po korištenju medija? Razlikuju li se gradovi po povjerenju? Razlikuju li se generacije po izvorima vijesti?
+
+### Osnovna logika
+
+`group_by()` dijeli tibble na nevidljive podskupove prema vrijednostima jednog ili više stupaca. Sam po sebi ne proizvodi nikakav vidljiv rezultat. Ali kad nakon njega pozovete `summarise()`, izračun se ponavlja zasebno za svaki podskup.
+
+```{r}
+#| label: group-by-osnovno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Prosječno korištenje društvenih mreža po spolu
+clean |>
+  group_by(spol) |>
+  summarise(
+    n = n(),
+    prosjek_sm = round(mean(sm_min), 1),
+    sd_sm = round(sd(sm_min), 1),
+    medijan_sm = median(sm_min),
+    .groups = "drop"
+  )
+```
+
+Argument `.groups = "drop"` na kraju govori R-u da ukloni grupiranje nakon izračuna. Bez njega, rezultirajući tibble bi ostao grupiran, što može uzrokovati neočekivano ponašanje u kasnijim operacijama. Dobra praksa je uvijek eksplicitno navesti `.groups = "drop"`.
+
+### Grupiranje po više varijabli
+
+```{r}
+#| label: group-by-vise
+#| echo: true
+#| message: false
+#| warning: false
+
+# Korištenje po spolu i dobnoj skupini
+clean |>
+  group_by(spol, dobna_skupina) |>
+  summarise(
+    n = n(),
+    prosjek_sm = round(mean(sm_min), 1),
+    prosjek_portal = round(mean(portal_min), 1),
+    .groups = "drop"
+  ) |>
+  filter(spol != "ostalo") |>
+  arrange(dobna_skupina, spol)
+```
+
+Kad grupirate po više varijabli, `summarise()` izračunava statistike za svaku kombinaciju tih varijabli. S dva spola i četiri dobne skupine dobivate osam grupa (ili manje, ako neke kombinacije nemaju opažanja). Filtrirali smo kategoriju "ostalo" jer s malim brojem opažanja statistike nisu pouzdane.
+
+### count() kao kratica
+
+Funkcija `count()` je zapravo kratica za `group_by() |> summarise(n = n()) |> ungroup()`. Koristite je kad vam treba samo prebrojavanje.
+
+```{r}
+#| label: count-kratica
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ovo:
+clean |>
+  count(grad, sort = TRUE) |>
+  head(5)
+
+# Je ekvivalentno ovome:
+clean |>
+  group_by(grad) |>
+  summarise(n = n(), .groups = "drop") |>
+  arrange(desc(n)) |>
+  head(5)
+```
+
+Obje verzije daju identičan rezultat, ali `count()` štedi tri reda koda. Za jednostavno prebrojavanje uvijek koristite `count()`.
+
+### group_by() s mutate()
+
+Manje poznata ali izuzetno korisna kombinacija je `group_by()` s `mutate()`. Umjesto da sažima podatke u jednu vrijednost po grupi (kao `summarise()`), `mutate()` dodaje novu kolonu svakom retku, ali izračun se radi unutar grupe.
+
+```{r}
+#| label: group-mutate
+#| echo: true
+#| message: false
+#| warning: false
+
+# Z-score korištenja društvenih mreža UNUTAR svake dobne skupine
+clean |>
+  group_by(dobna_skupina) |>
+  mutate(
+    sm_prosjek_grupe = mean(sm_min),
+    sm_z = round((sm_min - mean(sm_min)) / sd(sm_min), 2)
+  ) |>
+  ungroup() |>
+  select(id, dob, dobna_skupina, sm_min, sm_prosjek_grupe, sm_z) |>
+  head(10)
+```
+
+Primijetite `ungroup()` na kraju. Kad koristite `group_by()` s `mutate()`, grupiranje ostaje aktivno nakon mutatea (za razliku od `summarise()` koji ga automatski smanjuje). Uvijek dodajte `ungroup()` kad završite s grupiranim operacijama da izbjegnete iznenađenja.
+
+---
+
+## across(): ista operacija na više stupaca {#sec-across}
+
+Do sada smo u `summarise()` ručno pisali svaku statistiku za svaki stupac. Kad imate pet ili deset numeričkih stupaca, to postaje zamorno. Funkcija `across()` rješava ovaj problem jer primjenjuje istu funkciju (ili više funkcija) na više stupaca odjednom.
+
+```{r}
+#| label: across-osnovno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Prosjek za sve stupce koji sadrže "trust" u imenu
+clean |>
+  summarise(
+    across(starts_with("trust"), ~round(mean(.x), 1))
+  )
+```
+
+Sintaksa `~round(mean(.x), 1)` koristi lambda notaciju (tilda formula). `.x` je placeholder za svaki stupac na koji se `across()` primjenjuje. Ovo se čita kao "za svaki stupac koji počinje s trust, izračunaj zaokruženi prosjek".
+
+### Više funkcija odjednom
+
+```{r}
+#| label: across-vise-funkcija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Prosjek i SD za stupce s minutama
+clean |>
+  summarise(
+    across(
+      c(sm_min, portal_min, tv_minuta),
+      list(
+        prosjek = ~round(mean(.x, na.rm = TRUE), 1),
+        sd = ~round(sd(.x, na.rm = TRUE), 1)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+```
+
+Kad proslijedite imenovanu listu funkcija, `across()` kreira zasebne stupce za svaku kombinaciju stupca i funkcije. Argument `.names = "{.col}_{.fn}"` kontrolira kako se novi stupci imenuju: `{.col}` je ime izvornog stupca, `{.fn}` je ime funkcije iz liste.
+
+### across() s group_by()
+
+Kombinacija `across()` i `group_by()` omogućuje izračun više statistika za više stupaca po grupama, u jednom kompaktnom pozivu.
+
+```{r}
+#| label: across-group-by
+#| echo: true
+#| message: false
+#| warning: false
+
+clean |>
+  group_by(dobna_skupina) |>
+  summarise(
+    n = n(),
+    across(
+      c(sm_min, portal_min, trust_sm, trust_portal),
+      list(M = ~round(mean(.x, na.rm = TRUE), 1)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+```
+
+U jednom pozivu dobivamo prosjeke četiri varijable za svaku dobnu skupinu, plus broj opažanja. Ovo je obrazac koji ćete koristiti za izradu tablica deskriptivnih statistika u akademskim radovima.
+
+### across() s mutate()
+
+`across()` radi i unutar `mutate()` za transformaciju više stupaca odjednom.
+
+```{r}
+#| label: across-mutate
+#| echo: true
+#| message: false
+#| warning: false
+
+# Centriranje svih trust varijabli (oduzimanje prosjeka)
+clean |>
+  mutate(
+    across(
+      starts_with("trust"),
+      ~.x - mean(.x),
+      .names = "{.col}_cent"
+    )
+  ) |>
+  select(id, starts_with("trust")) |>
+  head(5)
+```
+
+Ovo je osobito korisno za standardizaciju ili transformaciju velikog broja varijabli u jednom koraku.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Funkcija `across()` čini kod kompaktnijim ali i teže čitljivim za početnike. Ako vam lambda notacija (`~mean(.x)`) izgleda zbunjujuće, nema ništa loše u tome da najprije pišete svaku statistiku ručno, a `across()` počnete koristiti kad se osjećate ugodno s osnovnim glagolima. Cilj je čitljivost, ne kratkoća.
+:::
+
+---
+
+## pivot_longer() i pivot_wider(): preoblikovanje podataka {#sec-pivot}
+
+Ponekad podaci dolaze u obliku koji nije pogodan za analizu ili vizualizaciju i moramo ih preoblikovati. Dva najčešća slučaja su pretvaranje širokog formata u dugački i obrnuto.
+
+### Tidy data: princip urednih podataka
+
+Wickham (2014) definira **uredne podatke** (tidy data) kao tablicu u kojoj svaki redak predstavlja jedno opažanje, svaki stupac jednu varijablu i svaka ćelija jednu vrijednost. Zvuči jednostavno, ali mnogi dataseti ne zadovoljavaju ovaj princip.
+
+Pogledajmo konkretan primjer. Naši podaci o povjerenju imaju tri zasebna stupca: `trust_tv`, `trust_portal`, `trust_sm`. Za neke analize (posebno vizualizaciju), bilo bi korisnije imati jedan stupac `medij` s vrijednostima "TV", "portal" i "društvene mreže" i jedan stupac `povjerenje` s numeričkom ocjenom.
+
+### pivot_longer(): od širokog prema dugačkom
+
+```{r}
+#| label: pivot-longer
+#| echo: true
+#| message: false
+#| warning: false
+
+trust_long <- clean |>
+  select(id, dob, spol, dobna_skupina, trust_tv, trust_portal, trust_sm) |>
+  pivot_longer(
+    cols = starts_with("trust"),
+    names_to = "medij",
+    values_to = "povjerenje",
+    names_prefix = "trust_"
+  )
+
+trust_long |>
+  head(12)
+```
+
+Funkcija `pivot_longer()` pretvara stupce u redove. Argumenti su:
+
+**`cols`** specificira koje stupce pretvaramo (ovdje sve koji počinju s "trust").
+
+**`names_to`** je ime novog stupca koji će sadržavati imena izvornih stupaca.
+
+**`values_to`** je ime novog stupca koji će sadržavati vrijednosti iz izvornih stupaca.
+
+**`names_prefix`** uklanja zajednički prefiks iz imena (bez njega bismo imali "trust_tv" umjesto "tv").
+
+Iz originalnih 250 redova (jedan po ispitaniku) dobili smo 750 redova (tri po ispitaniku, jedan za svaki tip medija). Ovo je dugački format.
+
+Sad možemo lako izračunati prosječno povjerenje po tipu medija.
+
+```{r}
+#| label: trust-po-mediju
+#| echo: true
+#| message: false
+#| warning: false
+
+trust_long |>
+  group_by(medij) |>
+  summarise(
+    prosjek = round(mean(povjerenje), 2),
+    sd = round(sd(povjerenje), 2),
+    .groups = "drop"
+  )
+```
+
+Ili po tipu medija i dobnoj skupini.
+
+```{r}
+#| label: trust-medij-dob
+#| echo: true
+#| message: false
+#| warning: false
+
+trust_long |>
+  group_by(dobna_skupina, medij) |>
+  summarise(
+    prosjek = round(mean(povjerenje), 1),
+    .groups = "drop"
+  ) |>
+  arrange(dobna_skupina, medij)
+```
+
+Ova tablica jasno pokazuje obrasce koje bi bilo teško vidjeti u širokom formatu. Dugački format je posebno koristan za vizualizaciju jer ggplot2 (koji ćemo učiti sljedeći tjedan) radi prirodno s dugačkim podacima.
+
+### pivot_wider(): od dugačkog prema širokom
+
+Obrnuta operacija, `pivot_wider()`, pretvara redove u stupce. Korisna je kad želite tablicu u obliku koji je čitljiv za ljude (široki format), a ne za računalo (dugački format).
+
+```{r}
+#| label: pivot-wider
+#| echo: true
+#| message: false
+#| warning: false
+
+# Prosječno povjerenje po dobnoj skupini i mediju, u širokom formatu
+trust_long |>
+  group_by(dobna_skupina, medij) |>
+  summarise(prosjek = round(mean(povjerenje), 1), .groups = "drop") |>
+  pivot_wider(
+    names_from = medij,
+    values_from = prosjek
+  )
+```
+
+Rezultat je tablica s jednim retkom po dobnoj skupini i jednim stupcem po tipu medija. Ovo je format koji biste stavili u izvještaj ili akademski rad jer je lako čitljiv.
+
+Argumenti su zrcalni u odnosu na `pivot_longer()`:
+
+**`names_from`** je stupac čije će vrijednosti postati imena novih stupaca.
+
+**`values_from`** je stupac čije će vrijednosti popuniti nove stupce.
+
+### Primjer s minutama korištenja
+
+Isti obrazac primjenjujemo i na podatke o korištenju medija.
+
+```{r}
+#| label: pivot-minute
+#| echo: true
+#| message: false
+#| warning: false
+
+# Pretvorba minuta korištenja u dugački format
+koristenje_long <- clean |>
+  select(id, dob, spol, dobna_skupina, tv_minuta, portal_min, sm_min) |>
+  pivot_longer(
+    cols = c(tv_minuta, portal_min, sm_min),
+    names_to = "medij",
+    values_to = "minuta"
+  ) |>
+  mutate(
+    medij = case_when(
+      medij == "tv_minuta" ~ "TV",
+      medij == "portal_min" ~ "Portali",
+      medij == "sm_min" ~ "Društvene mreže"
+    )
+  )
+
+# Prosječno korištenje po tipu medija
+koristenje_long |>
+  group_by(medij) |>
+  summarise(
+    prosjek = round(mean(minuta, na.rm = TRUE), 1),
+    medijan = median(minuta, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(desc(prosjek))
+```
+
+Društvene mreže dominiraju s velikim razmakom. TV je daleko na dnu. Ovi podaci su za studentsku populaciju, pa ne iznenađuju, ali upravo ovakve tablice čine temelj svakog izvještaja o medijskim navikama.
+
+::: {.callout-important}
+## Važna napomena
+
+Zapamtite pravilo: `pivot_longer()` koristite kad želite pretvoriti podatke iz oblika čitljivog za ljude u oblik pogodan za analizu i vizualizaciju. `pivot_wider()` koristite kad želite rezultate pretvoriti natrag u oblik čitljiv za ljude (za tablice u izvještajima). Tipičan radni tok je: učitajte podatke, pretvorite u dugački format, analizirajte, pretvorite rezultate u široki format za prezentaciju.
+:::
+
+---
+
+## Spajanje tablica: left_join() {#sec-join}
+
+U stvarnim istraživanjima, podaci rijetko dolaze u jednoj tablici. Možda imate jednu tablicu s demografskim podacima ispitanika i drugu s rezultatima eksperimenta. Ili jednu tablicu s podacima o člancima i drugu s podacima o komentarima. Da biste ih analizirali zajedno, morate ih spojiti.
+
+Kreirajmo pomoćnu tablicu za demonstraciju.
+
+```{r}
+#| label: join-priprema
+#| echo: true
+#| message: false
+#| warning: false
+
+# Tablica s informacijama o gradovima
+gradovi_info <- tibble(
+  grad = c("Zagreb", "Split", "Rijeka", "Osijek", "Zadar", "Dubrovnik",
+           "Slavonski Brod", "Pula", "Karlovac", "Varaždin", "Šibenik", "Sisak"),
+  regija = c("Središnja", "Dalmacija", "Primorje", "Slavonija", "Dalmacija", "Dalmacija",
+             "Slavonija", "Istra", "Središnja", "Sjever", "Dalmacija", "Središnja"),
+  populacija_tis = c(770, 160, 108, 96, 70, 41, 50, 52, 46, 41, 34, 33)
+)
+
+gradovi_info
+```
+
+Sada možemo spojiti ovu tablicu s našim čistim podacima da svakom ispitaniku dodamo informaciju o regiji i populaciji grada.
+
+```{r}
+#| label: left-join
+#| echo: true
+#| message: false
+#| warning: false
+
+clean_s_regijom <- clean |>
+  left_join(gradovi_info, by = "grad")
+
+clean_s_regijom |>
+  select(id, grad, regija, populacija_tis, sm_min) |>
+  head(10)
+```
+
+Funkcija `left_join()` spaja dvije tablice po zajedničkom stupcu (ovdje `grad`). Za svaki redak u lijevoj tablici (`clean`), traži podudarajući redak u desnoj tablici (`gradovi_info`) i dodaje stupce iz desne tablice. Ako nema podudaranja (na primjer, grad koji nije u tablici `gradovi_info`), dobivamo NA.
+
+Argument `by = "grad"` specificira koji stupac koristimo za podudaranje. Ako se stupac za spajanje različito zove u dvjema tablicama, koristimo sintaksu `by = c("ime_lijevo" = "ime_desno")`.
+
+Sad možemo analizirati podatke po regijama.
+
+```{r}
+#| label: analiza-po-regiji
+#| echo: true
+#| message: false
+#| warning: false
+
+clean_s_regijom |>
+  group_by(regija) |>
+  summarise(
+    n = n(),
+    prosjek_sm = round(mean(sm_min), 1),
+    prosjek_trust_sm = round(mean(trust_sm), 1),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(regija)) |>
+  arrange(desc(prosjek_sm))
+```
+
+Ovo je moć spajanja tablica: informacija koja je bila u zasebnoj tablici sada je dio naše analize i omogućuje grupiranje po varijabli koja nije postojala u izvornim podacima.
+
+### Vrste joinova
+
+`left_join()` je daleko najčešći join i jedini koji ćete trebati u većini situacija. Ali vrijedi znati da postoje i drugi.
+
+**`left_join(a, b)`** zadržava sve retke iz a, dodaje podudarajuće iz b. Ako nema podudaranja, NA.
+
+**`inner_join(a, b)`** zadržava samo retke koji postoje u obje tablice.
+
+**`full_join(a, b)`** zadržava sve retke iz obje tablice, s NA gdje nema podudaranja.
+
+**`anti_join(a, b)`** zadržava retke iz a koji nemaju podudaranje u b. Korisno za pronalaženje nepodudarajućih zapisa.
+
+```{r}
+#| label: anti-join
+#| echo: true
+#| message: false
+#| warning: false
+
+# Ima li ispitanika iz gradova koji nisu u našoj tablici?
+clean |>
+  anti_join(gradovi_info, by = "grad") |>
+  count(grad)
+```
+
+`anti_join()` je odličan dijagnostički alat jer otkriva retke koji se ne mogu spojiti. U ovom slučaju vidimo gradove koji postoje u anketi ali ne u našoj tablici gradova.
+
+---
+
+## Stringovi: osnove rada s tekstom {#sec-stringovi}
+
+U komunikologiji se često radi s tekstualnim podacima: imena platformi, naslovi članaka, otvoreni odgovori u anketama. Paket stringr (dio tidyverse) pruža konzistentan skup funkcija za rad s tekstom.
+
+Već smo koristili `str_to_lower()` i `str_detect()`. Pogledajmo još nekoliko korisnih funkcija.
+
+```{r}
+#| label: stringr-osnove
+#| echo: true
+#| message: false
+#| warning: false
+
+# Stupac s platformama je slobodan tekst s više unosa
+raw |>
+  select(id_respondenta, koje_platforme_koristi) |>
+  head(5)
+
+# Koliko ispitanika koristi Instagram (bilo gdje u tekstu)?
+raw |>
+  mutate(koristi_instagram = str_detect(koje_platforme_koristi, "Instagram")) |>
+  count(koristi_instagram)
+```
+
+### Brojanje i izdvajanje uzoraka
+
+```{r}
+#| label: stringr-count
+#| echo: true
+#| message: false
+#| warning: false
+
+# Koliko platformi svaki ispitanik navodi (brojeći zareze + 1)?
+raw |>
+  mutate(
+    navedeno_platformi = str_count(koje_platforme_koristi, ",") + 1
+  ) |>
+  select(id_respondenta, koje_platforme_koristi, navedeno_platformi) |>
+  head(8)
+```
+
+Funkcija `str_count()` broji koliko se puta uzorak pojavljuje u tekstu. Budući da su platforme odvojene zarezima, broj zareza plus jedan daje broj navedenih platformi. Ovo je primjer kako tekstualne operacije pomažu u izvlačenju numeričkih informacija iz nestrukturiranih podataka.
+
+### Zamjena i čišćenje teksta
+
+```{r}
+#| label: stringr-replace
+#| echo: true
+#| message: false
+#| warning: false
+
+# Zamjena "Twitter/X" s "X" za konzistentnost
+raw |>
+  mutate(
+    platforme_clean = str_replace(koje_platforme_koristi, "Twitter/X", "X")
+  ) |>
+  filter(str_detect(koje_platforme_koristi, "Twitter")) |>
+  select(koje_platforme_koristi, platforme_clean) |>
+  head(5)
+```
+
+Funkcija `str_replace()` zamjenjuje prvo pojavljivanje uzorka, a `str_replace_all()` zamjenjuje sva pojavljivanja. Funkcija `str_trim()` uklanja razmake s početka i kraja teksta, što je korisno kad ispitanici slučajno unesu razmak.
+
+---
+
+## Sve zajedno: kompletna analiza od sirovih do gotovih podataka {#sec-kompletna}
+
+Zaokružimo ovo predavanje tako da napišemo kompletnu analizu koja prolazi kroz sve faze: učitavanje, čišćenje, transformaciju, analizu i prezentaciju rezultata. Ovo je obrazac koji ćete ponavljati u svakom projektu.
+
+```{r}
+#| label: kompletna-1-ucitavanje
+#| echo: true
+#| message: false
+#| warning: false
+
+# FAZA 1: Učitavanje i čišćenje
+anketa_clean <- read_csv("../resources/datasets/media_habits_raw.csv") |>
+  clean_names() |>
+  mutate(
+    # Čišćenje spola
+    spol = case_when(
+      str_to_lower(spol) %in% c("ženski", "ž", "zensko", "female") ~ "ženski",
+      str_to_lower(spol) %in% c("muški", "m", "musko", "male") ~ "muški",
+      .default = NA_character_
+    ),
+    # Čišćenje godine studija
+    godina = case_when(
+      str_to_lower(godina_studija) %in% c("1", "1.", "prva") ~ 1L,
+      str_to_lower(godina_studija) %in% c("2", "2.", "druga") ~ 2L,
+      str_to_lower(godina_studija) %in% c("3", "3.", "treća", "treca") ~ 3L,
+      str_to_lower(godina_studija) %in% c("4", "4.") ~ 4L,
+      str_to_lower(godina_studija) %in% c("5", "5.") ~ 5L,
+      .default = NA_integer_
+    ),
+    # TV minute: text -> broj
+    tv_min = case_when(
+      tv_min_dan == "ne gledam" ~ 0,
+      tv_min_dan == "" ~ NA_real_,
+      .default = as.numeric(tv_min_dan)
+    ),
+    # Dobna skupina
+    dobna_sk = case_when(
+      dob < 20 ~ "18-19",
+      dob < 22 ~ "20-21",
+      dob < 24 ~ "22-23",
+      dob >= 24 ~ "24+"
+    )
+  ) |>
+  # Odabir i preimenovanje konačnih stupaca
+  select(
+    id = id_respondenta,
+    dob, spol, grad, godina,
+    tv_min,
+    portal_min = portali_min_dan,
+    sm_min = drustvene_mreze_min_dan,
+    trust_tv = povjerenje_tv_1_10,
+    trust_portal = povjerenje_portali_1_10,
+    trust_sm = povjerenje_drustvene_mreze_1_10,
+    vijesti = koliko_cesto_prati_vijesti,
+    dobna_sk
+  )
+
+glimpse(anketa_clean)
+```
+
+```{r}
+#| label: kompletna-2-provjera
+#| echo: true
+#| message: false
+#| warning: false
+
+# FAZA 2: Provjera
+# Koliko NA po stupcu?
+anketa_clean |>
+  summarise(across(everything(), ~sum(is.na(.x)))) |>
+  pivot_longer(everything(), names_to = "stupac", values_to = "n_NA") |>
+  filter(n_NA > 0)
+```
+
+```{r}
+#| label: kompletna-3-analiza
+#| echo: true
+#| message: false
+#| warning: false
+
+# FAZA 3: Deskriptivna analiza
+# Korištenje medija po dobnoj skupini
+anketa_clean |>
+  group_by(dobna_sk) |>
+  summarise(
+    n = n(),
+    across(
+      c(sm_min, portal_min, tv_min),
+      list(M = ~round(mean(.x, na.rm = TRUE), 1)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| label: kompletna-4-povjerenje
+#| echo: true
+#| message: false
+#| warning: false
+
+# Povjerenje po tipu medija (dugački format za lakšu usporedbu)
+anketa_clean |>
+  pivot_longer(
+    cols = starts_with("trust"),
+    names_to = "medij",
+    values_to = "povjerenje",
+    names_prefix = "trust_"
+  ) |>
+  mutate(
+    medij = case_when(
+      medij == "tv" ~ "Televizija",
+      medij == "portal" ~ "Web portali",
+      medij == "sm" ~ "Društvene mreže"
+    )
+  ) |>
+  group_by(medij) |>
+  summarise(
+    M = round(mean(povjerenje), 2),
+    SD = round(sd(povjerenje), 2),
+    Med = median(povjerenje),
+    .groups = "drop"
+  ) |>
+  arrange(desc(M))
+```
+
+```{r}
+#| label: kompletna-5-vijesti
+#| echo: true
+#| message: false
+#| warning: false
+
+# Tko prati vijesti, a tko ne?
+anketa_clean |>
+  mutate(
+    cesto_prati = vijesti %in% c("više puta dnevno", "jednom dnevno")
+  ) |>
+  group_by(cesto_prati) |>
+  summarise(
+    n = n(),
+    prosjek_dob = round(mean(dob), 1),
+    prosjek_sm = round(mean(sm_min), 1),
+    prosjek_trust_portal = round(mean(trust_portal), 1),
+    prosjek_trust_sm = round(mean(trust_sm), 1),
+    .groups = "drop"
+  )
+```
+
+Ova kompletna analiza, od učitavanja sirovih podataka do gotovih tablica, stane u manje od 80 redova koda. Svaki korak je dokumentiran, ponovljiv i čitljiv. Ako sutra dobijete ažurirane podatke s još 100 ispitanika, pokrenete istu skriptu i dobijete ažurirane rezultate. To je suština ponovljive analize.
+
+> Cilj čišćenja podataka nije savršenstvo. Cilj je da od neurednog, nekonzistentnog i djelomično nepoznatog skupa podataka stvorite skup koji je dovoljno uredan i dokumentiran da možete s povjerenjem raditi statističku analizu i transparentno komunicirati svaki izbor koji ste napravili.
+
+---
+
+::: {.callout-important}
+## Ključni zaključci
+
+1. Čišćenje i priprema podataka oduzima 80% vremena u bilo kojoj analizi. Stvarni podaci su gotovo uvijek neuredni i zahtijevaju sistematično čišćenje prije ikakve statističke analize.
+
+2. Funkcija `clean_names()` iz paketa janitor standardizira imena stupaca u snake_case format. Koristite je odmah nakon učitavanja svakog dataseta.
+
+3. `filter()` odabire retke po uvjetu. Automatski odbacuje retke s NA. Koristite `%in%` za provjeru pripadnosti skupu, `between()` za raspone i `str_detect()` za pretraživanje teksta.
+
+4. `select()` odabire, uklanja i preuređuje stupce. Pomoćne funkcije `starts_with()`, `ends_with()`, `contains()` i `where()` omogućuju pametan odabir. `rename()` mijenja imena bez gubitka stupaca.
+
+5. `mutate()` kreira nove stupce i transformira postojeće. `case_when()` je alat za složeno rekodiranje. `if_else()` za binarno. Razlika između 0 i NA je konceptualno važna.
+
+6. `arrange()` sortira retke. `desc()` za silazni smjer. NA uvijek na kraj.
+
+7. `group_by() |> summarise()` je temeljni obrazac za izračun statistika po grupama. Uvijek dodajte `.groups = "drop"`. `count()` je kratica za prebrojavanje.
+
+8. `across()` primjenjuje istu operaciju na više stupaca odjednom. Kombinira se i sa `summarise()` i s `mutate()`.
+
+9. `pivot_longer()` pretvara stupce u redove (široki u dugački format). `pivot_wider()` pretvara redove u stupce. Dugački format je pogodan za analizu i vizualizaciju, široki za prezentaciju.
+
+10. `left_join()` spaja dvije tablice po zajedničkom stupcu. Koristite ga kad trebate kombinirati podatke iz više izvora.
+
+11. stringr funkcije (`str_detect()`, `str_to_lower()`, `str_replace()`, `str_count()`) omogućuju rad s tekstualnim podacima. Bitne za čišćenje anketnih podataka.
+
+12. Svaka analiza ima jasne faze: učitavanje, čišćenje, provjera, analiza, prezentacija. Dokumentirajte svaki korak i svaki izbor (osobito koliko redova gubite filtiranjem).
+:::
+
+---
 
 ::: {.callout-warning}
-## Sadržaj u pripremi
+## Priprema za sljedeći tjedan
 
-Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+Sljedeći tjedan bavimo se **deskriptivnom statistikom**: mjerama centralne tendencije (prosjek, medijan, mod), mjerama varijabilnosti (varijanca, standardna devijacija, IQR), korelacijama i standardnim rezultatima (z-scores). Sve ćemo raditi kroz `summarise()` i `group_by()` koje ste upravo naučili.
 
-**Planirane teme:**
+Za pripremu napravite sljedeće:
 
-- dplyr glagoli: filter, select, mutate, summarise, group_by
-- tidyr funkcije: pivot_longer, pivot_wider
-- readr i readxl za učitavanje podataka
-- Primjer: čišćenje podataka iz ankete o medijskim navikama studenata
+1. Ponovite kompletni pipeline čišćenja iz ovog predavanja. Pokrenite ga red po red i provjerite da razumijete svaki korak.
+2. Pokušajte odgovoriti na pitanje: razlikuje li se prosječno povjerenje u društvene mreže između ispitanika koji prate vijesti često i onih koji ne prate? (Hint: `mutate()` za kreiranje binarne varijable, `group_by() |> summarise()` za usporedbu.)
+3. Pretvorite podatke o korištenju (TV, portali, društvene mreže) u dugački format pomoću `pivot_longer()` i izračunajte prosječno korištenje po tipu medija i spolu.
+4. Pročitajte poglavlje 5 iz knjige Navarro (Learning Statistics with R) o deskriptivnoj statistici. Fokusirajte se na koncepte, ne na R kod (jer knjiga koristi base R).
 :::
+
+---
+
+## Dodatno čitanje
+
+**Obavezno**
+
+Wickham, H. & Grolemund, G. (2023). *R for Data Science* (2nd edition), Chapters 4, 5 i 6. Besplatno dostupno na [r4ds.hadley.nz](https://r4ds.hadley.nz). Poglavlje 4 pokriva transformaciju podataka, poglavlje 5 organizaciju radnog toka, poglavlje 6 preoblikovanje podataka s pivot funkcijama.
+
+Navarro, D. (2018). *Learning Statistics with R*, Chapters 4 i 7. Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokrivaju sličan teren u base R sintaksi.
+
+**Preporučeno**
+
+Wickham, H. (2014). Tidy Data. *Journal of Statistical Software*, 59(10). Besplatno dostupno na [vita.had.co.nz/papers/tidy-data.pdf](https://vita.had.co.nz/papers/tidy-data.pdf). Klasičan rad koji definira princip urednih podataka.
+
+Firke, S. (2023). *janitor: Simple Tools for Examining and Cleaning Dirty Data*. Dokumentacija paketa na [sfirke.github.io/janitor](https://sfirke.github.io/janitor). Osim `clean_names()`, paket sadrži i `tabyl()` za brze tablice frekvencija i `remove_empty()` za uklanjanje praznih redova i stupaca.
+
+---
+
+## Pojmovnik
+
+| Pojam | Objašnjenje |
+|---|---|
+| dplyr | R paket iz tidyverse ekosustava za manipulaciju podacima. Sadrži glagole `filter()`, `select()`, `mutate()`, `summarise()`, `arrange()`, `group_by()` i druge. |
+| `filter()` | dplyr glagol za odabir redova koji zadovoljavaju logički uvjet. Automatski odbacuje retke s NA u uvjetu. |
+| `select()` | dplyr glagol za odabir, uklanjanje i preuređivanje stupaca. Podržava pomoćne funkcije poput `starts_with()`, `contains()` i `where()`. |
+| `mutate()` | dplyr glagol za kreiranje novih stupaca ili transformaciju postojećih. Novi stupci mogu referirati na upravo kreirane. |
+| `arrange()` | dplyr glagol za sortiranje redova po vrijednostima stupaca. `desc()` za silazno sortiranje. |
+| `summarise()` | dplyr glagol za sažimanje podataka u jednu vrijednost po grupi (ili za cijeli dataset). Koristi se s agregatnim funkcijama poput `mean()`, `sd()`, `n()`. |
+| `group_by()` | dplyr glagol koji dijeli podatke u grupe po jednoj ili više varijabli. Sve naknadne operacije se izvršavaju zasebno za svaku grupu. |
+| `ungroup()` | dplyr glagol koji uklanja grupiranje. Koristite nakon `group_by() |> mutate()` da izbjegnete neočekivano ponašanje. |
+| `count()` | Kratica za `group_by() |> summarise(n = n()) |> ungroup()`. Prebrojava opažanja po kategorijama. |
+| `across()` | Funkcija za primjenu iste operacije na više stupaca odjednom. Radi unutar `summarise()` i `mutate()`. |
+| `rename()` | dplyr glagol za preimenovanje stupaca bez gubitka ostalih. Sintaksa: `rename(novo = staro)`. |
+| `relocate()` | dplyr glagol za premještanje stupaca na drugu poziciju u datasetu. |
+| `case_when()` | Funkcija za složeno rekodiranje s više uvjeta. Svaki uvjet ima oblik `uvjet ~ vrijednost`. Provjerava uvjete redom. |
+| `if_else()` | Funkcija za binarno rekodiranje. Prima uvjet, vrijednost za TRUE i vrijednost za FALSE. |
+| `between()` | Pomoćna funkcija: provjera je li vrijednost unutar raspona. Kratica za `x >= left & x <= right`. |
+| `str_detect()` | stringr funkcija: provjerava sadrži li tekst zadani uzorak. Vraća TRUE/FALSE. |
+| `str_to_lower()` | stringr funkcija: pretvara tekst u mala slova. Korisna za standardizaciju. |
+| `str_replace()` | stringr funkcija: zamjenjuje prvo pojavljivanje uzorka u tekstu. `str_replace_all()` zamjenjuje sva. |
+| `str_count()` | stringr funkcija: broji pojavljivanja uzorka u tekstu. |
+| `pivot_longer()` | tidyr funkcija za pretvaranje stupaca u redove (široki u dugački format). Ključni argumenti: `cols`, `names_to`, `values_to`. |
+| `pivot_wider()` | tidyr funkcija za pretvaranje redova u stupce (dugački u široki format). Ključni argumenti: `names_from`, `values_from`. |
+| `left_join()` | dplyr funkcija za spajanje dviju tablica po zajedničkom stupcu. Zadržava sve retke iz lijeve tablice. |
+| `inner_join()` | Spajanje koje zadržava samo retke koji postoje u obje tablice. |
+| `anti_join()` | Spajanje koje zadržava retke iz lijeve tablice koji nemaju podudaranje u desnoj. Dijagnostički alat. |
+| `clean_names()` | janitor funkcija: pretvara imena stupaca u snake_case. Uklanja razmake, zagrade i specijalne znakove. |
+| `drop_na()` | tidyr funkcija za uklanjanje redova s NA. Može se primijeniti na cijeli dataset ili specifične stupce. |
+| Tidy data (uredni podaci) | Princip organizacije podataka: svaki redak je opažanje, svaki stupac varijabla, svaka ćelija vrijednost. |
+| Široki format | Organizacija podataka u kojoj su različita mjerenja iste varijable raspoređena u zasebne stupce. Čitljiv za ljude. |
+| Dugački format | Organizacija podataka u kojoj su različita mjerenja u zasebnim redovima s identifikacijskim stupcem. Pogodan za analizu i vizualizaciju. |
+| Pipeline | Niz operacija spojenih pipe operatorom (`|>`) koji transformira podatke korak po korak. |
+| Sirovi podaci (raw data) | Podaci u izvornom obliku, prije čišćenja. Ne bi ih trebalo mijenjati izravno. |
+| Čisti podaci (clean data) | Podaci nakon standardizacije, rekodiranja i provjere. Spremni za analizu. |
+| Rekodiranje | Pretvaranje vrijednosti varijable u standardizirani oblik (npr. svih varijanti spola u "ženski"/"muški"). |

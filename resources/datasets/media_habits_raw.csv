@@ -1,0 +1,251 @@
+ID respondenta,Timestamp,Dob,Spol,Grad,Godina studija,TV (min/dan),Portali (min/dan),Društvene mreže (min/dan),Radio (min/dan),Podcast (min/dan),Povjerenje TV (1-10),Povjerenje portali (1-10),Povjerenje društvene mreže (1-10),Broj platformi,Koje platforme koristi,Koliko često prati vijesti
+1,2025-03-28 17:05,20,ženski,Zagreb,2,0,40,59,49,89,2,6,4,9,"Snapchat, WhatsApp, Facebook",više puta dnevno
+2,2025-04-20 21:11,27,Muški,Zadar,3,0,20,101,,0,3,5,3,5,"Facebook, YouTube",nekoliko puta tjedno
+3,2025-04-18 14:48,27,muški,Zagreb,1,65,0,177,0,49,4,6,1,7,WhatsApp,više puta dnevno
+4,2025-03-28 12:54,18,female,Split,1,,11,71,,0,5,6,4,6,"Pinterest, LinkedIn",jednom tjedno
+5,2025-03-21 18:06,25,Ženski,Zagreb,2,,32,161,26,0,5,3,4,5,"Viber, Snapchat, Reddit",više puta dnevno
+6,2025-04-14 20:26,26,M,Zagreb,2.,91,25,155,,,4,7,7,2,"Pinterest, YouTube",rijetko
+7,2025-04-22 15:48,28,m,Zagreb,2,91,81,114,0,,3,7,2,1,WhatsApp,nekoliko puta tjedno
+8,2025-03-04 19:04,26,ženski,Karlovac,2,0,28,119,0,31,6,1,3,8,"Reddit, Pinterest, WhatsApp, Twitter/X",više puta dnevno
+9,2025-03-12 12:17,22,female,Split,2,76,37,56,17,0,6,7,4,5,"Viber, Snapchat, WhatsApp, Pinterest",nikada
+10,2025-03-19 18:17,21,ž,Osijek,1,66,5,40,0,19,7,5,6,7,LinkedIn,nekoliko puta tjedno
+11,2025-04-22 14:35,22,muški,Split,1,,38,129,0,0,2,6,1,6,Reddit,više puta dnevno
+12,2025-03-11 19:57,27,Ž,Zagreb,2,109,44,95,13,29,7,5,2,6,"Telegram, Viber",jednom tjedno
+13,2025-03-25 15:16,20,muški,Zagreb,1,0,26,72,0,22,7,5,3,2,YouTube,rijetko
+14,2025-04-20 11:09,20,Ženski,Zagreb,2,0,65,122,0,25,5,5,5,7,"WhatsApp, LinkedIn, Instagram",jednom dnevno
+15,2025-03-21 12:56,23,Ženski,Karlovac,2,56,35,35,16,0,4,4,2,4,Facebook,više puta dnevno
+16,2025-04-07 18:06,19,muški,Split,1,0,0,214,0,0,2,6,2,3,Facebook,nekoliko puta tjedno
+17,2025-04-25 17:31,21,ženski,Slavonski Brod,1,,62,187,15,,5,4,4,6,"Snapchat, Pinterest, WhatsApp, TikTok",više puta dnevno
+18,2025-03-01 13:09,19,Ž,Zagreb,1,12,77,86,0,0,3,5,3,5,"YouTube, Twitter/X, Pinterest, WhatsApp",više puta dnevno
+19,2025-04-16 15:56,22,ž,Zagreb,2,,45,148,0,0,4,6,6,3,"TikTok, WhatsApp",jednom dnevno
+20,2025-04-04 19:18,20,muški,Rijeka,2,,42,156,0,51,4,7,3,4,"Pinterest, Instagram, Telegram, Twitter/X",više puta dnevno
+21,2025-03-21 10:26,21,female,Slavonski Brod,3,,8,271,43,,3,6,2,4,"LinkedIn, Telegram, TikTok, Instagram",više puta dnevno
+22,2025-03-25 15:40,19,Musko,Osijek,4,0,37,150,,,6,2,4,5,"YouTube, Snapchat, TikTok",jednom dnevno
+23,2025-03-15 12:12,18,ženski,Split,2,0,43,145,52,0,1,7,2,4,"Reddit, Twitter/X, Pinterest",više puta dnevno
+24,2025-03-25 12:12,20,Ženski,Split,4,82,48,172,14,53,4,3,5,6,"Reddit, TikTok, WhatsApp, Instagram",više puta dnevno
+25,2025-03-23 13:58,18,M,Osijek,1,76,57,184,0,0,4,5,3,3,"Telegram, LinkedIn, Facebook",jednom dnevno
+26,2025-04-22 17:53,22,muški,Zagreb,2,107,13,71,15,0,1,5,3,5,"LinkedIn, YouTube, WhatsApp, Snapchat, Instagram",više puta dnevno
+27,2025-03-25 13:04,20,muški,Osijek,2.,17,34,191,0,0,3,4,1,6,"LinkedIn, Telegram, Snapchat, Twitter/X",više puta dnevno
+28,2025-04-05 12:33,19,Ženski,Zagreb,3,0,71,171,,45,7,7,5,4,Pinterest,jednom dnevno
+29,2025-03-21 21:22,22,ženski,Split,3,ne gledam,73,130,35,,5,7,6,5,LinkedIn,nekoliko puta tjedno
+30,2025-03-25 20:52,24,Muški,Zagreb,1,32,69,97,46,68,4,4,5,5,"YouTube, Viber, Pinterest, Reddit",više puta dnevno
+31,2025-04-06 16:30,18,Ženski,Zagreb,2,,72,97,0,54,7,8,4,2,"Pinterest, Facebook",nekoliko puta tjedno
+32,2025-04-13 11:16,25,Muški,Split,treća,82,60,120,6,0,2,1,4,4,"Twitter/X, Viber",jednom dnevno
+33,2025-04-18 13:13,20,Ženski,Zagreb,3,40,23,125,0,0,3,4,1,4,"Facebook, Pinterest, TikTok, Snapchat",nikada
+34,2025-03-06 18:40,23,Ženski,Dubrovnik,1.,ne gledam,55,151,,0,6,8,5,6,"Viber, Twitter/X",jednom dnevno
+35,2025-03-16 09:58,21,Musko,Split,2,26,65,170,49,,2,5,1,4,"Pinterest, Reddit, Telegram",jednom dnevno
+36,2025-03-05 22:49,26,Muški,Zagreb,3,53,89,89,0,,1,4,9,2,TikTok,više puta dnevno
+37,2025-04-04 11:02,24,Ženski,Osijek,1,10,62,128,,37,7,5,1,5,"LinkedIn, Facebook, Twitter/X",više puta dnevno
+38,2025-03-11 10:59,25,Zensko,Zagreb,3.,0,54,75,16,0,4,7,3,4,Twitter/X,jednom dnevno
+39,2025-03-03 18:04,18,Muški,Šibenik,2,0,28,154,26,,8,2,3,6,"WhatsApp, Twitter/X",jednom tjedno
+40,2025-03-22 09:02,24,muški,Zagreb,3,ne gledam,50,107,13,0,5,5,3,6,"Reddit, YouTube, WhatsApp",rijetko
+41,2025-04-12 10:39,20,Muški,Zagreb,1,88,43,163,0,42,7,7,4,3,"Telegram, WhatsApp, Facebook",jednom dnevno
+42,2025-03-06 09:12,25,Musko,Zagreb,druga,109,32,246,0,,4,5,4,6,"Viber, Facebook, TikTok, Pinterest",nekoliko puta tjedno
+43,2025-03-17 16:59,19,ž,Zagreb,1,0,51,133,6,44,6,2,4,6,Snapchat,više puta dnevno
+44,2025-03-26 19:12,18,Ženski,Zagreb,2.,0,48,152,37,40,8,7,2,5,YouTube,jednom dnevno
+45,2025-04-25 12:32,18,muški,Pula,4,0,48,86,38,0,2,3,2,5,"Twitter/X, Pinterest, Reddit, YouTube, Telegram",jednom dnevno
+46,2025-04-12 10:09,22,Ženski,Zagreb,3.,0,3,57,0,84,3,2,3,6,"Telegram, Instagram, TikTok",nekoliko puta tjedno
+47,2025-03-07 21:19,22,Muški,Rijeka,3,26,37,89,0,88,7,7,3,4,"WhatsApp, Twitter/X, Reddit",rijetko
+48,2025-03-16 10:56,24,Muški,Zagreb,3.,6,35,138,0,0,5,2,2,3,YouTube,jednom tjedno
+49,2025-03-24 12:18,21,muški,Šibenik,3,,40,5,0,,3,4,2,7,WhatsApp,nikada
+50,2025-03-03 20:50,26,ženski,Zagreb,3,10,17,169,0,0,4,5,4,6,"YouTube, Facebook, Telegram, Snapchat, Twitter/X",jednom tjedno
+51,2025-04-09 20:44,21,ženski,Split,1,0,40,152,40,52,7,4,3,2,YouTube,jednom dnevno
+52,2025-04-06 10:14,20,Ženski,Split,2,71,82,130,32,,1,6,3,5,"TikTok, Facebook",jednom dnevno
+53,2025-04-15 14:50,20,muški,Varaždin,5,0,48,49,7,62,8,3,6,8,"LinkedIn, Facebook, Twitter/X, Viber, TikTok",više puta dnevno
+54,2025-04-11 09:42,20,Ž,Zadar,druga,0,77,115,7,50,4,5,4,4,"YouTube, Twitter/X",rijetko
+55,2025-03-27 11:57,19,Muški,Rijeka,1.,0,65,77,0,0,4,5,6,4,"Instagram, Pinterest",više puta dnevno
+56,2025-04-01 08:44,27,Ženski,Zagreb,2,49,53,171,,22,8,3,5,2,WhatsApp,jednom tjedno
+57,2025-03-11 18:18,18,Muški,Zagreb,3,,6,192,,0,4,3,4,5,Pinterest,jednom dnevno
+58,2025-04-27 15:13,26,Ženski,Zagreb,5,0,88,170,0,0,5,4,3,1,WhatsApp,više puta dnevno
+59,2025-04-20 13:52,26,male,Zadar,1.,49,25,109,0,0,7,5,5,5,"Reddit, Pinterest, Facebook, Snapchat, Viber",više puta dnevno
+60,2025-04-06 11:37,24,Musko,Zagreb,4,48,60,91,0,26,8,6,1,3,YouTube,više puta dnevno
+61,2025-03-27 18:11,18,m,Zagreb,druga,0,23,164,0,0,2,2,7,8,Viber,više puta dnevno
+62,2025-04-28 18:16,19,muški,Zagreb,4,0,14,143,0,35,2,7,3,7,"Telegram, Pinterest, Facebook, Reddit, YouTube",jednom dnevno
+63,2025-04-19 17:53,21,ženski,Pula,2,0,51,129,32,34,7,2,2,6,"Telegram, Reddit, Facebook, Instagram",više puta dnevno
+64,2025-03-23 22:09,22,Ženski,Zagreb,3,34,46,158,26,0,5,6,5,3,"WhatsApp, Instagram, YouTube",nekoliko puta tjedno
+65,2025-04-28 17:06,20,m,Zadar,1,0,73,144,0,0,4,6,1,4,LinkedIn,nekoliko puta tjedno
+66,2025-04-18 14:00,25,Ženski,Pula,3,0,56,171,0,0,4,5,6,7,"Reddit, Twitter/X",više puta dnevno
+67,2025-03-09 09:04,22,ženski,Zagreb,1,0,29,150,25,25,7,8,2,5,"WhatsApp, Instagram",jednom tjedno
+68,2025-03-15 10:03,18,Ženski,Zagreb,1,32,48,166,37,0,4,5,2,7,"WhatsApp, Telegram, Instagram",jednom dnevno
+69,2025-03-12 12:11,20,m,Zadar,3.,119,29,128,0,0,4,7,3,5,"Pinterest, TikTok, Viber, LinkedIn, Instagram",rijetko
+70,2025-04-07 10:18,24,Ženski,Zagreb,5,0,54,179,0,,5,6,3,6,"Pinterest, WhatsApp, YouTube, Viber",jednom dnevno
+71,2025-04-07 18:02,21,Muški,Rijeka,1,49,65,121,52,40,3,4,1,4,Pinterest,jednom tjedno
+72,2025-03-26 08:18,18,Ženski,Split,1,103,44,152,0,33,7,4,4,6,"LinkedIn, Pinterest, Snapchat, Facebook",nekoliko puta tjedno
+73,2025-04-03 20:13,21,Ž,Karlovac,3.,17,15,20,0,0,4,4,5,2,TikTok,više puta dnevno
+74,2025-03-11 18:39,22,Muški,Zagreb,3.,47,44,65,19,,3,6,3,7,"TikTok, Viber",nekoliko puta tjedno
+75,2025-04-25 10:51,28,muški,Karlovac,prva,0,26,115,0,,3,6,5,1,Twitter/X,nekoliko puta tjedno
+76,2025-03-26 13:23,18,Ž,Slavonski Brod,3.,,0,64,0,,8,6,6,4,"Reddit, Facebook, Twitter/X, Snapchat",jednom dnevno
+77,2025-04-03 09:16,22,Muški,Zagreb,1,85,29,190,33,,4,6,4,5,"LinkedIn, Facebook, Snapchat, TikTok, Twitter/X",više puta dnevno
+78,2025-03-16 08:11,26,male,Zagreb,4,0,3,73,0,0,7,7,1,1,YouTube,više puta dnevno
+79,2025-03-03 13:44,22,female,Rijeka,4,0,26,206,,0,6,8,5,6,"Viber, Instagram, Facebook, Pinterest, WhatsApp",jednom tjedno
+80,2025-03-10 16:11,18,ženski,Split,4,48,55,123,11,0,6,1,4,3,"Facebook, YouTube",jednom dnevno
+81,2025-04-03 13:55,28,Musko,Split,treća,84,41,110,57,,1,4,4,3,"Viber, Facebook",više puta dnevno
+82,2025-04-10 16:21,19,Muški,Osijek,2,43,1,61,0,34,4,4,6,3,WhatsApp,više puta dnevno
+83,2025-03-22 16:55,19,ž,Split,3,48,44,154,0,88,6,5,5,3,Reddit,više puta dnevno
+84,2025-03-14 17:58,19,Musko,Karlovac,druga,,30,5,,0,2,5,6,8,"Pinterest, Reddit",više puta dnevno
+85,2025-04-11 15:36,20,Ž,Rijeka,3,78,0,130,0,85,7,8,5,4,"Viber, YouTube",jednom dnevno
+86,2025-03-04 14:52,26,Ženski,Zagreb,3,,39,144,0,0,5,6,1,4,"TikTok, Reddit",jednom tjedno
+87,2025-03-08 16:14,18,muški,Zagreb,1,64,39,246,23,76,7,1,1,6,"TikTok, YouTube",jednom dnevno
+88,2025-03-15 14:55,20,ž,Split,5,0,49,202,0,0,4,6,4,1,Snapchat,jednom tjedno
+89,2025-03-19 11:50,22,Ž,Varaždin,1,31,48,91,38,0,2,3,2,7,"LinkedIn, Reddit, YouTube",nekoliko puta tjedno
+90,2025-03-18 12:53,19,Muški,Varaždin,prva,67,53,46,0,77,3,10,2,3,"Viber, Facebook",jednom tjedno
+91,2025-04-15 13:02,18,Ženski,Zagreb,3.,,0,166,0,18,6,3,3,7,"LinkedIn, Snapchat, Pinterest",više puta dnevno
+92,2025-03-19 17:59,18,Zensko,Zagreb,3,,35,52,58,0,8,5,1,1,Viber,jednom dnevno
+93,2025-03-13 12:04,20,Muški,Zadar,1,0,65,145,56,58,3,2,5,3,"WhatsApp, Telegram, Facebook",jednom dnevno
+94,2025-03-17 22:43,23,Ženski,Osijek,3.,7,37,105,0,23,2,2,4,5,"Snapchat, Telegram, LinkedIn, Facebook, WhatsApp",jednom tjedno
+95,2025-04-10 11:16,20,M,Karlovac,2,27,15,147,0,65,6,1,7,5,"Snapchat, TikTok",više puta dnevno
+96,2025-04-06 12:01,26,ženski,Osijek,2,16,93,143,41,12,5,5,1,8,Snapchat,nekoliko puta tjedno
+97,2025-04-27 11:22,18,Ženski,Zagreb,5,0,17,133,0,,4,3,8,6,WhatsApp,više puta dnevno
+98,2025-03-09 18:50,22,male,Zagreb,3,0,12,196,0,0,3,2,1,6,TikTok,rijetko
+99,2025-04-22 18:54,24,male,Šibenik,2,0,63,190,42,0,2,6,3,7,"WhatsApp, Instagram",rijetko
+100,2025-04-18 17:15,24,Muški,Split,1.,120,57,131,0,51,3,6,2,3,Facebook,više puta dnevno
+101,2025-04-03 17:43,21,Muški,Zagreb,1,0,0,77,0,58,8,2,1,4,"TikTok, Pinterest, Viber",jednom dnevno
+102,2025-04-01 21:03,20,muški,Osijek,2,ne gledam,31,85,50,0,5,5,5,4,"TikTok, Instagram, WhatsApp",rijetko
+103,2025-03-26 20:32,21,female,Zagreb,1,52,81,117,,,4,6,4,1,LinkedIn,više puta dnevno
+104,2025-03-15 14:02,23,muški,Osijek,4,,55,59,0,76,7,4,2,4,"Reddit, LinkedIn, Pinterest, Instagram",nekoliko puta tjedno
+105,2025-04-21 20:23,29,Muški,Zagreb,3,0,43,77,38,,5,8,4,5,"LinkedIn, Snapchat",jednom dnevno
+106,2025-04-11 15:18,19,m,Slavonski Brod,2,0,73,110,0,52,5,5,3,3,"Instagram, Snapchat",nekoliko puta tjedno
+107,2025-04-05 11:32,24,muški,Zagreb,5,0,56,93,8,,3,5,3,6,"Reddit, Facebook, YouTube, Instagram",nekoliko puta tjedno
+108,2025-04-03 20:33,18,muški,Rijeka,4,73,11,7,0,,3,3,5,4,"Snapchat, Facebook, Telegram, WhatsApp",jednom dnevno
+109,2025-04-19 11:26,18,muški,Rijeka,3,24,30,147,,23,3,7,2,4,"YouTube, Snapchat, WhatsApp",nekoliko puta tjedno
+110,2025-04-19 18:35,22,M,Zagreb,druga,81,0,125,42,12,5,5,4,8,Snapchat,nekoliko puta tjedno
+111,2025-03-05 16:43,20,muški,Osijek,4,0,53,136,,53,3,4,3,4,"Pinterest, Twitter/X",nikada
+112,2025-03-13 20:49,27,ženski,Zagreb,5,0,0,114,0,0,7,5,4,4,"YouTube, Reddit, LinkedIn",više puta dnevno
+113,2025-04-14 12:35,18,muški,Osijek,prva,ne gledam,54,83,0,,5,6,1,3,"Pinterest, LinkedIn, YouTube",rijetko
+114,2025-03-19 09:11,21,muški,Rijeka,prva,79,29,147,0,37,7,6,2,6,Instagram,jednom dnevno
+115,2025-03-26 21:28,18,Ženski,Zadar,2.,,74,124,0,66,3,6,6,8,TikTok,nekoliko puta tjedno
+116,2025-03-18 22:25,18,M,Rijeka,1.,0,45,132,37,56,3,5,4,3,"LinkedIn, Reddit",jednom tjedno
+117,2025-04-13 16:44,19,Muški,Pula,1,64,33,151,18,48,5,8,3,5,"Instagram, Viber, TikTok, Facebook",nekoliko puta tjedno
+118,2025-04-13 11:59,21,m,Varaždin,3.,0,101,135,0,0,8,9,1,3,"Telegram, Facebook",više puta dnevno
+119,2025-03-01 18:19,27,ženski,Zagreb,3.,0,55,136,28,85,4,6,2,2,TikTok,više puta dnevno
+120,2025-03-12 09:30,20,Ženski,Zagreb,1,71,43,96,0,0,2,4,1,3,LinkedIn,jednom dnevno
+121,2025-04-27 17:09,21,Muški,Zagreb,4,0,21,74,0,54,7,6,3,4,"Reddit, WhatsApp",više puta dnevno
+122,2025-03-20 19:50,21,muški,Zagreb,1.,88,33,77,8,72,10,4,2,6,"Telegram, YouTube",više puta dnevno
+123,2025-03-11 22:17,19,ženski,Varaždin,3.,0,85,77,44,24,6,4,6,7,"YouTube, Instagram",nekoliko puta tjedno
+124,2025-03-12 10:06,19,Ženski,Split,3,115,28,179,0,0,6,5,3,4,"Pinterest, LinkedIn, Twitter/X",više puta dnevno
+125,2025-04-08 15:30,24,ženski,Rijeka,2,77,50,34,,0,7,4,4,6,"Twitter/X, WhatsApp, Viber, Telegram",više puta dnevno
+126,2025-04-06 19:33,26,muški,Zagreb,2,28,30,104,,11,4,5,1,6,"TikTok, Twitter/X, Snapchat",više puta dnevno
+127,2025-04-24 17:28,27,Muški,Osijek,1,106,0,101,0,46,4,4,5,4,"TikTok, Snapchat, Instagram, Viber",jednom dnevno
+128,2025-03-26 16:45,22,Ženski,Zagreb,druga,0,68,121,16,0,2,4,5,5,Pinterest,jednom tjedno
+129,2025-03-13 14:47,19,muški,Dubrovnik,2,26,65,203,14,0,1,5,1,6,"Twitter/X, Instagram, Pinterest",rijetko
+130,2025-04-08 21:13,28,Ženski,Zadar,5,,30,98,53,0,4,8,2,4,"YouTube, Snapchat, WhatsApp",jednom tjedno
+131,2025-03-22 15:48,18,ženski,Slavonski Brod,1,,26,118,36,0,4,9,1,8,"YouTube, Reddit, WhatsApp, Telegram, Pinterest",jednom tjedno
+132,2025-04-16 18:08,21,M,Split,1.,0,62,124,44,0,3,4,1,5,"LinkedIn, Instagram",više puta dnevno
+133,2025-03-01 21:56,23,male,Zagreb,2,38,69,72,14,0,6,2,2,9,"Pinterest, Snapchat",rijetko
+134,2025-04-15 17:00,23,Ž,Zagreb,3.,85,65,106,17,86,3,5,5,3,"Viber, TikTok",više puta dnevno
+135,2025-04-10 17:36,22,Ž,Šibenik,3,0,54,126,12,0,4,4,4,3,"Viber, LinkedIn, TikTok",jednom dnevno
+136,2025-04-27 18:09,19,male,Zadar,3.,,36,51,0,0,2,4,5,3,Reddit,nekoliko puta tjedno
+137,2025-03-19 18:51,25,female,Split,druga,0,24,134,30,0,5,5,1,3,"LinkedIn, Reddit",više puta dnevno
+138,2025-04-24 17:49,25,muški,Zagreb,3.,,36,95,0,88,4,4,5,1,Facebook,rijetko
+139,2025-04-11 08:58,24,Ženski,Zagreb,5,7,46,147,29,0,5,3,3,4,"YouTube, Viber, Telegram",više puta dnevno
+140,2025-04-05 13:33,20,male,Karlovac,3,40,48,135,0,0,4,6,4,4,"WhatsApp, LinkedIn",više puta dnevno
+141,2025-03-13 13:58,23,ž,Split,1,69,31,222,28,,4,6,5,5,"Twitter/X, WhatsApp, Viber",jednom dnevno
+142,2025-03-16 17:41,20,Ž,Split,treća,84,40,84,0,0,6,4,5,5,Twitter/X,rijetko
+143,2025-03-09 22:33,22,Muški,Split,treća,,46,78,0,87,7,4,1,5,"WhatsApp, LinkedIn, Viber",više puta dnevno
+144,2025-03-02 18:01,20,M,Zagreb,3.,0,71,106,0,0,4,5,7,1,Snapchat,više puta dnevno
+145,2025-03-15 11:58,19,ženski,Zagreb,2,104,54,157,,57,3,9,7,7,"Viber, Telegram, LinkedIn",jednom dnevno
+146,2025-04-13 12:00,21,Muški,Zagreb,3.,0,32,160,,41,5,4,6,4,"YouTube, Facebook, Telegram",nekoliko puta tjedno
+147,2025-04-18 13:58,18,muški,Osijek,1,104,0,175,0,10,6,5,5,5,LinkedIn,jednom tjedno
+148,2025-04-09 13:33,18,Ženski,Šibenik,1,0,43,173,40,73,3,4,2,2,"Facebook, LinkedIn",više puta dnevno
+149,2025-03-14 22:56,22,Ž,Zadar,3,0,34,296,0,54,3,3,2,1,LinkedIn,rijetko
+150,2025-04-04 19:04,25,ženski,Zagreb,1,57,17,47,0,0,2,4,4,6,"Viber, Facebook, LinkedIn, Telegram, Reddit",jednom dnevno
+151,2025-04-14 21:54,20,male,Zagreb,5,,31,53,0,58,4,4,5,6,"Twitter/X, Facebook, Reddit",nikada
+152,2025-04-09 19:27,22,male,Split,1,0,88,93,23,0,3,4,4,6,WhatsApp,nekoliko puta tjedno
+153,2025-03-06 10:12,28,Muški,Split,4,0,61,97,0,0,8,7,2,5,"Pinterest, Twitter/X",više puta dnevno
+154,2025-04-02 11:46,29,muški,Varaždin,2,73,46,144,24,0,6,7,2,5,"LinkedIn, Viber, TikTok",jednom dnevno
+155,2025-04-10 17:13,27,Muški,Zagreb,2,0,58,122,0,,4,6,3,4,"Pinterest, WhatsApp",jednom dnevno
+156,2025-04-04 22:21,21,Muški,Split,1.,,59,77,55,60,7,4,3,2,"YouTube, Reddit",više puta dnevno
+157,2025-03-05 17:19,18,Muški,Split,1.,72,41,90,0,0,4,4,3,3,"Telegram, Reddit, YouTube",nekoliko puta tjedno
+158,2025-04-15 17:13,25,Ženski,Zagreb,2,76,0,114,54,0,3,2,6,5,"Telegram, Facebook, Instagram",nikada
+159,2025-03-24 18:57,20,Zensko,Zagreb,treća,,100,51,0,0,7,7,3,4,"TikTok, Snapchat, Pinterest, YouTube",više puta dnevno
+160,2025-04-19 19:44,29,Ž,Zagreb,5,,43,93,14,56,1,7,1,3,"TikTok, Twitter/X",više puta dnevno
+161,2025-04-12 18:12,19,ženski,Split,1,119,46,96,0,0,4,6,6,3,LinkedIn,rijetko
+162,2025-04-07 19:07,23,Muški,Split,druga,112,19,110,43,0,4,7,4,4,"YouTube, Twitter/X",rijetko
+163,2025-03-09 19:53,21,Muški,Zadar,1,0,25,169,34,,5,3,7,5,"Instagram, YouTube, Viber",više puta dnevno
+164,2025-03-06 10:10,25,Zensko,Slavonski Brod,druga,31,32,52,53,,7,6,3,4,"Twitter/X, Snapchat, LinkedIn",nikada
+165,2025-03-19 18:02,18,Ženski,Split,prva,0,0,161,57,0,7,3,2,4,WhatsApp,nikada
+166,2025-04-05 18:14,19,muški,Split,1,,43,91,52,,4,8,4,7,Instagram,nekoliko puta tjedno
+167,2025-03-05 21:17,19,M,Osijek,druga,0,49,75,0,21,4,5,3,10,LinkedIn,jednom dnevno
+168,2025-03-18 12:26,18,male,Šibenik,4,0,65,144,0,0,4,4,1,5,Telegram,više puta dnevno
+169,2025-03-12 09:10,19,ženski,Zagreb,3,0,103,138,0,,7,6,4,5,"Twitter/X, YouTube, Pinterest, Telegram, TikTok",jednom tjedno
+170,2025-04-11 11:41,20,Musko,Rijeka,4,72,19,60,28,43,1,6,1,2,"LinkedIn, TikTok",jednom dnevno
+171,2025-03-25 17:16,19,ž,Osijek,3,0,47,202,0,56,7,5,2,4,"Pinterest, Reddit",jednom dnevno
+172,2025-04-12 15:06,25,Muški,Zagreb,2,51,61,188,54,,7,8,2,5,"Snapchat, Facebook",jednom dnevno
+173,2025-04-18 16:10,20,Ž,Zagreb,2,0,37,158,0,0,6,6,6,6,LinkedIn,više puta dnevno
+174,2025-03-15 13:20,19,male,Zagreb,2,0,31,5,,84,3,6,5,2,"Instagram, Facebook",jednom dnevno
+175,2025-03-16 14:33,26,Muški,Pula,2,16,26,190,,0,4,4,1,6,"YouTube, LinkedIn, Reddit, WhatsApp",više puta dnevno
+176,2025-04-25 10:59,26,Muški,Varaždin,1,19,56,11,0,46,1,2,4,3,"TikTok, WhatsApp, Reddit",jednom dnevno
+177,2025-04-24 16:09,27,ženski,Split,1,0,41,163,,0,7,6,3,3,TikTok,nikada
+178,2025-03-11 09:59,22,muški,Šibenik,2,,64,97,0,11,5,3,1,4,Twitter/X,jednom dnevno
+179,2025-03-13 19:50,22,muški,Split,5,0,35,85,57,56,3,5,5,9,"Pinterest, WhatsApp, Viber",jednom dnevno
+180,2025-04-03 18:16,19,Ženski,Pula,1,,45,90,0,0,4,4,2,5,"WhatsApp, Twitter/X, Viber, Snapchat",jednom tjedno
+181,2025-04-22 19:53,22,Muški,Split,1,117,50,217,0,42,1,3,3,5,"WhatsApp, Pinterest",jednom dnevno
+182,2025-03-17 20:50,26,ženski,Zagreb,druga,,24,158,32,0,5,7,4,3,"TikTok, Pinterest, LinkedIn",više puta dnevno
+183,2025-04-01 16:28,18,Muški,Šibenik,3.,0,36,168,0,0,7,3,1,5,"Instagram, WhatsApp, YouTube, TikTok, Twitter/X",jednom tjedno
+184,2025-03-14 18:09,18,ž,Zadar,3,0,34,102,,27,4,3,3,2,"Reddit, Viber",više puta dnevno
+185,2025-04-07 09:26,23,Zensko,Slavonski Brod,2,,20,127,0,0,3,4,2,5,LinkedIn,jednom dnevno
+186,2025-04-25 18:15,19,Ženski,Šibenik,3,0,26,83,0,0,7,5,2,3,"Twitter/X, Viber, Pinterest",nikada
+187,2025-04-21 11:54,21,muški,Zagreb,1.,39,32,149,24,0,5,6,3,2,Facebook,nekoliko puta tjedno
+188,2025-03-10 22:14,19,m,Zagreb,1,83,50,108,25,0,7,5,6,3,"YouTube, Instagram",jednom dnevno
+189,2025-03-11 10:24,21,Muški,Sisak,prva,70,54,132,7,12,4,5,2,5,"LinkedIn, Facebook, YouTube, Instagram",jednom tjedno
+190,2025-04-26 11:58,27,ženski,Sisak,3,94,67,138,0,0,3,6,2,3,WhatsApp,jednom tjedno
+191,2025-04-20 17:54,21,Ženski,Slavonski Brod,3.,,52,202,0,0,2,7,2,4,"Facebook, TikTok, LinkedIn, Reddit",nekoliko puta tjedno
+192,2025-04-17 18:06,28,M,Zagreb,3.,,31,98,0,0,1,4,5,6,"Viber, Twitter/X, YouTube, Reddit, Telegram",nikada
+193,2025-03-11 13:34,19,Muški,Split,1,89,62,206,48,89,2,6,2,4,"Facebook, YouTube, TikTok",rijetko
+194,2025-03-06 09:53,19,muški,Zagreb,2,,14,66,,88,2,2,1,8,"Viber, Telegram, Reddit, Facebook, WhatsApp",više puta dnevno
+195,2025-04-22 18:10,19,muški,Pula,1.,,35,159,0,87,7,4,3,10,"Telegram, Twitter/X, Reddit",rijetko
+196,2025-04-12 09:15,22,Ženski,Pula,1,0,27,140,0,0,5,6,7,6,Snapchat,jednom tjedno
+197,2025-04-23 16:45,21,ženski,Zagreb,druga,90,65,143,0,,8,6,3,6,"YouTube, Reddit",više puta dnevno
+198,2025-04-12 18:25,25,ženski,Dubrovnik,1.,97,25,99,13,0,4,5,6,8,"Twitter/X, Telegram, Facebook, YouTube, Viber",više puta dnevno
+199,2025-04-01 13:23,26,Ženski,Zagreb,2,75,45,133,39,35,3,7,3,1,LinkedIn,nekoliko puta tjedno
+200,2025-04-21 10:27,26,muški,Zagreb,1,,53,72,0,0,5,5,3,7,"Pinterest, Facebook, Telegram, Twitter/X, LinkedIn",nekoliko puta tjedno
+201,2025-03-18 14:05,19,ženski,Split,3,0,60,78,55,,4,6,1,7,Pinterest,više puta dnevno
+202,2025-03-10 11:59,23,Muški,Zagreb,3,0,46,76,,0,4,2,1,5,"TikTok, WhatsApp, LinkedIn, Reddit, Facebook",nikada
+203,2025-04-15 21:32,20,Musko,Osijek,1.,,41,128,0,0,7,5,5,6,"Snapchat, LinkedIn, Twitter/X, TikTok",jednom dnevno
+204,2025-04-20 10:42,19,m,Osijek,3,ne gledam,94,191,50,38,7,6,5,6,"Instagram, Twitter/X",više puta dnevno
+205,2025-03-09 12:21,19,Ženski,Pula,2,112,68,113,0,21,3,8,3,1,Reddit,više puta dnevno
+206,2025-03-14 16:29,19,Muški,Split,3,83,45,62,0,0,1,4,4,8,Facebook,nekoliko puta tjedno
+207,2025-04-05 11:27,20,Musko,Zagreb,1.,28,81,103,,0,7,4,3,5,"YouTube, WhatsApp",jednom dnevno
+208,2025-04-09 12:31,23,muški,Zagreb,3,13,69,16,42,0,6,3,2,6,"TikTok, Twitter/X, Telegram",više puta dnevno
+209,2025-03-07 17:11,23,Muški,Zagreb,treća,47,85,124,0,,5,7,3,5,"Twitter/X, WhatsApp",nekoliko puta tjedno
+210,2025-03-20 18:01,23,ž,Zagreb,2.,112,58,42,0,88,5,3,3,4,"Facebook, TikTok, WhatsApp, Reddit",više puta dnevno
+211,2025-04-11 20:07,24,M,Rijeka,2,56,56,103,,24,3,5,5,3,TikTok,jednom dnevno
+212,2025-04-08 17:35,18,Ženski,Pula,1,0,63,171,0,0,1,5,1,3,LinkedIn,nekoliko puta tjedno
+213,2025-04-08 17:38,27,Musko,Osijek,2,0,26,92,0,0,4,5,6,5,Telegram,više puta dnevno
+214,2025-03-21 17:05,20,muški,Zagreb,3,59,25,88,59,,3,4,4,3,"Snapchat, Viber, Facebook",nekoliko puta tjedno
+215,2025-04-26 11:04,23,muški,Zagreb,1.,0,51,136,0,,4,8,5,1,Snapchat,nekoliko puta tjedno
+216,2025-03-13 20:33,22,m,Split,druga,74,0,145,0,65,3,6,5,9,Instagram,jednom tjedno
+217,2025-04-18 14:26,19,male,Rijeka,2,51,69,124,,47,3,4,6,6,"WhatsApp, Viber, Pinterest, Twitter/X, LinkedIn",jednom dnevno
+218,2025-04-12 22:09,22,Muški,Zagreb,1.,,33,100,,0,3,5,4,5,"TikTok, Twitter/X, Viber, Reddit",jednom dnevno
+219,2025-03-22 16:20,21,Muški,Split,4,27,34,156,,0,6,4,2,7,"YouTube, Telegram",jednom dnevno
+220,2025-04-15 15:22,22,muški,Zagreb,1,0,83,129,,,1,7,5,6,LinkedIn,jednom dnevno
+221,2025-04-17 13:15,19,muški,Zadar,3,111,25,101,38,23,9,7,1,4,Reddit,nekoliko puta tjedno
+222,2025-04-06 18:33,21,ženski,Dubrovnik,1,0,46,109,46,55,3,7,3,6,Facebook,nekoliko puta tjedno
+223,2025-03-18 10:25,23,Ženski,Split,2,51,21,125,0,73,7,5,3,6,"Viber, TikTok, Pinterest, Twitter/X, YouTube",rijetko
+224,2025-03-13 11:25,21,ženski,Split,3,0,41,164,0,0,2,6,2,6,"Viber, Facebook, Reddit",jednom tjedno
+225,2025-03-08 20:05,23,muški,Rijeka,4,71,65,111,15,0,5,6,2,2,Instagram,više puta dnevno
+226,2025-03-12 18:03,26,Muški,Osijek,3.,,15,149,19,,1,7,3,6,"Reddit, Pinterest, Viber",jednom dnevno
+227,2025-04-22 16:45,28,male,Zadar,1,,23,158,37,0,8,7,2,2,Reddit,nekoliko puta tjedno
+228,2025-04-09 09:43,25,ženski,Zagreb,2,82,23,138,0,,2,6,4,3,"Instagram, WhatsApp",nekoliko puta tjedno
+229,2025-04-22 14:54,24,Zensko,Karlovac,2.,18,41,134,0,,7,6,3,4,LinkedIn,jednom dnevno
+230,2025-04-12 10:48,19,Ženski,Osijek,2,119,50,72,0,0,2,5,3,4,WhatsApp,jednom tjedno
+231,2025-03-26 13:27,24,Ž,Zagreb,4,0,48,161,0,49,4,9,2,8,"WhatsApp, TikTok, Snapchat, LinkedIn",više puta dnevno
+232,2025-04-13 19:21,22,Ženski,Zagreb,1,0,58,96,0,,1,4,4,6,"Pinterest, Facebook, YouTube, Snapchat",rijetko
+233,2025-04-02 20:06,20,Muški,Zagreb,2,57,23,90,,54,2,5,3,6,"Facebook, Telegram, Snapchat, Pinterest, WhatsApp",rijetko
+234,2025-03-16 17:17,20,male,Split,1.,23,25,136,0,0,7,3,6,7,WhatsApp,rijetko
+235,2025-04-03 19:43,23,Ženski,Osijek,2,86,65,163,0,0,2,6,3,4,Snapchat,više puta dnevno
+236,2025-03-21 12:47,20,Muški,Zagreb,1,71,17,22,45,79,5,6,4,4,"Instagram, TikTok",nikada
+237,2025-04-21 18:16,19,ž,Zadar,1,35,17,129,0,0,6,4,3,5,"Viber, Telegram, Pinterest, Facebook, Twitter/X",više puta dnevno
+238,2025-04-25 19:11,27,ženski,Split,2,41,50,118,0,0,7,5,4,3,Pinterest,više puta dnevno
+239,2025-04-26 18:53,18,Ženski,Zagreb,2,0,34,30,0,0,5,4,6,5,"Instagram, Pinterest",nekoliko puta tjedno
+240,2025-03-08 13:43,22,Muški,Zagreb,treća,0,27,117,0,,4,5,6,5,"Facebook, LinkedIn, Snapchat, Instagram, TikTok",nekoliko puta tjedno
+241,2025-03-28 09:13,27,Muški,Dubrovnik,3,0,55,165,0,0,6,5,4,3,Telegram,jednom dnevno
+242,2025-03-19 17:07,27,ženski,Osijek,2,7,61,98,0,0,2,2,7,7,Telegram,više puta dnevno
+243,2025-03-01 10:33,20,Ženski,Dubrovnik,4,80,35,117,0,0,2,6,3,6,Instagram,više puta dnevno
+244,2025-03-06 17:17,21,Ž,Rijeka,druga,77,64,114,,0,5,3,1,1,TikTok,jednom dnevno
+245,2025-03-07 19:57,25,Zensko,Zagreb,2,10,78,130,0,41,3,4,4,7,Reddit,jednom dnevno
+246,2025-03-27 12:34,26,M,Zagreb,2.,87,75,66,0,55,2,5,1,6,Pinterest,nekoliko puta tjedno
+247,2025-04-01 15:06,18,muški,Rijeka,3.,15,68,134,0,,6,5,5,7,Reddit,više puta dnevno
+248,2025-04-04 08:57,19,Muški,Rijeka,1.,21,41,121,40,0,3,6,1,5,"Twitter/X, LinkedIn",nekoliko puta tjedno
+249,2025-03-12 18:25,22,Ž,Split,1.,0,24,142,0,0,7,7,2,3,YouTube,jednom dnevno
+250,2025-03-11 08:23,18,Musko,Zagreb,2,,50,121,31,0,5,3,5,5,"LinkedIn, Telegram, Snapchat, Facebook, Pinterest",nikada
