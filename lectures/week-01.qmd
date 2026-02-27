@@ -326,4 +326,4 @@ U praksi, najbolja istraživanja kombiniraju više pristupa. Na primjer, možete
 7. Neeksperimentalni dizajni (opažajne studije, kvazieksperimenti) omogućuju proučavanje fenomena u prirodnom kontekstu, ali zahtijevaju oprez pri kauzalnom zaključivanju zbog mogućih konfundirajućih varijabli.
 
 8. Eksterna valjanost (mogućnost generalizacije rezultata) poseban je izazov u komunikologiji jer su medijska ponašanja visoko ovisna o platformi, kulturi i vremenu.
-
+:::

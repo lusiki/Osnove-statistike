@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: _site
+  resources:
+    - Osnove-statistike.pdf
+    - Osnove-statistike.docx
 
 execute:
   freeze: auto

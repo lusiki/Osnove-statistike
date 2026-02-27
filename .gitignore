@@ -1,6 +1,7 @@
 /.quarto/
 .claude/
 /_site/
+/_book/
 .Rproj.user
 .Rhistory
 .RData

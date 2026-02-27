@@ -4,7 +4,7 @@ title: "Osnove statistike"
 
 Dobrodošli na stranicu kolegija **Osnove statistike**! Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka.
 
-Kroz 15 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija — od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
+Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija — od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
 
 ::: {.callout-note}
 ## Osnovni podaci o kolegiju
@@ -21,13 +21,24 @@ Kroz 15 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 
 ## Struktura kolegija
 
-Kolegij je organiziran u tri cjeline:
+Kolegij je organiziran u četiri cjeline:
 
-**Cjelina 1: Deskriptivna statistika (tjedni 1–5).** Upoznajete se sa statističkim razmišljanjem, naučite koristiti R i tidyverse za rad s podacima, ovladate deskriptivnom statistikom i vizualizacijom.
+**Cjelina 1: Uvod i osnove programiranja (tjedni 1–4).** Upoznajete se sa statističkim razmišljanjem i istraživačkim dizajnom, učite programirati u R-u te ovladavate tidyverse ekosustavom za učitavanje, čišćenje i transformaciju podataka.
 
-**Cjelina 2: Statistička teorija (tjedni 6–10).** Učite programirati u R-u, upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem i temeljima testiranja hipoteza.
+**Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5–6).** Računate mjere centralne tendencije i raspršenosti te ih vizualizirate pomoću ggplot2 — od histograma i boxplotova do naprednih grafičkih prikaza.
 
-**Cjelina 3: Inferencijalna statistika (tjedni 11–15).** Primjenjujete inferencijalne metode — hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — na primjerima iz komunikologije, te prezentirate vlastite projekte.
+**Cjelina 3: Statistička teorija (tjedni 7–9).** Upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem, procjenom parametara, intervalima pouzdanosti i temeljima testiranja hipoteza.
+
+**Cjelina 4: Inferencijalna statistika (tjedni 10–13).** Primjenjujete inferencijalne metode — hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — na primjerima iz komunikologije.
+
+## Preuzmi cijelu knjigu
+
+Sva predavanja dostupna su i u obliku cjelovite knjige:
+
+| Format | Preuzmi |
+|--------|---------|
+| PDF | [Osnove-statistike.pdf](Osnove-statistike.pdf) |
+| Word | [Osnove-statistike.docx](Osnove-statistike.docx) |
 
 ## Brzi pristup
 

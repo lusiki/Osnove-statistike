@@ -1,0 +1,52 @@
+project:
+  type: book
+  output-dir: _book
+
+execute:
+  freeze: auto
+
+book:
+  title: "Osnove statistike"
+  subtitle: "Kolegij za studente komunikologije"
+  author: "doc. dr. sc. Luka Šikić"
+  date: today
+  chapters:
+    - index.qmd
+    - part: "Uvod i osnove programiranja"
+      chapters:
+        - lectures/week-01.qmd
+        - lectures/week-06.qmd
+        - lectures/week-02.qmd
+        - lectures/week-03.qmd
+    - part: "Deskriptivna statistika i vizualizacija"
+      chapters:
+        - lectures/week-04.qmd
+        - lectures/week-05.qmd
+    - part: "Statistička teorija"
+      chapters:
+        - lectures/week-07.qmd
+        - lectures/week-09.qmd
+        - lectures/week-10.qmd
+    - part: "Inferencijalna statistika"
+      chapters:
+        - lectures/week-11.qmd
+        - lectures/week-12.qmd
+        - lectures/week-13.qmd
+        - lectures/week-14.qmd
+
+format:
+  pdf:
+    documentclass: scrreprt
+    papersize: a4
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    lang: hr
+  docx:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    lang: hr
+
+lang: hr

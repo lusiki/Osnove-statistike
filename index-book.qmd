@@ -1,0 +1,7 @@
+# Predgovor {.unnumbered}
+
+Ova knjiga sadrži sva predavanja kolegija "Osnove statistike" na studiju komunikologije Hrvatskog katoličkog sveučilišta. Sadržaj je organiziran u četiri cjeline koje prate logiku postupnog građenja znanja — od uvodnih koncepata i programiranja u R-u, preko deskriptivne statistike i vizualizacije, do statističke teorije i inferencijalne statistike.
+
+Svi primjeri dolaze iz svijeta medija i komunikacija, a kod je napisan isključivo u tidyverse pristupu.
+
+Sadržajna okosnica inspirirana je knjigom *Learning Statistics with R* autorice Danielle Navarro (CC BY-SA 4.0), prilagođena za komunikologe i modernizirana korištenjem tidyverse pristupa.
