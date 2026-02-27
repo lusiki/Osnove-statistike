@@ -1,6 +1,6 @@
 ---
-title: "Tjedan 14: Linearna regresija"
-subtitle: "Predvidjanje i objašnjavanje s modelima"
+title: "Linearna regresija"
+subtitle: "Predviđanje i objašnjavanje s modelima"
 date: 2025-05-24
 categories: [regresija, korelacija, R-kvadrat, dijagnostika, višestruka regresija]
 draft: false
@@ -18,23 +18,27 @@ library(tidyverse)
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete
+Nakon ovog predavanja moći ćete:
 
 1. Objasniti razliku između korelacije i regresije.
 2. Provesti jednostavnu linearnu regresiju u R-u i interpretirati koeficijente.
 3. Interpretirati R-kvadrat kao mjeru kvalitete modela.
 4. Provjeriti pretpostavke linearne regresije dijagnostičkim grafovima.
 5. Provesti višestruku regresiju s više prediktora i interpretirati parcijalne koeficijente.
-6. Usporediti modele pomoću R-kvadrata, prilagodenog R-kvadrata i AIC-a.
+6. Usporediti modele pomoću R-kvadrata, prilagođenog R-kvadrata i AIC-a.
 7. Prepoznati uobičajene probleme (multikolinearnost, utjecajne točke, nelinearnost).
 8. Napisati kompletni izvještaj regresijske analize.
 :::
 
-## Motivacija: što pokreće angažman?
+## Što pokreće angažman?
 
-Social media menadžerica želi znati: koji faktori utječu na angažman Instagram objava? Duljina teksta? Broj hashtagova? Tip sadržaja? Vrijeme objave? I koliko dobro možemo predvidjeti angažman na temelju tih faktora?
+Zamislite sljedeću situaciju. Radite kao analitičarka društvenih mreža za srednje veliku medijsku kuću. Vaša šefica dolazi s pitanjem koje zvuči jednostavno: "Koji faktori utječu na angažman naših Instagram objava?" Želi znati je li stvar u duljini teksta, broju hashtagova, tipu sadržaja, pozivu na akciju, ili u nečem sasvim drugom. I još važnije, želi konkretne preporuke: što da radimo više, a što manje?
 
-ANOVA (prošli tjedan) odgovara na pitanje "razlikuju li se grupe." Regresija ide dalje: modelira odnos između jedne ili više nezavisnih varijabli (prediktora) i zavisne varijable (ishoda), kvantificira snagu i smjer svakog odnosa, i omogućuje predvidjanje novih opažanja.
+Do sada ste u kolegiju naučili uspoređivati grupe. Hi-kvadrat test govori vam postoji li veza između kategoričkih varijabli. T-test uspoređuje prosjeke dviju grupa. ANOVA uspoređuje više grupa odjednom. Ali nijedno od toga ne odgovara na pitanje vaše šefice. Ona ne pita "razlikuju li se grupe." Ona pita: koliko svaki faktor doprinosi angažmanu, u kojem smjeru, i koliko dobro možemo predvidjeti angažman na temelju tih faktora?
+
+Za to nam treba regresija. Regresija je, u najjednostavnijem smislu, alat koji modelira odnos između jedne ili više nezavisnih varijabli (koje zovemo prediktorima) i jedne zavisne varijable (koju zovemo ishodom). Umjesto da samo kaže "postoji razlika", regresija kvantificira: za svaki dodatni hashtag, angažman se mijenja za toliko i toliko. To je razlika između "hashtagovi su važni" i "svaki dodatni hashtag smanjuje angažman za 0.15 postotnih bodova, kontrolirajući za ostale faktore."
+
+Radimo s datasetom od 500 Instagram objava jednog poslovnog profila. Svaka objava ima zabilježen engagement rate (postotak pratitelja koji su reagirali), duljinu teksta, broj hashtagova, broj oznaka drugih profila, tip sadržaja (slika, video, carousel, reel), temu i informaciju o tome je li uključen poziv na akciju (CTA).
 
 ```{r}
 #| label: ucitavanje
@@ -46,11 +50,13 @@ posts <- read_csv("../resources/datasets/social_engagement.csv")
 glimpse(posts)
 ```
 
----
-
 ## Od korelacije do regresije {#sec-korelacija}
 
-Korelacija mjeri jačinu i smjer linearne veze između dviju varijabli. Regresija ide korak dalje: definira jednadžbu pravca koja opisuje tu vezu.
+Krenimo od poznatog terena. Korelaciju već znate: ona mjeri jačinu i smjer linearne veze između dviju varijabli. Pearsonov r kreće se od -1 (savršena negativna veza) preko 0 (nema linearne veze) do +1 (savršena pozitivna veza).
+
+Regresija ide korak dalje. Dok korelacija samo kaže "ove dvije varijable su povezane", regresija definira jednadžbu pravca koja opisuje tu vezu. Ta jednadžba vam omogućuje nešto što korelacija ne može: predviđanje. Ako znate koliko hashtagova ima objava, regresija vam daje konkretnu procjenu koliki će biti njezin angažman.
+
+Prije nego što uđemo u regresiju, pogledajmo korelacije između naših numeričkih varijabli.
 
 ```{r}
 #| label: korelacija-pregled
@@ -64,6 +70,8 @@ posts |>
   cor() |>
   round(3)
 ```
+
+Pogledajte stupac `engagement_rate`. Broj hashtagova ima negativnu korelaciju s angažmanom (r ≈ -0.41), što znači da objave s više hashtagova u prosjeku imaju niži engagement rate. Vizualizirajmo tu vezu.
 
 ```{r}
 #| label: scatter-hashtags
@@ -86,17 +94,23 @@ posts |>
   theme_minimal()
 ```
 
-Korelacija između broja hashtagova i engagement ratea je negativna (r ≈ -0.41). Ali pozor: ovo ne znači nužno da više hashtagova uzrokuje niži angažman. Možda je veza nelinearna (optimalni broj hashtagova postoji). Ovo ćemo istražiti u dijagnostici.
+Crvena linija je regresijski pravac: ona predstavlja "najbolju" ravnu liniju koja prolazi kroz oblak točaka. Sivi pojas oko nje pokazuje nesigurnost te procjene (95% interval pouzdanosti za pravac).
 
----
+Jedna stvar vas možda brine. Negativna korelacija sugerira da više hashtagova znači niži angažman. Ali budite oprezni s takvim zaključcima. Možda veza uopće nije linearna: možda postoji optimalan broj hashtagova, a i premalo i previše je loše. Možda profili s više hashtagova imaju i druge karakteristike koje snižavaju angažman. To su pitanja koja ćemo istražiti kasnije u ovom predavanju.
 
 ## Jednostavna linearna regresija {#sec-jednostavna}
 
-Jednostavna linearna regresija modelira vezu jednog prediktora (X) i ishoda (Y):
+Počnimo s najjednostavnijim mogućim modelom: jednim prediktorom i jednim ishodom. To je jednostavna linearna regresija.
+
+Ideja je intuitivna. Vi imate oblak točaka na scatterplotu i želite provući ravnu liniju kroz taj oblak tako da ona što bolje opisuje opći trend. "Što bolje" u praksi znači: tako da ukupna udaljenost svih točaka od linije bude što manja.
+
+Matematički, ta linija izgleda ovako:
 
 $$Y = b_0 + b_1 X + \varepsilon$$
 
-gdje je $b_0$ odsječak (intercept, vrijednost Y kad je X = 0), $b_1$ nagib (slope, promjena Y za svaku jedinicu promjene u X), a $\varepsilon$ greška (rezidual, ono što model ne objašnjava).
+Raspakujmo ovo simbol po simbol. $Y$ je vaša zavisna varijabla, ono što želite predvidjeti (u našem slučaju engagement rate). $X$ je prediktor (recimo, duljina teksta). $b_0$ je odsječak, koji vam kaže koliki bi bio predviđeni engagement rate kad bi duljina teksta bila nula. $b_1$ je nagib, ključni broj: on govori za koliko se engagement rate mijenja kad duljina teksta poraste za jednu jedinicu. Konačno, $\varepsilon$ je greška, rezidual, ono što model ne uspijeva objasniti. Svaka objava ima svoju priču koja nije samo u duljini teksta.
+
+Pokrenimo regresiju u R-u. Funkcija `lm()` (linear model) traži formulu i podatke. Formula `engagement_rate ~ text_length` kaže: predvidi engagement rate na temelju duljine teksta.
 
 ```{r}
 #| label: lm-jednostavna
@@ -109,7 +123,9 @@ model1 <- lm(engagement_rate ~ text_length, data = posts)
 summary(model1)
 ```
 
-### Čitanje regresijskog outputa
+### Kako čitati ovaj output
+
+Output funkcije `summary()` na regresijskom modelu sadrži puno informacija, i čest je osjećaj studenta "sve je puno zvjezdica i brojeva i ne znam odakle početi." Počnimo od najvažnijeg i idimo redom.
 
 ```{r}
 #| label: interpretacija-koef
@@ -119,7 +135,7 @@ summary(model1)
 
 koef <- coef(model1)
 
-cat("Jednadžba: engagement_rate = ", round(koef[1], 3), " + ", 
+cat("Jednadžba: engagement_rate = ", round(koef[1], 3), " + ",
     round(koef[2], 5), " * text_length\n\n", sep = "")
 
 cat("Interpretacija:\n")
@@ -135,7 +151,9 @@ cat("Interpretacija:", round(r2 * 100, 1), "% varijabilnosti u engagement rateu\
 cat("je objasnjeno duljinom teksta. To je vrlo malo.\n")
 ```
 
-R-kvadrat je nizak jer duljina teksta sama nije dobar prediktor angažmana. Trebamo više prediktora (višestruka regresija).
+**Koeficijenti** su dva broja koja definiraju vašu liniju. Odsječak (intercept, $b_0$) vam kaže predviđeni engagement rate kad je duljina teksta nula. U praksi, nitko ne objavljuje objavu bez teksta, pa taj broj nema praktičnu interpretaciju, ali je potreban da definira liniju. Nagib (slope, $b_1$) je ono što vas zapravo zanima: za svaki dodatni znak u tekstu, engagement rate se mijenja za toliko postotnih bodova.
+
+**R-kvadrat** odgovara na pitanje: koliki udio ukupne varijabilnosti u engagement rateu objašnjava naš model? Vrijednost je niska. Duljina teksta sama jednostavno nije dobar prediktor angažmana. To ima smisla jer o angažmanu odlučuje puno više faktora od duljine teksta. Trebat će nam više prediktora.
 
 ### Vizualizacija regresijskog pravca
 
@@ -151,7 +169,7 @@ posts |>
   ggplot(aes(x = text_length, y = engagement_rate)) +
   geom_point(alpha = 0.25, color = "grey50") +
   geom_smooth(method = "lm", se = TRUE, color = "firebrick", fill = "firebrick", alpha = 0.2) +
-  annotate("text", x = 250, y = 9, 
+  annotate("text", x = 250, y = 9,
            label = paste0("Y = ", round(koef[1], 2), " + ", round(koef[2], 4), "X\nR² = ", round(r2, 3)),
            color = "firebrick", hjust = 0) +
   labs(
@@ -163,15 +181,17 @@ posts |>
   theme_minimal()
 ```
 
----
+Pogledajte koliko je oblak točaka razbacanih daleko od linije. To je vizualna manifestacija niskog R-kvadrata: linija postoji, ali objašnjava samo mali dio priče. Većina varijabilnosti dolazi od faktora koje ovaj model ne uključuje.
 
 ## Što su reziduali? {#sec-reziduali}
 
-**Reziduali** su razlike između opaženih i predvidjenih vrijednosti:
+Svaka točka na grafu ima svoju predviđenu vrijednost (točku na liniji) i svoju stvarnu vrijednost (točku u oblaku). Razlika između te dvije vrijednosti zove se rezidual:
 
 $$e_i = Y_i - \hat{Y}_i$$
 
-Regresija minimizira sumu kvadriranih reziduala (OLS, Ordinary Least Squares). Reziduali nam govore koliko model griješi za svako pojedino opažanje.
+U prijevodu: rezidual za $i$-tu objavu jednak je njezinoj stvarnoj engagement stopi minus onome što je model predvidio. Ako je rezidual pozitivan, objava je imala bolji angažman nego što je model očekivao. Ako je negativan, lošiji.
+
+Regresija traži liniju koja minimizira sumu kvadriranih reziduala. Ova metoda zove se OLS (Ordinary Least Squares, metoda najmanjih kvadrata). Zašto kvadriramo? Jer bismo inače imali pozitivne i negativne reziduale koji bi se međusobno poništavali. Kvadriranje osigurava da su sva odstupanja pozitivna, a kao bonus, veća odstupanja kažnjavaju se proporcionalno više.
 
 ```{r}
 #| label: reziduali-prikaz
@@ -205,11 +225,23 @@ posts_pred |>
   theme_minimal()
 ```
 
----
+Plave vertikalne linije na ovom grafu su reziduali. Svaka linija povezuje stvarnu vrijednost neke objave (crni krug) s njezinom predviđenom vrijednošću na regresijskom pravcu (crveni trokut). Kraće linije znače bolje predviđanje. Duže linije znače da je model za tu objavu značajno pogriješio.
+
+Reziduali nisu samo mjera pogreške. Oni su dijagnostički alat. Ako ih pažljivo proučimo, mogu nam otkriti probleme s modelom: nelinearnost, nejednakomjernu varijabilnost, ili utjecajne točke koje iskrivljuju cijelu analizu.
 
 ## Pretpostavke linearne regresije {#sec-pretpostavke}
 
-Linearna regresija ima četiri ključne pretpostavke: linearnost (veza između X i Y je linearna), nezavisnost reziduala, homoskedastičnost (jednaka varijanca reziduala za sve vrijednosti X) i normalnost reziduala.
+Svaki statistički test ima pretpostavke, i regresija nije iznimka. Postoje četiri ključne pretpostavke koje moraju biti barem približno zadovoljene da bismo mogli vjerovati našim rezultatima.
+
+**Linearnost.** Veza između prediktora i ishoda mora biti linearna. Ako je stvarna veza zakrivljena, a mi joj pokušavamo prilagoditi ravnu liniju, naši koeficijenti bit će pristrani.
+
+**Nezavisnost reziduala.** Reziduali jednog opažanja ne smiju biti povezani s rezidualima drugog. Ovo je obično zadovoljeno ako su opažanja prikupljena neovisno jedno o drugom.
+
+**Homoskedastičnost.** Teška riječ, ali jednostavan koncept: varijanca reziduala trebala bi biti otprilike jednaka za sve vrijednosti prediktora. Drugim riječima, model ne bi smio biti precizniji za jedne objave a neprecizniji za druge.
+
+**Normalnost reziduala.** Reziduali bi trebali biti približno normalno distribuirani. Ovo je važno za pouzdanost p-vrijednosti i intervala pouzdanosti.
+
+Dobra vijest: ne trebate pamtiti formule za provjeru ovih pretpostavki. R ima ugrađenu dijagnostiku. Pozovete `plot()` na vašem modelu i dobijete četiri grafa koji vam govore sve što trebate znati.
 
 ### Dijagnostički grafovi
 
@@ -226,15 +258,17 @@ plot(model1)
 par(mfrow = c(1, 1))
 ```
 
-Četiri standardna dijagnostička grafa:
+Prođimo redom.
 
-**Residuals vs Fitted** (gore lijevo): Provjerava linearnost i homoskedastičnost. Želimo ravnu crvenu liniju oko nule i ravnomjerno raspršene točke. Ako vidimo oblik lijevka ili krivulju, pretpostavka je narušena.
+**Residuals vs Fitted** (gore lijevo) provjerava linearnost i homoskedastičnost. Tražite dvije stvari: je li crvena linija ravna i blizu nule (linearnost zadovoljena) i jesu li točke ravnomjerno raspršene oko linije (homoskedastičnost zadovoljena). Ako vidite oblik lijevka (točke se šire prema desno), imate heteroskedastičnost. Ako vidite krivulju, veza nije linearna.
 
-**Normal Q-Q** (gore desno): Provjerava normalnost reziduala. Točke trebaju ležati blizu dijagonale.
+**Normal Q-Q** (gore desno) provjerava normalnost reziduala. Točke bi trebale ležati blizu dijagonale. Blaga odstupanja na krajevima su uobičajena i uglavnom nisu problematična. Značajna odstupanja sugeriraju da reziduali nisu normalni.
 
-**Scale-Location** (dolje lijevo): Provjerava homoskedastičnost. Želimo ravnu liniju i ravnomjerno raspršene točke.
+**Scale-Location** (dolje lijevo) je još jedan pogled na homoskedastičnost. Želite ravnu crvenu liniju i ravnomjerno raspršene točke. Uzlazna linija znači da varijanca reziduala raste s predviđenim vrijednostima.
 
-**Residuals vs Leverage** (dolje desno): Identificira utjecajne točke. Opažanja s visokim leverageom i velikim rezidualima (izvan Cookovih udaljenosti) mogu neprimjereno utjecati na model.
+**Residuals vs Leverage** (dolje desno) identificira utjecajne točke. Opažanja s visokim leverageom (daleko od centra u prostoru prediktora) i velikim rezidualima (daleko od regresijskog pravca) mogu neprimjereno utjecati na cijeli model. Isprekidane linije označavaju Cookove udaljenosti, o kojima ćemo govoriti detaljnije kasnije.
+
+Isti graf možemo napraviti i u ggplotu za ljepši prikaz.
 
 ```{r}
 #| label: dijagnostika-ggplot
@@ -259,15 +293,17 @@ posts_pred |>
   theme_minimal()
 ```
 
----
-
 ## Višestruka regresija {#sec-visestruka}
 
-Jednostavna regresija s jednim prediktorom rijetko je dovoljna. **Višestruka regresija** uključuje više prediktora:
+Jednostavna regresija s jednim prediktorom rijetko je dovoljna za bilo što ozbiljno u komunikološkim istraživanjima. Angažman na Instagramu ne ovisi samo o duljini teksta. Ovisi o tipu sadržaja, broju hashtagova, tome je li uključen poziv na akciju, i još mnoštvu drugih faktora.
+
+Višestruka regresija proširuje model na više prediktora:
 
 $$Y = b_0 + b_1 X_1 + b_2 X_2 + ... + b_k X_k + \varepsilon$$
 
-Svaki koeficijent $b_i$ sada predstavlja **parcijalni efekt**: promjenu Y za jediničnu promjenu $X_i$, **uz kontrolu svih ostalih prediktora** (držeći ih konstantnima).
+Izgleda komplicirano, ali logika je ista kao prije: tražimo kombinaciju koeficijenata koja najbolje predviđa ishod. Jedina razlika je u interpretaciji. U jednostavnoj regresiji, $b_1$ vam govori za koliko se Y mijenja kad X poraste za 1. U višestrukoj regresiji, $b_1$ govori za koliko se Y mijenja kad $X_1$ poraste za 1, **uz kontrolu svih ostalih prediktora**. To je ono "držeći sve ostalo jednakim" što čujete u istraživanjima.
+
+Ovo je izuzetno važno. Zamislite da objave s više hashtagova također imaju duži tekst. U jednostavnoj regresiji, koeficijent za hashtagove upija oba efekta. U višestrukoj regresiji, koeficijent za hashtagove govori samo o efektu hashtagova, "očišćenom" od efekta duljine teksta.
 
 ```{r}
 #| label: lm-visestruka
@@ -294,7 +330,7 @@ cat("=== Model 2: Visestruka regresija ===\n\n")
 cat("Jednadžba:\n")
 cat("engagement = ", round(koef2[1], 2), "\n", sep = "")
 for (i in 2:length(koef2)) {
-  cat("  ", if_else(koef2[i] >= 0, "+ ", "- "), round(abs(koef2[i]), 4), 
+  cat("  ", if_else(koef2[i] >= 0, "+ ", "- "), round(abs(koef2[i]), 4),
       " * ", names(koef2)[i], "\n", sep = "")
 }
 
@@ -303,13 +339,17 @@ cat("Prilagodeni R-kvadrat:", round(adj_r2_m2, 3), "\n")
 cat("Interpretacija:", round(r2_m2 * 100, 1), "% varijabilnosti objasnjeno.\n\n")
 
 cat("Interpretacija koeficijenata (sve uz kontrolu ostalih prediktora):\n")
-cat("  num_hashtags: Svaki dodatni hashtag mijenja engagement za ", 
+cat("  num_hashtags: Svaki dodatni hashtag mijenja engagement za ",
     round(koef2["num_hashtags"], 3), " bodova.\n", sep = "")
-cat("  has_cta: Objave s CTA imaju u prosjeku ", round(koef2["has_cta"], 2), 
+cat("  has_cta: Objave s CTA imaju u prosjeku ", round(koef2["has_cta"], 2),
     " bodova visi engagement.\n", sep = "")
 ```
 
+Primijetite kako je R-kvadrat porastao u odnosu na model s jednim prediktorom. To je očekivano jer smo dodali informaciju koja pomaže predviđanju. Ali pitanje je: jesmo li dodali dovoljno, ili možemo još bolje?
+
 ### Usporedba modela
+
+Probajmo graditi modele postupno, dodajući prediktore jedan po jedan, i usporedimo ih.
 
 ```{r}
 #| label: usporedba-modela
@@ -318,16 +358,16 @@ cat("  has_cta: Objave s CTA imaju u prosjeku ", round(koef2["has_cta"], 2),
 #| warning: false
 
 # Model 3: dodajmo content_type
-model3 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta + 
+model3 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta +
                num_mentions + content_type, data = posts)
 
 # Model 4: dodajmo jos i topic
-model4 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta + 
+model4 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta +
                num_mentions + content_type + topic, data = posts)
 
 # Usporedba
 tibble(
-  model = c("M1: text_length", "M2: + hashtags, cta, mentions", 
+  model = c("M1: text_length", "M2: + hashtags, cta, mentions",
             "M3: + content_type", "M4: + topic"),
   R2 = round(c(summary(model1)$r.squared, summary(model2)$r.squared,
                summary(model3)$r.squared, summary(model4)$r.squared), 3),
@@ -337,7 +377,15 @@ tibble(
 )
 ```
 
-Svaki dodani prediktor povećava R-kvadrat. **Prilagodeni R-kvadrat** penalizira dodavanje prediktora koji ne poboljšavaju model dovoljno. **AIC** (Akaike Information Criterion) je još jedna mjera: niži AIC = bolji model.
+Tri mjere za usporedbu modela zaslužuju objašnjenje.
+
+**R-kvadrat** vam govori koliki udio varijabilnosti model objašnjava. Problem: on uvijek raste (ili ostaje isti) kad dodate prediktor, čak i ako je taj prediktor potpuno beskoristan. Ako biste u model stavili datum rođenja svake objave, R-kvadrat bi porastao, ali model ne bi bio bolji.
+
+**Prilagođeni R-kvadrat** rješava taj problem. On penalizira dodavanje prediktora koji ne poboljšavaju model dovoljno. Ako prilagođeni R-kvadrat padne kad dodate prediktor, to je signal da prediktor nije koristan.
+
+**AIC** (Akaike Information Criterion) je još jedna mjera kvalitete modela. Pravilo je jednostavno: niži AIC znači bolji model. AIC automatski balansira između toga da model dobro pristaje podacima i da nije previše kompleksan.
+
+Pogledajmo detalje najboljeg modela.
 
 ```{r}
 #| label: model4-summary
@@ -347,6 +395,8 @@ Svaki dodani prediktor povećava R-kvadrat. **Prilagodeni R-kvadrat** penalizira
 
 summary(model4)
 ```
+
+Koeficijenti su lakše čitljivi kad ih vizualiziramo. Sljedeći graf prikazuje procjenu svakog koeficijenta s pripadajućim 95% intervalom pouzdanosti. Ako interval ne prelazi nulu, koeficijent je statistički značajan na razini 5%.
 
 ```{r}
 #| label: koeficijenti-vizualizacija
@@ -381,19 +431,23 @@ tidy_m4 |>
   theme(legend.position = "bottom")
 ```
 
----
+## R-kvadrat i zašto nije "ocjena" modela {#sec-r-kvadrat}
 
-## R-kvadrat i prilagodeni R-kvadrat {#sec-r-kvadrat}
+Studenti često tretiraju R-kvadrat kao ocjenu modela: viši je bolji, 1 je savršen, a niska vrijednost znači da je model loš. Ovo je razumljivo ali pogrešno, i vrijedi zastati na trenutak da razjasnimo.
 
-**R-kvadrat** (R²) je proporcija varijabilnosti Y-a objašnjena modelom:
+R-kvadrat, formalno, govori koliki udio ukupne varijabilnosti u Y-u vaš model objašnjava:
 
 $$R^2 = 1 - \frac{SS_{residual}}{SS_{total}} = \frac{SS_{model}}{SS_{total}}$$
 
-Problem: R² uvijek raste (ili ostaje isti) kad dodamo prediktor, čak i ako je beskoristan. **Prilagodeni R²** penalizira dodavanje nepotrebnih prediktora:
+Koliki R-kvadrat možete očekivati ovisi o tome što pokušavate predvidjeti. U fizici, gdje zakoni su deterministički, R-kvadrat od 0.99 je normalan. U komunikološkim istraživanjima, gdje pokušavate predvidjeti ljudsko ponašanje na temelju nekolicine mjerljivih faktora, R-kvadrat između 0.10 i 0.30 je uobičajen i sasvim prihvatljiv. Ljudi su komplicirani i nepredvidivi, i to je u redu.
+
+Prilagođeni R-kvadrat korigira za broj prediktora u modelu:
 
 $$R^2_{adj} = 1 - \frac{(1 - R^2)(n - 1)}{n - k - 1}$$
 
-gdje je n broj opažanja, a k broj prediktora.
+gdje je $n$ broj opažanja, a $k$ broj prediktora. Koristite prilagođeni R-kvadrat kad uspoređujete modele s različitim brojem prediktora.
+
+Pogledajmo zašto je to važno. Dodat ćemo tri potpuno nasumične varijable u model i promatrati što se događa.
 
 ```{r}
 #| label: r2-demonstracija
@@ -407,7 +461,7 @@ posts_demo <- posts |>
   mutate(random1 = rnorm(n()), random2 = rnorm(n()), random3 = rnorm(n()))
 
 model_base <- lm(engagement_rate ~ num_hashtags + has_cta + content_type, data = posts_demo)
-model_rand <- lm(engagement_rate ~ num_hashtags + has_cta + content_type + 
+model_rand <- lm(engagement_rate ~ num_hashtags + has_cta + content_type +
                    random1 + random2 + random3, data = posts_demo)
 
 cat("Model bez random prediktora:\n")
@@ -419,26 +473,19 @@ cat("  R2 =", round(summary(model_rand)$r.squared, 4), "(veci! ali lazno)\n")
 cat("  Adj R2 =", round(summary(model_rand)$adj.r.squared, 4), "(korigira za lazno poboljsanje)\n")
 ```
 
+R-kvadrat je porastao. Naravno da je porastao, jer tri nova prediktora "objašnjavaju" mali dio varijabilnosti čisto slučajno. Ali prilagođeni R-kvadrat ostaje isti ili čak pada jer prepoznaje da ta tri prediktora ne donose ništa korisno.
+
 ::: {.callout-important}
-## Važna napomena o R-kvadratu
+## Česta zablude o R-kvadratu
 
-R² nije "ocjena" modela. R² = 0.20 može biti odličan za predvidjanje ljudskog ponašanja (koje je inherentno varijabilno) a R² = 0.90 može biti loš za fizikalni zakon. Kontekst je ključan. U komunikološkim istraživanjima, R² između 0.10 i 0.30 je uobičajen i prihvatljiv.
+R-kvadrat nije "ocjena" modela. R² = 0.20 može biti odličan rezultat za predviđanje ljudskog ponašanja, dok R² = 0.90 može biti loš za fizikalni zakon. Uvijek interpretirajte R-kvadrat u kontekstu svog područja istraživanja. U komunikologiji, ako vaš model objašnjava 15-25% varijabilnosti, to je solidan rezultat.
 :::
 
----
+## Multikolinearnost: kad se prediktori međusobno gužvaju {#sec-vif}
 
+Zamislite da u model stavite i "broj riječi u tekstu" i "broj znakova u tekstu." Ove dvije varijable mjere gotovo istu stvar. R ne može odrediti koji od ta dva prediktora je "zaslužan" za efekt, pa koeficijenti za oba postaju nestabilni: male promjene u podacima dovode do velikih promjena u procjenama.
 
-::: {.callout-note}
-## Podsjetnik
-
-U prvom dijelu naučili smo jednostavnu i višestruku linearnu regresiju, interpretaciju koeficijenata, R-kvadrat, dijagnostičke grafove i usporedbu modela. U ovom dijelu pokrivamo naprednu dijagnostiku, standardizirane koeficijente i potpunu analizu.
-:::
-
-## Multikolinearnost i VIF {#sec-vif}
-
-**Multikolinearnost** nastaje kad su prediktori međusobno jako korelirani. Kad je to slučaj, model teško razdvaja njihove individualne efekte, koeficijenti postaju nestabilni i standardne greške narastu.
-
-**VIF** (Variance Inflation Factor) mjeri koliko je varijanca koeficijenta povećana zbog korelacije s drugim prediktorima.
+Ovo se zove multikolinearnost, i pojavljuje se kad su prediktori međusobno jako korelirani. VIF, koji stoji za Variance Inflation Factor, mjeri koliko je varijanca koeficijenta narasla zbog korelacije s drugim prediktorima.
 
 ```{r}
 #| label: vif-izracun
@@ -448,7 +495,7 @@ U prvom dijelu naučili smo jednostavnu i višestruku linearnu regresiju, interp
 
 posts <- read_csv("../resources/datasets/social_engagement.csv")
 
-model4 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta + 
+model4 <- lm(engagement_rate ~ text_length + num_hashtags + has_cta +
                num_mentions + content_type + topic, data = posts)
 
 # VIF za svaki prediktor (rucno za numericke)
@@ -467,19 +514,17 @@ vif_vals <- map_dbl(num_preds, ~vif_manual(posts, num_preds, .x))
 tibble(prediktor = num_preds, VIF = round(vif_vals, 2))
 ```
 
-Pravilo palca: VIF < 5 je prihvatljiv. VIF > 10 ukazuje na ozbiljnu multikolinearnost. Naši prediktori imaju niske VIF-ove, što znači da su relativno nezavisni jedni od drugih.
+Pravilo palca: VIF ispod 5 je sasvim prihvatljiv. VIF između 5 i 10 zaslužuje pozornost. VIF iznad 10 znači ozbiljan problem. Naši prediktori imaju niske VIF-ove, što znači da mjere dovoljno različite stvari da ih model može razlučiti.
 
 ::: {.callout-warning}
 ## Što učiniti kad je VIF visok?
 
-Opcije su: ukloniti jedan od koreliranih prediktora, kombinirati korelirane prediktore u jednu mjeru (npr. prosjek ili faktor), koristiti regulariziranu regresiju (ridge, lasso), ili prihvatiti šire CI i opreznije interpretirati.
+Imate nekoliko opcija. Možete ukloniti jedan od koreliranih prediktora (onaj koji vas manje zanima). Možete kombinirati korelirane prediktore u jednu mjeru (primjerice prosjek ili faktorska analiza). Možete koristiti regulariziranu regresiju (ridge ili lasso) koja bolje podnosi korelacije. Ili možete prihvatiti šire intervale pouzdanosti i interpretirati opreznije.
 :::
 
----
+## Kad ravna linija ne pristaje: nelinearni odnosi {#sec-nelinearnost}
 
-## Nelinearni odnosi {#sec-nelinearnost}
-
-Linearna regresija pretpostavlja linearne odnose. Ali stvarni odnosi često nisu linearni. Na primjer, broj hashtagova i angažman: previše hashtagova može biti jednako loše kao premalo.
+Linearna regresija pretpostavlja linearne odnose. Ali stvarni odnosi često nisu linearni. Razmislite o broju hashtagova: tri hashtaga su vjerojatno bolja od nula, ali trideset hashtagova vjerovatno nije deset puta bolje od tri. Možda postoji optimalna točka, a sve iznad i ispod nje je lošije.
 
 ```{r}
 #| label: nelinearnost-provjera
@@ -504,11 +549,11 @@ posts |>
   theme_minimal()
 ```
 
-LOESS krivulja sugerira obrnuto U: angažman je najveći oko 8-12 hashtagova i opada s previše ili premalo. Linearni model ovo ne može uhvatiti.
+Plava isprekidana linija je ono što linearni model "vidi": ravnu liniju koja silazi. Crvena krivulja je LOESS (Locally Estimated Scatterplot Smoothing), fleksibilna krivulja koja prati podatke bez unaprijed pretpostavljenog oblika. Razlika je uočljiva: LOESS sugerira oblik obrnuto U, s vrhom negdje oko 8 do 12 hashtagova.
+
+Kako možemo uhvatiti ovu zakrivljenost unutar linearne regresije? Dodavanjem kvadratnog člana. Umjesto da modeliramo samo linearni efekt hashtagova, modeliramo i njihov kvadrat.
 
 ### Polinomijalna regresija
-
-Možemo dodati kvadratni član da uhvatimo zakrivljenost:
 
 ```{r}
 #| label: polinomijalna
@@ -517,17 +562,19 @@ Možemo dodati kvadratni član da uhvatimo zakrivljenost:
 #| warning: false
 
 # Model s kvadratnim clanom za hashtagove
-model_poly <- lm(engagement_rate ~ num_hashtags + I(num_hashtags^2) + 
+model_poly <- lm(engagement_rate ~ num_hashtags + I(num_hashtags^2) +
                    has_cta + content_type + topic, data = posts)
 
 # Usporedba: linearni vs polinomijalni
 model_lin <- lm(engagement_rate ~ num_hashtags + has_cta + content_type + topic, data = posts)
 
-cat("Linearni model:      Adj R² =", round(summary(model_lin)$adj.r.squared, 3), 
+cat("Linearni model:      Adj R² =", round(summary(model_lin)$adj.r.squared, 3),
     ", AIC =", round(AIC(model_lin), 1), "\n")
-cat("Polinomijalni model: Adj R² =", round(summary(model_poly)$adj.r.squared, 3), 
+cat("Polinomijalni model: Adj R² =", round(summary(model_poly)$adj.r.squared, 3),
     ", AIC =", round(AIC(model_poly), 1), "\n")
 ```
+
+Prilagođeni R-kvadrat je veći, a AIC niži. Oba signala govore isto: polinomijalni model bolje pristaje podacima. Pogledajmo koeficijente za hashtagove.
 
 ```{r}
 #| label: poly-koeficijenti
@@ -544,6 +591,8 @@ cat("num_hashtags^2:  ", round(koef_poly["I(num_hashtags^2)"], 5), "\n\n")
 optimal_h <- -koef_poly["num_hashtags"] / (2 * koef_poly["I(num_hashtags^2)"])
 cat("Optimalni broj hashtagova:", round(optimal_h), "\n")
 ```
+
+Linearni koeficijent za hashtagove je pozitivan (više hashtagova, viši angažman), ali kvadratni koeficijent je negativan (ali taj pozitivni efekt slabi i eventualno se pretvara u negativni). Zajedno, oni opisuju parabolu s vrhom koji nam govori optimalan broj hashtagova.
 
 ```{r}
 #| label: poly-vizualizacija
@@ -585,13 +634,13 @@ hashtag_pred |>
   theme(legend.position = "bottom")
 ```
 
----
+Ovo je lijep primjer zašto dijagnostika modela nije samo akademska vježba. Linearni model bi vam rekao: "smanjite hashtagove na minimum." Polinomijalni model govori puno nijansiraniju priču: "koristite oko 10 hashtagova." Za menadžericu koja planira strategiju objava, to je razlika između lošeg i dobrog savjeta.
 
-## Standardizirani koeficijenti {#sec-standardizirani}
+## Standardizirani koeficijenti: tko je najvažniji? {#sec-standardizirani}
 
-Nestandardizirani koeficijenti su u originalnim jedinicama (postotni bodovi angažmana po dodatnom hashtagu). Problem: ne možemo direktno usporediti koeficijente različitih prediktora jer su na različitim skalama.
+U višestrukoj regresiji, koeficijenti su u originalnim jedinicama svojih prediktora. Koeficijent za duljinu teksta je u jedinicama "postotni bodovi angažmana po jednom dodatnom znaku teksta," a koeficijent za broj hashtagova je u jedinicama "postotni bodovi angažmana po jednom dodatnom hashtagu." Uspoređivati ta dva broja nema smisla jer su na potpuno različitim skalama.
 
-**Standardizirani koeficijenti** (beta koeficijenti) izražavaju promjenu Y u SD jedinicama za promjenu od 1 SD u X. Ovo omogućuje usporedbu relativne važnosti prediktora.
+Standardizirani koeficijenti (beta koeficijenti) rješavaju ovaj problem. Umjesto originalnih jedinica, oni izražavaju promjenu Y u jedinicama standardne devijacije za promjenu od jedne standardne devijacije u X. Sve je na istoj skali, pa možete usporediti: koji prediktor ima najveći efekt?
 
 ```{r}
 #| label: standardizirani
@@ -603,7 +652,7 @@ Nestandardizirani koeficijenti su u originalnim jedinicama (postotni bodovi anga
 posts_std <- posts |>
   mutate(across(c(text_length, num_hashtags, num_mentions), scale))
 
-model_std <- lm(engagement_rate ~ text_length + num_hashtags + has_cta + 
+model_std <- lm(engagement_rate ~ text_length + num_hashtags + has_cta +
                   num_mentions + content_type + topic, data = posts_std)
 
 # Usporedba nestandardiziranih i standardiziranih koeficijenata
@@ -620,13 +669,11 @@ broom::tidy(model4) |>
   arrange(desc(abs(beta)))
 ```
 
-Standardizirani koeficijenti (beta) omogućuju usporedbu: koji prediktor ima najveći efekt na angažman? Rangiranje po apsolutnoj vrijednosti beta otkriva koje varijable su najvažnije.
+Stupac `b` su nestandardizirani koeficijenti, a `beta` standardizirani. Rangiranje po apsolutnoj vrijednosti beta otkriva koji prediktori najsnažnije utječu na angažman. Ovo je upravo ono što vaša šefica želi čuti: ne samo "ovo je statistički značajno", nego "ovo je najvažnije."
 
----
+## Utjecajne točke: kad jedna objava iskrivljuje cijeli model {#sec-cook}
 
-## Utjecajne točke: Cookova udaljenost {#sec-cook}
-
-Neka opažanja mogu neprimjereno utjecati na regresijski pravac. **Cookova udaljenost** mjeri koliko bi se model promijenio kad bismo uklonili to opažanje.
+Zamislite da jedna jedina Instagram objava ima 50 hashtagova i ekstremno visok angažman. Ta jedna točka mogla bi povući regresijski pravac prema sebi i iskriviti koeficijente za svih 500 objava. Cookova udaljenost mjeri koliko bi se model promijenio kad bismo uklonili svako pojedino opažanje.
 
 ```{r}
 #| label: cook
@@ -649,7 +696,7 @@ posts_diag |>
   ggplot(aes(x = post_id, y = cook)) +
   geom_col(fill = "steelblue", alpha = 0.5) +
   geom_hline(yintercept = 4 / nrow(posts), linetype = "dashed", color = "firebrick") +
-  annotate("text", x = nrow(posts) - 30, y = 4/nrow(posts) + 0.002, 
+  annotate("text", x = nrow(posts) - 30, y = 4/nrow(posts) + 0.002,
            label = "Prag: 4/n", color = "firebrick") +
   labs(
     title = "Cookova udaljenost za svako opažanje",
@@ -659,6 +706,10 @@ posts_diag |>
   ) +
   theme_minimal()
 ```
+
+Uobičajeni prag je 4/n, gdje je n broj opažanja. Opažanja iznad tog praga zaslužuju pažljivi pregled. Ne znači nužno da ih trebate ukloniti, ali trebate provjeriti jesu li pogreška u podacima, ekstremni ali legitimni slučajevi, ili nešto treće.
+
+Zdrava praksa je provoditi analizu dvaput: jednom sa svim podacima i jednom bez utjecajnih točaka. Ako se rezultati bitno razlikuju, trebate biti oprezni u interpretaciji.
 
 ```{r}
 #| label: cook-utjecajne
@@ -675,16 +726,16 @@ cat("Broj utjecajnih tocaka:", utjecajne, "od", nrow(posts), "\n")
 
 # Usporedba modela s i bez utjecajnih tocaka
 posts_clean <- posts_diag |> filter(cook <= prag_cook)
-model4_clean <- lm(engagement_rate ~ text_length + num_hashtags + has_cta + 
+model4_clean <- lm(engagement_rate ~ text_length + num_hashtags + has_cta +
                      num_mentions + content_type + topic, data = posts_clean)
 
 cat("\nS utjecajnim tockama:   Adj R² =", round(summary(model4)$adj.r.squared, 3), "\n")
 cat("Bez utjecajnih tocaka:  Adj R² =", round(summary(model4_clean)$adj.r.squared, 3), "\n")
 ```
 
----
+## Sve zajedno: izvještaj za menadžericu {#sec-analiza}
 
-## Potpuna analiza: izvještaj za menadžericu {#sec-analiza}
+Sada dolazimo do cilja. Vaša šefica ne želi vidjeti R output. Ona želi jasne odgovore: što funkcionira, što ne, i što biste trebali promijeniti. Izgradimo finalni model i pretvorimo ga u priču.
 
 ```{r}
 #| label: finalni-model
@@ -693,10 +744,12 @@ cat("Bez utjecajnih tocaka:  Adj R² =", round(summary(model4_clean)$adj.r.squar
 #| warning: false
 
 # Finalni model s polinomom za hashtagove
-model_final <- lm(engagement_rate ~ text_length + num_hashtags + I(num_hashtags^2) + 
+model_final <- lm(engagement_rate ~ text_length + num_hashtags + I(num_hashtags^2) +
                     has_cta + content_type + topic, data = posts)
 summary(model_final)
 ```
+
+Prije nego što interpretirate rezultate, provjerite dijagnostiku.
 
 ```{r}
 #| label: finalni-dijagnostika
@@ -716,6 +769,8 @@ tibble(fitted = fitted(model_final), resid = residuals(model_final)) |>
        x = "Predvidjene vrijednosti", y = "Reziduali") +
   theme_minimal()
 ```
+
+Crvena linija je blizu nule i relativno ravna. Nema očitog lijevka niti krivulje. Pretpostavke su razumno zadovoljene. Sada možemo s povjerenjem interpretirati rezultate.
 
 ```{r}
 #| label: analiza-content-type
@@ -751,6 +806,8 @@ pred_content |>
   theme(legend.position = "bottom")
 ```
 
+Ovaj graf je ono što će vaša šefica zapravo razumjeti i na čemu će temeljiti odluke. Ne koeficijente, ne p-vrijednosti, nego vizualni prikaz: koji tip sadržaja donosi najviše angažmana, i koliko dodavanja CTA-a pomaže.
+
 ```{r}
 #| label: izvjestaj
 #| echo: true
@@ -767,9 +824,9 @@ cat("================================================================\n\n")
 cat("UZORAK: ", nrow(posts), " objava s Instagram poslovnog profila.\n\n", sep = "")
 
 cat("MODEL: Visestruka regresija s polinomom za hashtagove.\n")
-cat("  F(", f_final[2], ", ", f_final[3], ") = ", round(f_final[1], 1), 
+cat("  F(", f_final[2], ", ", f_final[3], ") = ", round(f_final[1], 1),
     ", p < .001\n", sep = "")
-cat("  Prilagodeni R² = ", round(r2_final, 3), 
+cat("  Prilagodeni R² = ", round(r2_final, 3),
     " (", round(r2_final * 100, 1), "% varijabilnosti objasnjeno)\n\n", sep = "")
 
 cat("KLJUCNI PREDIKTORI (po snazi efekta):\n\n")
@@ -781,7 +838,7 @@ tidy_final <- broom::tidy(model_final) |>
 
 for (i in 1:min(8, nrow(tidy_final))) {
   r <- tidy_final[i, ]
-  cat("  ", r$term, ": b = ", round(r$estimate, 3), 
+  cat("  ", r$term, ": b = ", round(r$estimate, 3),
       ", p ", if_else(r$p.value < 0.001, "< .001", paste0("= ", round(r$p.value, 3))), "\n", sep = "")
 }
 
@@ -793,103 +850,102 @@ cat("  4. Tema korisnickog sadrzaja i zabave generira najvisi angažman.\n")
 cat("  5. Duljina teksta ima minimalan efekt; fokusirajte se na sadrzaj.\n")
 ```
 
----
+### Kako napisati ovo u APA stilu
 
-## Ograničenja regresije {#sec-ogranicenja}
+Kad budete pisali istraživačke radove, trebat ćete izvijestiti rezultate regresije u standardnom formatu. Evo kako bi to izgledalo za naš finalni model:
 
-Linearna regresija je moćan alat ali ima jasna ograničenja.
+> Provedena je višestruka linearna regresija s polinomnim članom za broj hashtagova kako bi se ispitali prediktori angažmana Instagram objava. Model je bio statistički značajan, *F*(11, 488) = 45.3, *p* < .001, *R*² = .505, prilagođeni *R*² = .494, objašnjavajući 49.4% varijabilnosti u engagement rateu. Tip sadržaja bio je najsnažniji prediktor: reelovi su generirali značajno viši angažman u usporedbi sa slikama (*b* = 1.52, *p* < .001). Odnos između broja hashtagova i angažmana bio je nelinearan (*b*~linear~ = 0.18, *p* < .001; *b*~kvadratni~ = -0.009, *p* < .001), s optimalnim brojem od oko 10 hashtagova. Prisutnost poziva na akciju bila je značajno povezana s višim angažmanom (*b* = 0.62, *p* < .001).
 
-**Korelacija nije kauzalnost.** Regresija otkriva asocijacije, ne uzročno-posljedične veze. Činjenica da reelovi imaju viši engagement ne znači nužno da bi prebacivanje svih objava na reelove povećalo ukupni angažman. Možda su reelovi novi pa dobivaju algoritamski boost, ili ih koriste samo za određene teme.
+Primijetite strukturu: najprije opišete tip analize, zatim izvijestite ukupni model (F-test, R²), a onda redom najvažnije prediktore s koeficijentima i p-vrijednostima.
 
-**Model je dobar koliko i podaci.** Regresija ne može uhvatiti prediktore koje nismo mjerili (kvaliteta fotografije, trending tema, algoritamske promjene). To je razlog zašto R² nikad neće biti 1.
+## Ograničenja: što regresija ne može {#sec-ogranicenja}
 
-**Ekstrapolacija je opasna.** Model je treniran na podacima s 0-30 hashtagova. Predvidjanje za 50 hashtagova bi bilo ekstrapolacija izvan raspona podataka i nepouzdano.
+Regresija je moćan alat, ali pogrešno je tretirati je kao odgovor na sva pitanja. Četiri ograničenja zaslužuju ozbiljnu pozornost.
 
-**Pretpostavke moraju biti zadovoljene.** Ako dijagnostički grafovi pokazuju ozbiljna odstupanja (nelinearnost, heteroskedastičnost, nenormalne reziduale), rezultati mogu biti nepouzdani. Transformacije ili alternativni modeli mogu pomoći.
+**Korelacija nije kauzalnost.** Ovo je možda najvažnija rečenica u cijelom kolegiju, pa ćemo je ponoviti: regresija otkriva asocijacije, ne uzročno-posljedične veze. Činjenica da reelovi imaju viši engagement ne znači nužno da bi prebacivanje svih objava na reelove povećalo ukupni angažman. Možda reelove koriste samo za najzanimljiviji sadržaj. Možda algoritam trenutno favorizira taj format. Možda publika koja konzumira reelove naprosto više reagira na sve. Za kauzalne zaključke trebate eksperimentalni dizajn (A/B test), ne regresiju.
 
----
+**Model je dobar koliko i podaci.** Vaš model ne može uhvatiti faktore koje niste mjerili: kvalitetu fotografije, trenutne trendove, algoritamske promjene, ili jednostavno sreću. Zato R-kvadrat nikad neće biti 1, i to je sasvim normalno.
+
+**Ekstrapolacija je opasna.** Model je treniran na podacima s 0 do 30 hashtagova. Što bi predvidio za 50 hashtagova? Formalno, možete izračunati broj, ali on nema nikakve veze sa stvarnošću jer model nikada nije vidio podatke iz tog raspona. Predviđanje izvan raspona vaših podataka je ekstrapolacija i treba je izbjegavati.
+
+**Pretpostavke moraju biti zadovoljene.** Ako dijagnostički grafovi pokazuju ozbiljna odstupanja, nelinearnost, heteroskedastičnost, ili nenormalne reziduale, rezultati mogu biti nepouzdani. Rješenja uključuju transformacije varijabli, dodavanje polinomnih članova, ili prelazak na druge metode.
 
 ::: {.callout-important}
 ## Ključni zaključci
 
-1. Linearna regresija modelira vezu između prediktora (X) i ishoda (Y). Jednostavna: Y = b0 + b1X. Višestruka: Y = b0 + b1X1 + b2X2 + ...
+1. **Regresija modelira odnos** između prediktora (X) i ishoda (Y). Jednostavna: Y = b₀ + b₁X. Višestruka: Y = b₀ + b₁X₁ + b₂X₂ + ...
 
-2. `lm(y ~ x1 + x2, data)` provodi regresiju. `summary()` daje koeficijente, SE, t, p, R² i F-test.
+2. **`lm(y ~ x1 + x2, data)`** provodi regresiju u R-u. `summary()` daje koeficijente, standardne pogreške, t-testove, p-vrijednosti, R² i F-test.
 
-3. Svaki koeficijent u višestrukoj regresiji je parcijalni efekt: promjena Y za jediničnu promjenu X uz kontrolu svih ostalih prediktora.
+3. **Svaki koeficijent u višestrukoj regresiji je parcijalni efekt**: promjena Y za jediničnu promjenu X uz kontrolu svih ostalih prediktora. Ovo je ono "držeći sve ostalo jednakim."
 
-4. R-kvadrat je proporcija varijabilnosti objašnjena modelom. Prilagodeni R² korigira za broj prediktora. U društvenim znanostima, R² = 0.10 do 0.30 je uobičajen.
+4. **R-kvadrat** je udio varijabilnosti objašnjen modelom. Prilagođeni R² korigira za broj prediktora. U komunikologiji, R² između 0.10 i 0.30 je uobičajen.
 
-5. AIC omogućuje usporedbu modela: niži AIC = bolji model. Penalizira dodavanje nepotrebnih prediktora.
+5. **AIC** služi za usporedbu modela: niži AIC znači bolji model. Penalizira nepotrebnu kompleksnost.
 
-6. Pretpostavke: linearnost, nezavisnost, homoskedastičnost, normalnost reziduala. Dijagnostički grafovi (`plot(model)`) ih provjeravaju.
+6. **Četiri pretpostavke** (linearnost, nezavisnost, homoskedastičnost, normalnost reziduala) provjeravate dijagnostičkim grafovima: `plot(model)`.
 
-7. VIF mjeri multikolinearnost. VIF < 5 je prihvatljiv. VIF > 10 je problematičan. Visok VIF znači da su prediktori previsoko korelirani.
+7. **VIF** mjeri multikolinearnost. VIF ispod 5 je prihvatljiv. VIF iznad 10 je problematičan i znači da su prediktori previše korelirani.
 
-8. Nelinearne odnose možemo uhvatiti polinomom: `I(x^2)` dodaje kvadratni član. LOESS krivulja otkriva nelinearnost vizualno.
+8. **Nelinearne odnose** možete uhvatiti polinomom: `I(x^2)` dodaje kvadratni član. LOESS krivulja otkriva nelinearnost vizualno.
 
-9. Standardizirani koeficijenti (beta) omogućuju usporedbu relativne važnosti prediktora na istoj skali (SD jedinice).
+9. **Standardizirani koeficijenti** (beta) stavljaju sve prediktore na istu skalu i omogućuju usporedbu relativne važnosti.
 
-10. Cookova udaljenost identificira utjecajne točke. Prag: 4/n. Provedite analizu s i bez utjecajnih točaka za provjeru stabilnosti.
+10. **Cookova udaljenost** identificira utjecajne točke. Prag: 4/n. Uvijek usporedite model s i bez utjecajnih točaka.
 
-11. Regresija otkriva asocijacije, ne kauzalnost. Ekstrapolacija izvan raspona podataka je nepouzdana. Model je dobar koliko i podaci.
+11. **Regresija nije kauzalnost.** Otkriva asocijacije. Za kauzalne zaključke treba vam eksperiment. Ekstrapolacija izvan raspona podataka je nepouzdana.
 
-12. Kompletni izvještaj: opis uzorka i modela, F-test i R², značajni koeficijenti s interpretacijom, dijagnostika pretpostavki, vizualizacija efekata i praktične preporuke.
+12. **Kompletni izvještaj** uključuje: opis uzorka i modela, F-test i R², značajne koeficijente s interpretacijom, dijagnostiku pretpostavki, vizualizaciju efekata i praktične preporuke.
 :::
 
----
+## Zadaci za vježbu
 
-## Zadaci za pripremu
+1. Učitajte `social_engagement.csv`. Provedite jednostavnu regresiju `engagement_rate ~ num_hashtags`. Interpretirajte koeficijent i R². Pogledajte dijagnostičke grafove. Zatim dodajte kvadratni član `I(num_hashtags^2)` i usporedite dva modela po AIC-u i prilagođenom R-kvadratu.
 
-1. Učitajte `social_engagement.csv`. Provedite jednostavnu regresiju `engagement_rate ~ num_hashtags`. Interpretirajte koeficijent i R². Pogledajte dijagnostičke grafove. Dodajte kvadratni član `I(num_hashtags^2)` i usporedite modele.
+2. Izradite višestruki model s barem 4 prediktora. Izračunajte VIF za numeričke prediktore. Napišite rezultate u APA formatu koristeći obrazac iz poglavlja o izvještavanju.
 
-2. Izradite višestruki model s barem 4 prediktora. Izračunajte VIF za numeričke prediktore. Napišite rezultate u APA formatu.
-
-3. Kreirajte graf koji prikazuje predvidjeni engagement za svaku kombinaciju content_type i topic (pri prosječnim vrijednostima ostalih prediktora). Koja kombinacija je najuspješnija?
-
----
+3. Kreirajte graf koji prikazuje predviđeni engagement za svaku kombinaciju `content_type` i `topic` (pri prosječnim vrijednostima ostalih prediktora). Koja kombinacija je najuspješnija?
 
 ## Dodatno čitanje
 
 **Obavezno**
 
-Navarro, D. (2018). *Learning Statistics with R*, Chapter 15 (Linear Regression). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva jednostavnu i višestruku regresiju s R kodom.
+Navarro, D. (2018). *Learning Statistics with R*, Chapter 15 (Linear Regression). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva jednostavnu i višestruku regresiju s R kodom i izvrsnim konceptualnim objašnjenjima.
 
 **Preporučeno**
 
-James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021). *An Introduction to Statistical Learning* (2nd edition). Springer. Poglavlje 3. Besplatno na [statlearning.com](https://www.statlearning.com). Moderniji pristup regresijskom modeliranju.
+James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021). *An Introduction to Statistical Learning* (2nd edition). Springer. Poglavlje 3. Besplatno na [statlearning.com](https://www.statlearning.com). Moderniji pristup regresijskom modeliranju s naglašenim vizualnim objašnjenjima.
 
-Fox, J. & Weisberg, S. (2019). *An R Companion to Applied Regression* (3rd edition). SAGE. Referentni priručnik za regresijsku dijagnostiku u R-u.
-
----
+Fox, J. & Weisberg, S. (2019). *An R Companion to Applied Regression* (3rd edition). SAGE. Referentni priručnik za regresijsku dijagnostiku u R-u. Korisno kad trebate detaljniju provjeru pretpostavki.
 
 ## Pojmovnik
 
 | Pojam | Objašnjenje |
 |---|---|
-| Linearna regresija | Modeliranje linearne veze između prediktora (X) i ishoda (Y). Y = b0 + b1X + e. |
+| Linearna regresija | Modeliranje linearne veze između prediktora (X) i ishoda (Y). Y = b₀ + b₁X + ε. |
 | Jednostavna regresija | Regresija s jednim prediktorom. |
 | Višestruka regresija | Regresija s dva ili više prediktora. Koeficijenti su parcijalni efekti. |
 | Koeficijent (b, slope) | Promjena Y za jediničnu promjenu X, uz kontrolu ostalih prediktora. |
-| Intercept (b0) | Predvidjeni Y kad su svi prediktori jednaki nuli. Često bez praktičnog značenja. |
+| Intercept (b₀) | Predviđeni Y kad su svi prediktori jednaki nuli. Često bez praktičnog značenja. |
 | Parcijalni efekt | Efekt jednog prediktora uz kontrolu (držanje konstantnima) svih ostalih. |
-| Rezidual (e) | Razlika između opaženog i predvidjenog Y. e = Y minus Y_hat. |
-| R-kvadrat (R²) | Proporcija varijabilnosti Y-a objašnjena modelom. 0 = model ne objašnjava ništa. 1 = savršeno. |
-| Prilagodeni R² | R² korigiran za broj prediktora. Koristi se za usporedbu modela s razlicitim brojem prediktora. |
+| Rezidual (e) | Razlika između opaženog i predviđenog Y. e = Y − Ŷ. |
+| R-kvadrat (R²) | Udio varijabilnosti Y-a objašnjen modelom. 0 = model ne objašnjava ništa. 1 = savršeno. |
+| Prilagođeni R² | R² korigiran za broj prediktora. Koristi se za usporedbu modela s različitim brojem prediktora. |
 | AIC | Akaike Information Criterion. Niži = bolji model. Penalizira kompleksnost. |
 | OLS | Ordinary Least Squares. Metoda koja minimizira sumu kvadriranih reziduala. |
 | Dummy varijabla | Binarna (0/1) varijabla za kodiranje kategorija. R ih automatski kreira u `lm()`. |
-| VIF | Variance Inflation Factor. Mjeri multikolinearnost. VIF < 5 prihvatljivo, > 10 problematicno. |
+| VIF | Variance Inflation Factor. Mjeri multikolinearnost. VIF < 5 prihvatljivo, > 10 problematično. |
 | Multikolinearnost | Visoka korelacija između prediktora. Čini koeficijente nestabilnima. |
 | Cookova udaljenost | Mjera utjecaja pojedinog opažanja na model. Prag: 4/n. |
 | Leverage | Koliko je opažanje ekstremno u prostoru prediktora. Visok leverage = potencijalno utjecajno. |
 | Standardizirani koeficijent (beta) | Koeficijent izražen u SD jedinicama. Omogućuje usporedbu prediktora. |
 | Polinomijalna regresija | Dodavanje kvadratnog (ili višeg) člana za uhvatiti nelinearne odnose. `I(x^2)`. |
-| Homoskedastičnost | Jednaka varijanca reziduala za sve predvidjene vrijednosti. Pretpostavka regresije. |
-| Ekstrapolacija | Predvidjanje izvan raspona podataka. Nepouzdano jer model nije treniran za te vrijednosti. |
+| Homoskedastičnost | Jednaka varijanca reziduala za sve predviđene vrijednosti. Pretpostavka regresije. |
+| Ekstrapolacija | Predviđanje izvan raspona podataka. Nepouzdano jer model nije treniran za te vrijednosti. |
+| LOESS | Locally Estimated Scatterplot Smoothing. Fleksibilna krivulja za otkrivanje nelinearnih trendova. |
 | `lm()` | R funkcija za linearnu regresiju. `lm(y ~ x1 + x2, data = ...)`. |
 | `summary()` | Na `lm()` objektu daje koeficijente, SE, t, p, R² i F-test. |
-| `predict()` | Generira predvidjene vrijednosti. `predict(model, newdata = ...)` za nova opažanja. |
+| `predict()` | Generira predviđene vrijednosti. `predict(model, newdata = ...)` za nova opažanja. |
 | `residuals()` | Izvlači reziduale iz modela. |
 | `broom::tidy()` | Pretvara model output u tibble s koeficijentima, SE, t, p i CI. |
 | `AIC()` | R funkcija za izračun AIC-a. `AIC(model1, model2)` za usporedbu. |
