@@ -20,8 +20,6 @@ title: "Tjedni raspored"
 | 12 | TBD | [Usporedba više grupa: ANOVA](lectures/week-13.qmd) | Vježba: ANOVA analiza | [Uskoro]{.badge-upcoming} |
 | 13 | TBD | [Linearna regresija](lectures/week-14.qmd) | Radionica: regresijski model | [Uskoro]{.badge-upcoming} |
 
----
-
 ## Važni datumi
 
 | Događaj | Datum |
@@ -29,8 +27,6 @@ title: "Tjedni raspored"
 | Početak nastave | TBD |
 | Predaja praktičnog projekta | TBD |
 | Kraj nastave | TBD |
-
----
 
 ## Bilješke
 

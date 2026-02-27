@@ -56,9 +56,17 @@ website:
             text: Alati
       - href: projects/practical-project.qmd
         text: Projekt
+    right:
+      - icon: github
+        href: https://github.com/lusiki/Osnove-statistike
+        aria-label: GitHub repozitorij
+      - icon: linkedin
+        href: https://www.linkedin.com/in/luka-sikic-662ba869/
+        aria-label: LinkedIn
   search: true
   page-footer:
-    left: "Osnove statistike | HKS 2024/2025"
+    left: "© 2025 [doc. dr. sc. Luka Šikić](https://www.lukasikic.info) | [Hrvatsko katoličko sveučilište](https://www.unicath.hr)"
+    center: "[GitHub](https://github.com/lusiki) · [LinkedIn](https://www.linkedin.com/in/luka-sikic-662ba869/)"
     right: "Izrađeno pomoću [Quarto](https://quarto.org)"
 
 format:

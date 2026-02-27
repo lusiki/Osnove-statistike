@@ -6,9 +6,7 @@ title: "Praktični projekt"
 
 Praktični projekt je završni rad kolegija u kojem samostalno (ili u paru) provodite statističku analizu podataka iz komunikološkog konteksta. Cilj je primijeniti znanja stečena tijekom semestra na stvarni istraživački problem.
 
-Projekt čini **40% ukupne ocjene** kolegija.
-
----
+Projekt čini **50% ukupne ocjene** kolegija.
 
 ## Scenariji
 
@@ -26,17 +24,13 @@ Koristeći javno dostupne podatke (ili simulirani dataset), analizirajte čimben
 
 Dizajnirajte i analizirajte A/B test za komunikološki problem (npr. dva formata naslova članka, dvije verzije newsletter emaila, dva pristupa u objavi na društvenim mrežama). Koristite odgovarajući statistički test za usporedbu grupa.
 
----
-
 ## Što se predaje
 
 1. **Quarto izvještaj (.qmd)** — narativni izvještaj s ugrađenim R kodom koji se reproducibilno renderira
 2. **Renderirana HTML verzija** — finalni izvještaj u HTML formatu
 3. **Dataset** — podatci korišteni u analizi (CSV format)
-4. **Kratka prezentacija** — 10–15 minuta za prezentaciju na zadnjem tjednu nastave
+4. **Kratka prezentacija** — 10 do 15 minuta za prezentaciju na zadnjem tjednu nastave
 5. **Samoprocjena** — kratki odlomak o tome što ste naučili i što biste napravili drugačije
-
----
 
 ## Rubrika
 
@@ -49,8 +43,6 @@ Dizajnirajte i analizirajte A/B test za komunikološki problem (npr. dva formata
 | **Reproducibilnost** | Kod se izvršava bez grešaka, dobro organiziran, komentiran | Kod se izvršava uz manje prilagodbe | Kod se ne može reproducirati |
 | **Prezentacija** | Jasna, strukturirana, vizualno privlačna, odgovara na pitanja | Prenosi ključne nalaze ali nedostaje struktura | Neorganizirana ili nepripremljena |
 
----
-
 ## Rokovi
 
 | Stavka | Rok |
@@ -58,9 +50,7 @@ Dizajnirajte i analizirajte A/B test za komunikološki problem (npr. dva formata
 | Odabir scenarija i formiranje grupa | TBD |
 | Predaja nacrta (istraživačko pitanje + plan analize) | TBD |
 | Predaja finalnog izvještaja | TBD |
-| Prezentacije (tjedan 15) | TBD |
-
----
+| Prezentacije (zadnji tjedan nastave) | TBD |
 
 ## Često postavljana pitanja
 
@@ -71,7 +61,7 @@ Da, projekt možete raditi samostalno ili u paru. Grupe od troje ili više nisu 
 Ne morate. Možete koristiti simulirane datasete s kolegija, javno dostupne podatke ili vlastitu anketu. Preporučujemo korištenje podataka s kojima ste upoznati.
 
 **Koliko R koda treba biti u izvještaju?**
-Izvještaj treba sadržavati R kod koji reproducira vašu analizu — od učitavanja podataka do finalnih rezultata. Fokus je na čistoći i razumljivosti koda, ne na količini.
+Izvještaj treba sadržavati R kod koji reproducira vašu analizu, od učitavanja podataka do finalnih rezultata. Fokus je na čistoći i razumljivosti koda, ne na količini.
 
 **Koji statistički testovi su minimalno potrebni?**
 Barem jedan inferencijalni test (t-test, hi-kvadrat, ANOVA ili regresija) i deskriptivna statistika. Odaberite test koji odgovara vašim podacima i istraživačkom pitanju.
@@ -82,5 +72,5 @@ To je sasvim u redu! Neznačajan rezultat je jednako valjan kao značajan. Važn
 ::: {.callout-tip}
 ## Savjet za uspjeh
 
-Počnite rano, birajte temu koja vas zanima, i redovito provjeravajte radi li vam kod. Najčešći problem na projektima nije statistika — nego odugovlačenje s početkom rada.
+Počnite rano, birajte temu koja vas zanima, i redovito provjeravajte radi li vam kod. Najčešći problem na projektima nije statistika nego odugovlačenje s početkom rada.
 :::

@@ -16,21 +16,19 @@ title: "Silabus kolegija"
 
 ## Narativ kolegija
 
-Statistika je jezik podataka, a podaci su danas svugdje — od metrika društvenih mreža do rezultata istraživanja javnog mnijenja. Ovaj kolegij osmišljen je tako da studente komunikologije opremi alatima za razumijevanje i korištenje podataka u profesionalnom kontekstu.
+Statistika je jezik podataka, a podaci su danas svugdje, od metrika društvenih mreža do rezultata istraživanja javnog mnijenja. Ovaj kolegij osmišljen je tako da studente komunikologije opremi alatima za razumijevanje i korištenje podataka u profesionalnom kontekstu.
 
 Kolegij prati logiku postupnog građenja znanja. Počinjemo s pitanjem zašto komunikolog uopće treba statistiku, upoznajemo se s R-om kao alatom za analizu podataka, učimo organizirati i vizualizirati podatke, a zatim prelazimo na inferencijalne metode koje nam omogućuju donošenje zaključaka na temelju uzoraka. Svaki tjedan gradi se na prethodnom, a svi primjeri dolaze iz svijeta medija i komunikacija.
 
 Sadržajna okosnica kolegija inspirirana je knjigom "Learning Statistics with R" autorice Danielle Navarro (CC BY-SA 4.0), ali prilagođena za komunikologe i modernizirana korištenjem tidyverse pristupa u R-u.
 
----
+## Cjelina 1: Uvod i osnove programiranja (tjedni 1 do 4)
 
-## Cjelina 1: Uvod i osnove programiranja (tjedni 1–4)
-
-Prva cjelina postavlja temelje kolegija. Prije nego što se upustimo u bilo kakvu analizu, trebamo razumjeti zašto statistika uopće postoji i kako nam pomaže razlučiti signal od šuma u podacima. Zatim gradimo praktične vještine u R-u — od pisanja prvih funkcija i skripti, preko učitavanja podataka, do njihovog čišćenja i transformacije. Na kraju ove cjeline svaki student ima funkcionalan radni tok: zna učitati dataset, pregledati ga, očistiti i pripremiti za analizu.
+Prva cjelina postavlja temelje kolegija. Prije nego što se upustimo u bilo kakvu analizu, trebamo razumjeti zašto statistika uopće postoji i kako nam pomaže razlučiti signal od šuma u podacima. Zatim gradimo praktične vještine u R-u, od pisanja prvih funkcija i skripti, preko učitavanja podataka, do njihovog čišćenja i transformacije. Na kraju ove cjeline svaki student ima funkcionalan radni tok: zna učitati dataset, pregledati ga, očistiti i pripremiti za analizu.
 
 ### Tjedan 1: Zašto statistika? Uvod u istraživački dizajn {#t01}
 
-Zašto bi komunikolog trebao razumjeti statistiku? Kroz Simpsonov paradoks u medijskim anketama i primjere obmanjujućih grafikona, otkrivamo koliko je lako izvesti krivi zaključak bez rigoroznog pristupa podacima. Predavanje uvodi osnove istraživačkog dizajna — razine mjerenja (nominalna, ordinalna, intervalna, omjerna), pouzdanost i valjanost mjerenja, te razliku između eksperimentalnih i opservacijskih studija u kontekstu medijskih istraživanja.
+Zašto bi komunikolog trebao razumjeti statistiku? Kroz Simpsonov paradoks u medijskim anketama i primjere obmanjujućih grafikona, otkrivamo koliko je lako izvesti krivi zaključak bez rigoroznog pristupa podacima. Predavanje uvodi osnove istraživačkog dizajna: razine mjerenja (nominalna, ordinalna, intervalna, omjerna), pouzdanost i valjanost mjerenja, te razliku između eksperimentalnih i opservacijskih studija u kontekstu medijskih istraživanja.
 
 Materijali: [HTML](lectures/week-01.html) | [PDF](lectures/week-01.pdf) | [DOCX](lectures/week-01.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-01.qmd)
 
@@ -42,89 +40,81 @@ Materijali: [HTML](lectures/week-06.html) | [PDF](lectures/week-06.pdf) | [DOCX]
 
 ### Tjedan 3: Uvod u R i tidyverse {#t03}
 
-Studenti instaliraju R i Positron te odmah kreću s tidyverse pristupom — modernim ekosistemom paketa koji čini rad s podacima intuitivnim i čitljivim. Umjesto klasičnog base R sučelja, od početka koristimo tibbleove umjesto data.frameova, pipe operator (`|>`) za ulančavanje operacija i `readr` za učitavanje podataka. Na kraju tjedna svaki student samostalno učitava i pregledava dataset o korištenju društvenih mreža.
+Studenti instaliraju R i Positron te odmah kreću s tidyverse pristupom, modernim ekosistemom paketa koji čini rad s podacima intuitivnim i čitljivim. Umjesto klasičnog base R sučelja, od početka koristimo tibbleove umjesto data.frameova, pipe operator (`|>`) za ulančavanje operacija i `readr` za učitavanje podataka. Na kraju tjedna svaki student samostalno učitava i pregledava dataset o korištenju društvenih mreža.
 
 Materijali: [HTML](lectures/week-02.html) | [PDF](lectures/week-02.pdf) | [DOCX](lectures/week-02.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-02.qmd)
 
 ### Tjedan 4: Rad s podacima u tidyverse {#t04}
 
-Čišćenje i transformacija podataka oduzima oko 80% vremena svake analize — a upravo tu se gradi ili gubi kvaliteta istraživanja. Ovaj tjedan posvećen je praktičnom radu s dplyr glagolima (`filter()`, `select()`, `mutate()`, `summarise()`, `group_by()`) i tidyr funkcijama za preoblikovanje podataka (`pivot_longer()`, `pivot_wider()`). Na primjeru studentske ankete o medijskim navikama, studenti prolaze cijeli put od sirovih, neurednih podataka do dataseta spremnog za analizu.
+Čišćenje i transformacija podataka oduzima oko 80% vremena svake analize, a upravo tu se gradi ili gubi kvaliteta istraživanja. Ovaj tjedan posvećen je praktičnom radu s dplyr glagolima (`filter()`, `select()`, `mutate()`, `summarise()`, `group_by()`) i tidyr funkcijama za preoblikovanje podataka (`pivot_longer()`, `pivot_wider()`). Na primjeru studentske ankete o medijskim navikama, studenti prolaze cijeli put od sirovih, neurednih podataka do dataseta spremnog za analizu.
 
 Materijali: [HTML](lectures/week-03.html) | [PDF](lectures/week-03.pdf) | [DOCX](lectures/week-03.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-03.qmd)
 
----
+## Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5 i 6)
 
-## Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5–6)
-
-Sada kada znamo učitati i pripremiti podatke, trebamo ih opisati i prikazati. Ova kratka ali ključna cjelina uči nas kako brojkama sažeti ono što podaci govore i kako te iste podatke pretvoriti u vizualne priče. Deskriptivna statistika i vizualizacija idu ruku pod ruku — brojke bez grafova su apstraktne, a grafovi bez konteksta mogu biti obmanjujući.
+Sada kada znamo učitati i pripremiti podatke, trebamo ih opisati i prikazati. Ova kratka ali ključna cjelina uči nas kako brojkama sažeti ono što podaci govore i kako te iste podatke pretvoriti u vizualne priče. Deskriptivna statistika i vizualizacija idu ruku pod ruku: brojke bez grafova su apstraktne, a grafovi bez konteksta mogu biti obmanjujući.
 
 ### Tjedan 5: Deskriptivna statistika {#t05}
 
-Kako jednim brojem opisati cijelu distribuciju? Predavanje obrađuje mjere centralne tendencije (aritmetička sredina, medijan, mod) i mjere varijabilnosti (raspon, standardna devijacija, IQR), sve izračunato pomoću `summarise()` i `group_by()`. Uvode se i z-vrijednosti za standardizaciju te Pearsonova i Spearmanova korelacija za mjerenje povezanosti dviju varijabli. Na primjeru podataka o korištenju TikToka po dobnim skupinama, studenti uče zašto samo prosjek nije dovoljan — bez informacije o raspršenosti podataka, prosjek može biti potpuno obmanjujući.
+Kako jednim brojem opisati cijelu distribuciju? Predavanje obrađuje mjere centralne tendencije (aritmetička sredina, medijan, mod) i mjere varijabilnosti (raspon, standardna devijacija, IQR), sve izračunato pomoću `summarise()` i `group_by()`. Uvode se i z-vrijednosti za standardizaciju te Pearsonova i Spearmanova korelacija za mjerenje povezanosti dviju varijabli. Na primjeru podataka o korištenju TikToka po dobnim skupinama, studenti uče zašto samo prosjek nije dovoljan: bez informacije o raspršenosti podataka, prosjek može biti potpuno obmanjujući.
 
 Materijali: [HTML](lectures/week-04.html) | [PDF](lectures/week-04.pdf) | [DOCX](lectures/week-04.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-04.qmd)
 
 ### Tjedan 6: Vizualizacija podataka s ggplot2 {#t06}
 
-Anscombeov kvartet demonstrira zašto su grafovi nezamjenjivi: četiri potpuno različita uzorka podataka imaju identičnu deskriptivnu statistiku, ali izgledaju sasvim drugačije kada ih nacrtamo. Predavanje uvodi gramatiku grafike — filozofiju ggplot2 paketa u kojoj se svaki graf gradi slaganjem slojeva: podaci, estetike, geometrije, facete i teme. Studenti izrađuju histograme, boxplotove, scatterplotove, density plotove i bar chartove koristeći podatke o angažmanu čitatelja na portalima, te uče kako vizualizacijom otkriti obrasce koji se kriju iza brojki.
+Anscombeov kvartet demonstrira zašto su grafovi nezamjenjivi: četiri potpuno različita uzorka podataka imaju identičnu deskriptivnu statistiku, ali izgledaju sasvim drugačije kada ih nacrtamo. Predavanje uvodi gramatiku grafike, filozofiju ggplot2 paketa u kojoj se svaki graf gradi slaganjem slojeva: podaci, estetike, geometrije, facete i teme. Studenti izrađuju histograme, boxplotove, scatterplotove, density plotove i bar chartove koristeći podatke o angažmanu čitatelja na portalima, te uče kako vizualizacijom otkriti obrasce koji se kriju iza brojki.
 
 Materijali: [HTML](lectures/week-05.html) | [PDF](lectures/week-05.pdf) | [DOCX](lectures/week-05.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-05.qmd)
 
----
-
-## Cjelina 3: Statistička teorija (tjedni 7–9)
+## Cjelina 3: Statistička teorija (tjedni 7 do 9)
 
 Ova cjelina čini konceptualni most između opisivanja podataka i donošenja zaključaka. Kako iz uzorka od 500 ispitanika možemo nešto zaključiti o cijeloj populaciji? Odgovor leži u teoriji vjerojatnosti, distribucijama uzorkovanja i formalnom postupku testiranja hipoteza. Ovi tjedni grade matematičku intuiciju koja je neophodna za razumijevanje svih statističkih testova koji slijede.
 
 ### Tjedan 7: Uvod u vjerojatnost {#t07}
 
-Što zapravo znači kada kažemo da objava ima 3% šanse da postane viralna? Predavanje gradi intuiciju za vjerojatnost kroz praktične primjere — od bacanja novčića do A/B testova email kampanja. Obrađuju se osnovna pravila vjerojatnosti (komplement, zbrajanje, množenje), binomna distribucija za modeliranje broja uspjeha u nizu pokusa, te normalna distribucija s pravilom 68-95-99.7 i Q-Q plotovima za provjeru normalnosti. Na datasetu od 2000 objava na društvenim mrežama, studenti istražuju distribuciju lajkova i otkrivaju zašto je logaritamska transformacija korisna za "iskrivljene" podatke.
+Što zapravo znači kada kažemo da objava ima 3% šanse da postane viralna? Predavanje gradi intuiciju za vjerojatnost kroz praktične primjere, od bacanja novčića do A/B testova email kampanja. Obrađuju se osnovna pravila vjerojatnosti (komplement, zbrajanje, množenje), binomna distribucija za modeliranje broja uspjeha u nizu pokusa, te normalna distribucija s pravilom 68-95-99.7 i Q-Q plotovima za provjeru normalnosti. Na datasetu od 2000 objava na društvenim mrežama, studenti istražuju distribuciju lajkova i otkrivaju zašto je logaritamska transformacija korisna za iskrivljene podatke.
 
 Materijali: [HTML](lectures/week-07.html) | [PDF](lectures/week-07.pdf) | [DOCX](lectures/week-07.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-07.qmd)
 
 ### Tjedan 8: Uzorkovanje, procjena i intervali pouzdanosti {#t08}
 
-Svako istraživanje javnog mnijenja navodi "marginu pogreške" — ali što taj broj zapravo znači? Predavanje objašnjava temeljni problem statistike: kako iz dijela (uzorka) saznati nešto o cjelini (populaciji). Kroz simulaciju na populaciji od 50.000 osoba, studenti vizualiziraju distribuciju uzorkovanja, centralni granični teorem i standardnu pogrešku. Zatim konstruiraju intervale pouzdanosti i uče interpretirati ih pravilno — ne kao raspon u kojem se "nalazi pravi parametar s 95% vjerojatnosti", već kao postupak koji u 95% slučajeva daje interval koji obuhvaća pravi parametar.
+Svako istraživanje javnog mnijenja navodi "marginu pogreške", ali što taj broj zapravo znači? Predavanje objašnjava temeljni problem statistike: kako iz dijela (uzorka) saznati nešto o cjelini (populaciji). Kroz simulaciju na populaciji od 50.000 osoba, studenti vizualiziraju distribuciju uzorkovanja, centralni granični teorem i standardnu pogrešku. Zatim konstruiraju intervale pouzdanosti i uče interpretirati ih pravilno, ne kao raspon u kojem se "nalazi pravi parametar s 95% vjerojatnosti", već kao postupak koji u 95% slučajeva daje interval koji obuhvaća pravi parametar.
 
 Materijali: [HTML](lectures/week-09.html) | [PDF](lectures/week-09.pdf) | [DOCX](lectures/week-09.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-09.qmd)
 
 ### Tjedan 9: Testiranje hipoteza {#t09}
 
-Je li opažena razlika u angažmanu između carousel i običnih objava na Instagramu stvarna ili samo posljedica slučajnosti? Testiranje hipoteza daje formalan okvir za odgovor na takva pitanja. Predavanje objašnjava logiku kroz analogiju sa suđenjem: nulta hipoteza je "nevin dok se ne dokaže krivnja". Studenti uče formulirati hipoteze, izračunati testnu statistiku i p-vrijednost, te razumjeti greške tipa I i II. Poseban naglasak stavljen je na veličinu učinka (Cohenov d) i statističku snagu — jer statistička značajnost bez praktične važnosti nema smisla.
+Je li opažena razlika u angažmanu između carousel i običnih objava na Instagramu stvarna ili samo posljedica slučajnosti? Testiranje hipoteza daje formalan okvir za odgovor na takva pitanja. Predavanje objašnjava logiku kroz analogiju sa suđenjem: nulta hipoteza je "nevin dok se ne dokaže krivnja". Studenti uče formulirati hipoteze, izračunati testnu statistiku i p-vrijednost, te razumjeti greške tipa I i II. Poseban naglasak stavljen je na veličinu učinka (Cohenov d) i statističku snagu, jer statistička značajnost bez praktične važnosti nema smisla.
 
 Materijali: [HTML](lectures/week-10.html) | [PDF](lectures/week-10.pdf) | [DOCX](lectures/week-10.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-10.qmd)
 
----
+## Cjelina 4: Inferencijalna statistika (tjedni 10 do 13)
 
-## Cjelina 4: Inferencijalna statistika (tjedni 10–13)
-
-Završna cjelina primjenjuje sve naučeno na konkretne statističke testove s kojima se komunikolozi najčešće susreću u praksi. Svaki tjedan donosi novi tip testa prilagođen vrsti podataka i istraživačkom pitanju — od kategoričkih varijabli i usporedbe dviju grupa, preko usporedbe više grupa, do predviđanja jedne varijable na temelju drugih. Svaki test prate provjera pretpostavki, mjera veličine učinka i neparametarska alternativa.
+Završna cjelina primjenjuje sve naučeno na konkretne statističke testove s kojima se komunikolozi najčešće susreću u praksi. Svaki tjedan donosi novi tip testa prilagođen vrsti podataka i istraživačkom pitanju, od kategoričkih varijabli i usporedbe dviju grupa, preko usporedbe više grupa, do predviđanja jedne varijable na temelju drugih. Svaki test prate provjera pretpostavki, mjera veličine učinka i neparametarska alternativa.
 
 ### Tjedan 10: Kategorički podaci i hi-kvadrat testovi {#t10}
 
-Kada su varijable kategorije (tip medija, dobna skupina, spol), ne možemo računati prosjeke — ali možemo testirati postoji li veza među njima. Predavanje obrađuje hi-kvadrat test slaganja (odgovaraju li opažene frekvencije očekivanim?) i test nezavisnosti (postoji li veza između tipa medija i dobi publike?). Studenti uče čitati kontingencijske tablice, interpretirati standardizirane reziduale koji pokazuju gdje je veza najjača, koristiti Cramérovo V kao mjeru veličine učinka, te primijeniti Fisherov egzaktni test kada su očekivane frekvencije premale. Na anketi od 800 ispitanika otkrivamo generacijski jaz u medijskim navikama.
+Kada su varijable kategorije (tip medija, dobna skupina, spol), ne možemo računati prosjeke, ali možemo testirati postoji li veza među njima. Predavanje obrađuje hi-kvadrat test slaganja (odgovaraju li opažene frekvencije očekivanim?) i test nezavisnosti (postoji li veza između tipa medija i dobi publike?). Studenti uče čitati kontingencijske tablice, interpretirati standardizirane reziduale koji pokazuju gdje je veza najjača, koristiti Cramérovo V kao mjeru veličine učinka, te primijeniti Fisherov egzaktni test kada su očekivane frekvencije premale. Na anketi od 800 ispitanika otkrivamo generacijski jaz u medijskim navikama.
 
 Materijali: [HTML](lectures/week-11.html) | [PDF](lectures/week-11.pdf) | [DOCX](lectures/week-11.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-11.qmd)
 
-### Tjedan 11: Usporedba prosjeka — t-testovi {#t11}
+### Tjedan 11: Usporedba prosjeka s t-testovima {#t11}
 
 Čitaju li ljudi članke brže ili sporije kada imaju vizualne elemente? T-test je najčešći alat za usporedbu dviju grupa. Predavanje pokriva tri varijante: t-test za jedan uzorak (razlikuje li se naš prosjek od poznate vrijednosti?), t-test za nezavisne uzorke (razlikuju li se dvije grupe?) i upareni t-test (postoji li promjena unutar istih subjekata?). Za svaku varijantu studenti provjeravaju pretpostavke (Shapiro-Wilkov test, Q-Q plotovi), računaju Cohenov d i uče kada primijeniti Wilcoxonov neparametrijski test. Eksperiment s vizualima u člancima daje konkretan okvir za sve tri analize.
 
 Materijali: [HTML](lectures/week-12.html) | [PDF](lectures/week-12.pdf) | [DOCX](lectures/week-12.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-12.qmd)
 
-### Tjedan 12: Usporedba više grupa — ANOVA {#t12}
+### Tjedan 12: Usporedba više grupa s ANOVA-om {#t12}
 
-Kada želimo usporediti vjerodostojnost vijesti iz pet različitih izvora (TV, portal, društvena mreža, novine, podcast), ne možemo provesti 10 zasebnih t-testova — svaki test nosi rizik lažno pozitivnog rezultata, a s 10 testova taj rizik eksplodira. ANOVA rješava ovaj problem testirajući sve grupe odjednom. Predavanje objašnjava logiku F-statistike (omjer varijance između grupa i varijance unutar grupa), Tukeyjev HSD post-hoc test za utvrđivanje konkretnih razlika, eta-kvadrat kao mjeru veličine učinka, te Kruskal-Wallisov test kao neparametarsku alternativu.
+Kada želimo usporediti vjerodostojnost vijesti iz pet različitih izvora (TV, portal, društvena mreža, novine, podcast), ne možemo provesti 10 zasebnih t-testova jer svaki test nosi rizik lažno pozitivnog rezultata, a s 10 testova taj rizik eksplodira. ANOVA rješava ovaj problem testirajući sve grupe odjednom. Predavanje objašnjava logiku F-statistike (omjer varijance između grupa i varijance unutar grupa), Tukeyjev HSD post-hoc test za utvrđivanje konkretnih razlika, eta-kvadrat kao mjeru veličine učinka, te Kruskal-Wallisov test kao neparametarsku alternativu.
 
 Materijali: [HTML](lectures/week-13.html) | [PDF](lectures/week-13.pdf) | [DOCX](lectures/week-13.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-13.qmd)
 
 ### Tjedan 13: Linearna regresija {#t13}
 
-Svi dosadašnji testovi uspoređivali su grupe. Regresija ide korak dalje — omogućuje nam predviđanje jedne varijable na temelju jedne ili više drugih. Koliko dodatnih lajkova donosi svaki dodatni hashtag? Predavanje gradi put od jednostavne regresije (jedan prediktor) do višestruke regresije (više prediktora), objašnjava R-kvadrat kao mjeru koliko model objašnjava varijabilnost u podacima, te uvodi dijagnostiku modela kroz rezidualne plotove, Cookovu udaljenost i provjeru multikolinearnosti. Na datasetu o angažmanu objava na Instagramu, studenti grade, uspoređuju i interpretiraju regresijske modele.
+Svi dosadašnji testovi uspoređivali su grupe. Regresija ide korak dalje i omogućuje nam predviđanje jedne varijable na temelju jedne ili više drugih. Koliko dodatnih lajkova donosi svaki dodatni hashtag? Predavanje gradi put od jednostavne regresije (jedan prediktor) do višestruke regresije (više prediktora), objašnjava R-kvadrat kao mjeru koliko model objašnjava varijabilnost u podacima, te uvodi dijagnostiku modela kroz rezidualne plotove, Cookovu udaljenost i provjeru multikolinearnosti. Na datasetu o angažmanu objava na Instagramu, studenti grade, uspoređuju i interpretiraju regresijske modele.
 
 Materijali: [HTML](lectures/week-14.html) | [PDF](lectures/week-14.pdf) | [DOCX](lectures/week-14.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-14.qmd)
-
----
 
 ## Seminarske aktivnosti
 
@@ -144,31 +134,27 @@ Materijali: [HTML](lectures/week-14.html) | [PDF](lectures/week-14.pdf) | [DOCX]
 | 12 | Vježba: ANOVA analiza na podacima o percepciji medija |
 | 13 | Radionica: izgradnja regresijskog modela za medijske podatke |
 
----
-
 ## Popis literature
 
 ### Osnovna literatura
 
-- Navarro, D. (2018). *Learning Statistics with R: A tutorial for psychology students and other beginners* (Version 0.6). [Besplatno dostupno online](https://learningstatisticswithr.com/) [O]
-- Wickham, H. & Grolemund, G. (2023). *R for Data Science* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r4ds.hadley.nz/) [O]
+1. Navarro, D. (2018). *Learning Statistics with R: A tutorial for psychology students and other beginners* (Version 0.6). [Besplatno dostupno online](https://learningstatisticswithr.com/) **[O]**
+2. Wickham, H. & Grolemund, G. (2023). *R for Data Science* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r4ds.hadley.nz/) **[O]**
 
-### Statistika — konceptualni uvod
+### Statistika: konceptualni uvod
 
-- Field, A. (2017). *Discovering Statistics Using IBM SPSS Statistics* (5th edition). Sage.
-- Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition). [Besplatno dostupno online](https://www.openintro.org/book/os/)
+3. Field, A. (2017). *Discovering Statistics Using IBM SPSS Statistics* (5th edition). Sage.
+4. Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition). [Besplatno dostupno online](https://www.openintro.org/book/os/)
 
 ### R i tidyverse
 
-- Ismay, C. & Kim, A. Y. (2019). *Statistical Inference via Data Science: A ModernDive into R and the Tidyverse*. [Besplatno dostupno online](https://moderndive.com/)
-- Chang, W. (2018). *R Graphics Cookbook* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r-graphics.org/)
+5. Ismay, C. & Kim, A. Y. (2019). *Statistical Inference via Data Science: A ModernDive into R and the Tidyverse*. [Besplatno dostupno online](https://moderndive.com/)
+6. Chang, W. (2018). *R Graphics Cookbook* (2nd edition). O'Reilly. [Besplatno dostupno online](https://r-graphics.org/)
 
 ### Komunikologija i medijska istraživanja
 
-- Berger, A. A. (2020). *Media and Communication Research Methods* (5th edition). Sage.
-- Holbert, R. L. & Hardy, B. W. (2009). *Political Communication Research Methods*. Routledge.
-
----
+7. Berger, A. A. (2020). *Media and Communication Research Methods* (5th edition). Sage.
+8. Holbert, R. L. & Hardy, B. W. (2009). *Political Communication Research Methods*. Routledge.
 
 ## Ocjenjivanje
 
@@ -182,8 +168,8 @@ Materijali: [HTML](lectures/week-14.html) | [PDF](lectures/week-14.pdf) | [DOCX]
 
 | Ocjena | Postotak |
 |:------:|:--------:|
-| Izvrstan (5) | 90–100% |
-| Vrlo dobar (4) | 80–89% |
-| Dobar (3) | 65–79% |
-| Dovoljan (2) | 50–64% |
-| Nedovoljan (1) | < 50% |
+| Izvrstan (5) | 90 do 100% |
+| Vrlo dobar (4) | 80 do 89% |
+| Dobar (3) | 65 do 79% |
+| Dovoljan (2) | 50 do 64% |
+| Nedovoljan (1) | ispod 50% |

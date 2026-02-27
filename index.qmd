@@ -1,10 +1,11 @@
 ---
 title: "Osnove statistike"
+subtitle: "Kolegij za studente komunikologije | HKS"
 ---
 
 Dobrodošli na stranicu kolegija **Osnove statistike**! Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka.
 
-Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija — od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
+Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija, od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
 
 ::: {.callout-note}
 ## Osnovni podaci o kolegiju
@@ -15,7 +16,9 @@ Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 | **Semestar** | Ljetni semestar 2024/2025 |
 | **ECTS** | 6 |
 | **Opterećenje** | 30P + 30S |
-| **Nositelj** | doc. dr. sc. Luka Šikić ([luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr)) |
+| **Nositelj** | doc. dr. sc. Luka Šikić |
+| **Kontakt** | [luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr) |
+| **Web** | [lukasikic.info](https://www.lukasikic.info) · [GitHub](https://github.com/lusiki) · [LinkedIn](https://www.linkedin.com/in/luka-sikic-662ba869/) |
 | **Konzultacije** | Prema dogovoru putem emaila |
 :::
 
@@ -23,13 +26,13 @@ Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 
 Kolegij je organiziran u četiri cjeline:
 
-**Cjelina 1: Uvod i osnove programiranja (tjedni 1–4).** Upoznajete se sa statističkim razmišljanjem i istraživačkim dizajnom, učite programirati u R-u te ovladavate tidyverse ekosustavom za učitavanje, čišćenje i transformaciju podataka.
+**Cjelina 1: Uvod i osnove programiranja (tjedni 1 do 4).** Upoznajete se sa statističkim razmišljanjem i istraživačkim dizajnom, učite programirati u R-u te ovladavate tidyverse ekosustavom za učitavanje, čišćenje i transformaciju podataka.
 
-**Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5–6).** Računate mjere centralne tendencije i raspršenosti te ih vizualizirate pomoću ggplot2 — od histograma i boxplotova do naprednih grafičkih prikaza.
+**Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5 i 6).** Računate mjere centralne tendencije i raspršenosti te ih vizualizirate pomoću ggplot2, od histograma i boxplotova do naprednih grafičkih prikaza.
 
-**Cjelina 3: Statistička teorija (tjedni 7–9).** Upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem, procjenom parametara, intervalima pouzdanosti i temeljima testiranja hipoteza.
+**Cjelina 3: Statistička teorija (tjedni 7 do 9).** Upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem, procjenom parametara, intervalima pouzdanosti i temeljima testiranja hipoteza.
 
-**Cjelina 4: Inferencijalna statistika (tjedni 10–13).** Primjenjujete inferencijalne metode — hi-kvadrat testove, t-testove, ANOVA-u i linearnu regresiju — na primjerima iz komunikologije.
+**Cjelina 4: Inferencijalna statistika (tjedni 10 do 13).** Primjenjujete inferencijalne metode poput hi-kvadrat testova, t-testova, ANOVA-e i linearne regresije na primjerima iz komunikologije.
 
 ## Preuzmi cijelu knjigu
 
@@ -37,8 +40,8 @@ Sva predavanja dostupna su i u obliku cjelovite knjige:
 
 | Format | Preuzmi |
 |--------|---------|
-| PDF | [Osnove-statistike.pdf](Osnove-statistike.pdf) |
-| Word | [Osnove-statistike.docx](Osnove-statistike.docx) |
+| PDF | [Osnove statistike.pdf](Osnove-statistike.pdf) |
+| Word | [Osnove statistike.docx](Osnove-statistike.docx) |
 
 ## Brzi pristup
 
