@@ -72,12 +72,6 @@ Materijali: [HTML](lectures/week-06.html) | [PDF](lectures/week-06.pdf) | [DOCX]
 
 Materijali: [HTML](lectures/week-07.html) | [PDF](lectures/week-07.pdf) | [DOCX](lectures/week-07.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-07.qmd)
 
-### Tjedan 8: Distribucije vjerojatnosti {#week-08}
-
-Detaljniji pregled distribucija vjerojatnosti s naglaskom na normalnu distribuciju, z-vrijednosti i standardizaciju. Uvodi se centralni granični teorem kao temelj za inferencijalne metode koje slijede. Primjeri uključuju analizu distribucije vremena gledanja sadržaja i angažmana na platformama.
-
-Materijali: [HTML](lectures/week-08.html) | [PDF](lectures/week-08.pdf) | [DOCX](lectures/week-08.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-08.qmd)
-
 ### Tjedan 9: Uzorkovanje, procjena i intervali pouzdanosti {#week-09}
 
 Razlika između uzorka i populacije, zakon velikih brojeva, centralni granični teorem u praksi i intervali pouzdanosti. Primjeri uključuju anketiranje publike, marginu pogreške u istraživanjima medija i zašto su online ankete problematične.
@@ -122,7 +116,7 @@ Materijali: [HTML](lectures/week-14.html) | [PDF](lectures/week-14.pdf) | [DOCX]
 
 Studentske prezentacije praktičnih projekata. Kratki pregled faktorske ANOVA-e i bayesijanskog pristupa kao alternativnog okvira za statističko zaključivanje. Osvrt na kolegij i smjernice za daljnje učenje.
 
-Materijali: [HTML](lectures/week-15.html) | [PDF](lectures/week-15.pdf) | [DOCX](lectures/week-15.docx) | [QMD](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-15.qmd)
+Materijali: *sadržaj u pripremi*
 
 ---
 

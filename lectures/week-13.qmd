@@ -1,34 +1,960 @@
 ---
-title: "Tjedan 13: Usporedba više grupa: ANOVA"
-subtitle: "Jednosmjerna ANOVA, post-hoc testovi i provjera pretpostavki"
-date: 2025-02-01
-categories: [ANOVA, post-hoc, Tukey]
+title: "Tjedan 13: Usporedba više grupa ANOVA-om"
+subtitle: "Kad t-test nije dovoljan"
+date: 2025-05-17
+categories: [ANOVA, F-test, post-hoc, Tukey, eta-kvadrat, Kruskal-Wallis]
 draft: false
 ---
+
+```{r}
+#| label: setup
+#| echo: true
+#| message: false
+#| warning: false
+
+library(tidyverse)
+```
 
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete:
+Nakon ovog predavanja moći ćete
 
-1. Objasniti logiku ANOVA-e (usporedba varijance između i unutar grupa)
-2. Provesti jednosmjernu ANOVA-u u R-u
-3. Interpretirati F-statistiku i p-vrijednost iz ANOVA-e
-4. Provesti Tukeyev post-hoc test
-5. Provjeriti pretpostavke ANOVA-e (homogenost varijance, normalnost)
+1. Objasniti zašto višestruki t-testovi nisu primjereni za usporedbu više od dviju grupa.
+2. Provesti i interpretirati jednosmjernu ANOVA-u u R-u.
+3. Objasniti logiku F-statistike kao omjera varijabilnosti između i unutar grupa.
+4. Provjeriti pretpostavke ANOVA-e (normalnost, homogenost varijance).
+5. Primijeniti post-hoc testove (Tukey HSD) za identifikaciju specifičnih razlika.
+6. Izračunati eta-kvadrat kao mjeru veličine učinka za ANOVA-u.
+7. Primijeniti Kruskal-Wallisov test kao neparametrijsku alternativu.
+8. Provesti kompletnu analizu s izvještajem.
 :::
 
-::: {.callout-warning}
-## Sadržaj u pripremi
+## Motivacija: vjerodostojnost vijesti po izvoru
 
-Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
+Istraživačko pitanje: percipiraju li ljudi istu vijest kao više ili manje vjerodostojnu ovisno o tome iz kojeg izvora dolazi? Konkretno: razlikuje li se percipirana vjerodostojnost vijesti ovisno o tome pripisuje li se izvoru TV, web portal, društvena mreža, tisak ili podcast?
 
-**Planirane teme:**
+Imamo pet grupa. Prošli tjedan naučili smo t-test za usporedbu dviju grupa. Zašto ne bismo jednostavno proveli t-test za svaki par?
 
-- Zašto ne možemo koristiti više t-testova?
-- Jednosmjerna ANOVA
-- F-statistika i p-vrijednost
-- Post-hoc testovi (Tukey HSD)
-- Provjera pretpostavki
-- Primjer: percepcija vjerodostojnosti vijesti ovisno o izvoru (TV, portal, društvena mreža)
+### Problem višestrukih t-testova
+
+S pet grupa imamo 10 mogućih parova (5 choose 2 = 10). Ako svaki test provodimo na razini alfa = 0.05, vjerojatnost barem jednog lažno pozitivnog rezultata je:
+
+$$P(\text{barem 1 greska}) = 1 - (1 - 0.05)^{10} = 1 - 0.95^{10} \approx 0.40$$
+
+S 10 testova, šansa za barem jedan lažno pozitivni rezultat je oko 40%. To je potpuno neprihvatljivo.
+
+```{r}
+#| label: inflacija-alfa
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 5
+
+# Inflacija greske tipa I s brojem testova
+n_grupa <- 2:10
+n_parova <- choose(n_grupa, 2)
+alpha_inflated <- 1 - (1 - 0.05)^n_parova
+
+tibble(grupe = n_grupa, parovi = n_parova, alpha = alpha_inflated) |>
+  ggplot(aes(x = grupe, y = alpha)) +
+  geom_line(linewidth = 1.2, color = "firebrick") +
+  geom_point(size = 3, color = "firebrick") +
+  geom_hline(yintercept = 0.05, linetype = "dashed", color = "grey50") +
+  annotate("text", x = 9.5, y = 0.07, label = "alfa = 0.05", color = "grey50") +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1)) +
+  labs(
+    title = "Inflacija greske tipa I s brojem grupa",
+    subtitle = "S 5 grupa (10 parova) sansa za lazno pozitivni rezultat je ~40%",
+    x = "Broj grupa",
+    y = "Vjerojatnost barem jedne greske tipa I"
+  ) +
+  theme_minimal()
+```
+
+ANOVA rješava ovaj problem: testira sve grupe odjednom jednim testom, održavajući alfa na 0.05.
+
+---
+
+## Naši podaci {#sec-podaci}
+
+```{r}
+#| label: ucitavanje
+#| echo: true
+#| message: false
+#| warning: false
+
+cred <- read_csv("../resources/datasets/news_credibility.csv")
+glimpse(cred)
+```
+
+```{r}
+#| label: opisna
+#| echo: true
+#| message: false
+#| warning: false
+
+cred |>
+  group_by(news_source) |>
+  summarise(
+    n = n(),
+    M = round(mean(credibility), 2),
+    SD = round(sd(credibility), 2),
+    Min = min(credibility),
+    Max = max(credibility),
+    .groups = "drop"
+  ) |>
+  arrange(desc(M))
+```
+
+TV i tisak imaju najvišu percipiranu vjerodostojnost (M > 5), društvena mreža najnižu (M < 3.5). Razlike su očite, ali jesu li statistički značajne kad uzmemo u obzir varijabilnost unutar svake grupe?
+
+```{r}
+#| label: vizualizacija-osnovna
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+cred |>
+  mutate(news_source = fct_reorder(news_source, credibility)) |>
+  ggplot(aes(x = news_source, y = credibility, fill = news_source)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.2, size = 1.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Percipirana vjerodostojnost vijesti po izvoru",
+    subtitle = "TV i tisak najvise, drustvena mreza najnize",
+    x = NULL,
+    y = "Vjerodostojnost (1-7)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+---
+
+## Logika ANOVA-e {#sec-logika}
+
+ANOVA (Analysis of Variance) uspoređuje varijabilnost IZMEĐU grupa s varijabilnošću UNUTAR grupa.
+
+Intuicija je sljedeća. Ako se grupe stvarno razlikuju, prosjeci grupa bit će razbacani daleko jedni od drugih (velika varijabilnost između grupa). Istovremeno, unutar svake grupe postoji prirodna varijabilnost pojedinaca. Ako je varijabilnost između grupa puno veća od varijabilnosti unutar grupa, onda su razlike između grupa "stvarne" (nije samo šum).
+
+$$F = \frac{\text{varijabilnost IZMEĐU grupa}}{\text{varijabilnost UNUTAR grupa}} = \frac{MS_{between}}{MS_{within}}$$
+
+Ako F je blizu 1, varijabilnost između grupa je podjednaka onoj unutar grupa (nema učinka). Ako je F puno veći od 1, grupe se značajno razlikuju.
+
+### Dekompozicija varijance: SS
+
+Ukupnu varijabilnost podataka rastavimo na dva dijela:
+
+$$SS_{total} = SS_{between} + SS_{within}$$
+
+```{r}
+#| label: ss-rucno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Rucni izracun dekompozicije varijance
+grand_mean <- mean(cred$credibility)
+
+# SS_total: ukupno odstupanje svakog opazanja od grand mean
+ss_total <- sum((cred$credibility - grand_mean)^2)
+
+# SS_between: odstupanje grupnih prosjeka od grand mean (ponderano s n)
+group_stats <- cred |>
+  group_by(news_source) |>
+  summarise(n = n(), M = mean(credibility), .groups = "drop")
+
+ss_between <- sum(group_stats$n * (group_stats$M - grand_mean)^2)
+
+# SS_within: odstupanje opazanja od njihovog grupnog prosjeka
+ss_within <- cred |>
+  left_join(group_stats |> select(news_source, M), by = "news_source") |>
+  summarise(ss = sum((credibility - M)^2)) |>
+  pull(ss)
+
+cat("SS_total:  ", round(ss_total, 1), "\n")
+cat("SS_between:", round(ss_between, 1), "\n")
+cat("SS_within: ", round(ss_within, 1), "\n")
+cat("Provjera:  ", round(ss_between + ss_within, 1), " (treba biti = SS_total)\n\n")
+
+# Stupnjevi slobode
+k <- nrow(group_stats)   # broj grupa
+N <- nrow(cred)           # ukupno opazanja
+df_between <- k - 1
+df_within <- N - k
+
+# Mean Squares
+ms_between <- ss_between / df_between
+ms_within <- ss_within / df_within
+
+# F statistika
+f_stat <- ms_between / ms_within
+p_val <- pf(f_stat, df_between, df_within, lower.tail = FALSE)
+
+cat("df_between:", df_between, "\n")
+cat("df_within: ", df_within, "\n")
+cat("MS_between:", round(ms_between, 2), "\n")
+cat("MS_within: ", round(ms_within, 2), "\n")
+cat("F =", round(f_stat, 2), "\n")
+cat("p =", format(p_val, scientific = TRUE, digits = 3), "\n")
+```
+
+MS_between (varijabilnost između grupa) je mnogo veća od MS_within (varijabilnost unutar grupa). F je velik, p je izuzetno mali. Grupe se značajno razlikuju.
+
+```{r}
+#| label: ss-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 5
+
+# Vizualizacija: ukupna vs objašnjena varijanca
+cred_plot <- cred |>
+  left_join(group_stats |> select(news_source, group_mean = M), by = "news_source") |>
+  mutate(news_source = fct_reorder(news_source, group_mean))
+
+cred_plot |>
+  ggplot(aes(x = news_source, y = credibility)) +
+  geom_hline(yintercept = grand_mean, color = "firebrick", linewidth = 1, linetype = "dashed") +
+  geom_jitter(width = 0.15, alpha = 0.25, color = "grey50") +
+  stat_summary(fun = mean, geom = "point", size = 4, color = "steelblue") +
+  stat_summary(fun = mean, geom = "crossbar", width = 0.4, color = "steelblue", 
+               fun.min = mean, fun.max = mean) +
+  annotate("text", x = 0.5, y = grand_mean + 0.15, label = "Grand mean", 
+           color = "firebrick", hjust = 0, fontface = "italic") +
+  labs(
+    title = "ANOVA logika: razlike izmedu grupnih prosjeka vs varijabilnost unutar grupa",
+    subtitle = "Plavi crossbar = grupni prosjek. Crvena linija = ukupni prosjek. Sive tocke = pojedinci.",
+    x = NULL, y = "Vjerodostojnost (1-7)"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## ANOVA u R-u {#sec-anova-r}
+
+R koristi funkciju `aov()` za ANOVA-u. Sintaksa je formula pristup: `aov(y ~ grupa, data = ...)`.
+
+```{r}
+#| label: aov
+#| echo: true
+#| message: false
+#| warning: false
+
+# Jednosmjerna ANOVA
+model <- aov(credibility ~ news_source, data = cred)
+summary(model)
+```
+
+ANOVA tablica sadrži sve elemente koje smo ručno izračunali: df, SS (Sum Sq), MS (Mean Sq), F vrijednost i p-vrijednost (Pr(>F)). Rezultat potvrđuje: postoji statistički značajna razlika u percipiranoj vjerodostojnosti ovisno o izvoru vijesti.
+
+Ali ANOVA je **omnibus test**: govori da se barem dvije grupe razlikuju, ali ne govori KOJE. Za to trebamo post-hoc testove (drugi dio).
+
+---
+
+## Pretpostavke ANOVA-e {#sec-pretpostavke}
+
+ANOVA ima tri pretpostavke: nezavisnost opažanja (dizajn istraživanja), normalnost distribucije unutar svake grupe (ili dovoljno velik n), homogenost varijance (jednake varijance u svim grupama).
+
+### Provjera normalnosti
+
+```{r}
+#| label: normalnost
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 6
+
+# QQ plotovi po grupi
+cred |>
+  ggplot(aes(sample = credibility)) +
+  stat_qq(color = "steelblue", alpha = 0.5) +
+  stat_qq_line(color = "firebrick") +
+  facet_wrap(~news_source) +
+  labs(
+    title = "QQ plotovi za vjerodostojnost po izvoru vijesti",
+    x = "Teoretski kvantili",
+    y = "Opazeni kvantili"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: shapiro-po-grupi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Shapiro-Wilk po grupi
+cred |>
+  group_by(news_source) |>
+  summarise(
+    n = n(),
+    shapiro_W = round(shapiro.test(credibility)$statistic, 4),
+    shapiro_p = round(shapiro.test(credibility)$p.value, 4),
+    normalno = shapiro_p >= 0.05,
+    .groups = "drop"
+  )
+```
+
+Neke grupe možda ne prolaze Shapiro-Wilk test. Ali s n > 50 po grupi, ANOVA je robusna na umjerena odstupanja od normalnosti (CLT). Također možemo provjeriti normalnost **reziduala** modela:
+
+```{r}
+#| label: normalnost-reziduali
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 5
+
+# Reziduali modela
+tibble(reziduali = residuals(model)) |>
+  ggplot(aes(sample = reziduali)) +
+  stat_qq(color = "steelblue") +
+  stat_qq_line(color = "firebrick") +
+  labs(
+    title = "QQ plot reziduala ANOVA modela",
+    subtitle = "Ako su reziduali normalni, pretpostavka je zadovoljena",
+    x = "Teoretski kvantili",
+    y = "Reziduali"
+  ) +
+  theme_minimal()
+```
+
+### Provjera homogenosti varijance: Levenov test
+
+```{r}
+#| label: levene
+#| echo: true
+#| message: false
+#| warning: false
+
+# Rucna provjera: omjer najvece i najmanje varijance
+var_by_group <- cred |>
+  group_by(news_source) |>
+  summarise(var = var(credibility), sd = round(sd(credibility), 2), .groups = "drop")
+
+var_by_group
+
+cat("\nOmjer max/min varijance:", round(max(var_by_group$var) / min(var_by_group$var), 2), "\n")
+cat("Pravilo palca: ako je omjer < 3, homogenost je prihvatljiva.\n")
+```
+
+```{r}
+#| label: levene-formalni
+#| echo: true
+#| message: false
+#| warning: false
+
+# Levenov test (rucna implementacija bazirana na apsolutnim devijacijama)
+cred_levene <- cred |>
+  left_join(group_stats |> select(news_source, group_median = M), by = "news_source") |>
+  mutate(abs_dev = abs(credibility - group_median))
+
+levene_anova <- aov(abs_dev ~ news_source, data = cred_levene)
+levene_p <- summary(levene_anova)[[1]][["Pr(>F)"]][1]
+
+cat("Levenov test (ANOVA na apsolutnim devijacijama):\n")
+cat("p =", round(levene_p, 4), "\n")
+cat("Homogenost varijance:", if_else(levene_p >= 0.05, "zadovoljena", "narusena"), "\n")
+```
+
+Ako je Levenov test značajan (varijance nejednake), koristimo **Welchovu ANOVA-u** koja ne pretpostavlja jednake varijance:
+
+```{r}
+#| label: welch-anova
+#| echo: true
+#| message: false
+#| warning: false
+
+# Welchova ANOVA (ne pretpostavlja jednake varijance)
+oneway.test(credibility ~ news_source, data = cred, var.equal = FALSE)
+```
+
+```{r}
+#| label: usporedba-anova
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba klasicne i Welchove ANOVA
+klasicna <- summary(model)[[1]]
+welch <- oneway.test(credibility ~ news_source, data = cred, var.equal = FALSE)
+
+cat("Klasicna ANOVA:  F(", df_between, ",", N - k, ") = ", 
+    round(klasicna$`F value`[1], 2), ", p < 0.001\n", sep = "")
+cat("Welchova ANOVA:  F(", welch$parameter[1], ",", round(welch$parameter[2], 1), 
+    ") = ", round(welch$statistic, 2), ", p < 0.001\n", sep = "")
+cat("\nOba pristupa daju isti zakljucak.\n")
+```
+
+::: {.callout-tip}
+## Praktični savjet
+
+Kao i kod t-testa, preporučujemo Welchovu ANOVA-u (`oneway.test(y ~ grupa, var.equal = FALSE)`) kao standardni izbor. Kad su varijance jednake, daje iste rezultate kao klasična ANOVA. Kad su nejednake, daje točnije rezultate. Klasičnu ANOVA-u (`aov()`) koristite kad trebate rezidualne dijagnostike ili post-hoc testove koji zahtijevaju `aov` objekt.
 :::
+
+---
+
+## Vizualizacija ANOVA rezultata {#sec-vizualizacija}
+
+```{r}
+#| label: mean-ci-plot
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Prosjeci s 95% CI
+cred |>
+  group_by(news_source) |>
+  summarise(
+    M = mean(credibility),
+    SE = sd(credibility) / sqrt(n()),
+    CI_lo = M - 1.96 * SE,
+    CI_hi = M + 1.96 * SE,
+    .groups = "drop"
+  ) |>
+  mutate(news_source = fct_reorder(news_source, M)) |>
+  ggplot(aes(x = news_source, y = M, color = news_source)) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymin = CI_lo, ymax = CI_hi), width = 0.2, linewidth = 1) +
+  geom_hline(yintercept = grand_mean, linetype = "dashed", color = "grey50") +
+  scale_color_brewer(palette = "Set2") +
+  labs(
+    title = "Prosjeci s 95% intervalima pouzdanosti",
+    subtitle = "Nepreklapajuci CI sugeriraju znacajnu razliku izmedu grupa",
+    x = NULL,
+    y = "Percipirana vjerodostojnost (1-7)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| label: violin-plot
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Violin plot s prosjekom
+cred |>
+  mutate(news_source = fct_reorder(news_source, credibility)) |>
+  ggplot(aes(x = news_source, y = credibility, fill = news_source)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.15, fill = "white", outlier.shape = NA) +
+  stat_summary(fun = mean, geom = "point", size = 3, color = "firebrick") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Distribucija vjerodostojnosti po izvoru",
+    subtitle = "Violin = oblik distribucije. Crvena tocka = prosjek. Bijeli box = medijan i IQR.",
+    x = NULL,
+    y = "Vjerodostojnost (1-7)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+
+::: {.callout-note}
+## Podsjetnik
+
+U prvom dijelu naučili smo logiku ANOVA-e (F = varijabilnost između / varijabilnost unutar), dekompoziciju varijance (SS_total = SS_between + SS_within), pretpostavke (normalnost, homogenost varijance) i osnovno provođenje `aov()` i `oneway.test()`. ANOVA je pokazala da se grupe značajno razlikuju (p < 0.001). Sada utvrđujemo KOJE se grupe razlikuju.
+:::
+
+## Post-hoc testovi: Tukey HSD {#sec-tukey}
+
+ANOVA je omnibus test: govori da se barem dvije grupe razlikuju, ali ne govori koje. **Post-hoc testovi** uspoređuju sve parove grupa uz kontrolu greške tipa I.
+
+Najčešći post-hoc test je **Tukey HSD** (Honestly Significant Difference). On testira sve parove istovremeno i prilagođava p-vrijednosti tako da ukupna greška tipa I ostane na alfa = 0.05.
+
+```{r}
+#| label: tukey
+#| echo: true
+#| message: false
+#| warning: false
+
+cred <- read_csv("../resources/datasets/news_credibility.csv")
+model <- aov(credibility ~ news_source, data = cred)
+
+# Tukey HSD
+tukey_rez <- TukeyHSD(model)
+tukey_rez
+```
+
+```{r}
+#| label: tukey-tablica
+#| echo: true
+#| message: false
+#| warning: false
+
+# Preglednija tablica
+tukey_df <- as_tibble(tukey_rez$news_source, rownames = "par") |>
+  mutate(
+    razlika = round(diff, 2),
+    CI_lo = round(lwr, 2),
+    CI_hi = round(upr, 2),
+    p = round(`p adj`, 4),
+    znacajno = p < 0.05
+  ) |>
+  select(par, razlika, CI_lo, CI_hi, p, znacajno) |>
+  arrange(p)
+
+tukey_df
+```
+
+Tablica pokazuje razliku prosjeka za svaki par, 95% CI za tu razliku i prilagođenu p-vrijednost. Značajni parovi (p < 0.05) su oni gdje CI ne uključuje nulu.
+
+```{r}
+#| label: tukey-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 6
+
+# Vizualizacija Tukey rezultata
+tukey_df |>
+  mutate(par = fct_reorder(par, razlika)) |>
+  ggplot(aes(y = par)) +
+  geom_errorbarh(aes(xmin = CI_lo, xmax = CI_hi, color = znacajno), 
+                 height = 0.3, linewidth = 1) +
+  geom_point(aes(x = razlika, color = znacajno), size = 3) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  scale_color_manual(values = c("TRUE" = "#2a9d8f", "FALSE" = "#e76f51"),
+                     labels = c("TRUE" = "p < .05", "FALSE" = "p >= .05")) +
+  labs(
+    title = "Tukey HSD: razlike izmedu svih parova izvora",
+    subtitle = "Zeleno = znacajna razlika. CI koji ne sadrzi 0 = znacajno.",
+    x = "Razlika u vjerodostojnosti",
+    y = NULL,
+    color = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+Iz grafa se jasno vide obrasci: društvena mreža ima značajno nižu vjerodostojnost od svih drugih izvora. TV i tisak nemaju značajnu razliku međusobno (oba su visoki). Podcast i web portal su u sredini.
+
+### Compact letter display
+
+Česta praksa u izvještavanju je grupiranje izvora koji se NE razlikuju značajno. To zovemo "compact letter display" (CLD).
+
+```{r}
+#| label: cld-rucno
+#| echo: true
+#| message: false
+#| warning: false
+
+# Rucna interpretacija Tukey rezultata u grupe
+# Grupe koje se NE razlikuju znacajno dijele isto slovo
+group_stats <- cred |>
+  group_by(news_source) |>
+  summarise(M = round(mean(credibility), 2), .groups = "drop") |>
+  arrange(desc(M))
+
+cat("Grupiranje izvora (isti skup slova = nema znacajne razlike):\n\n")
+
+# Na temelju Tukey rezultata:
+znacajni_parovi <- tukey_df |> filter(znacajno) |> pull(par)
+cat("Znacajno razliciti parovi:\n")
+for (p in znacajni_parovi) cat("  ", p, "\n")
+```
+
+---
+
+## Veličina učinka: eta-kvadrat {#sec-eta}
+
+Kao i kod t-testa, p-vrijednost ne govori koliko je učinak velik. **Eta-kvadrat** (eta2) je mjera veličine učinka za ANOVA-u:
+
+$$\eta^2 = \frac{SS_{between}}{SS_{total}}$$
+
+Eta-kvadrat je proporcija ukupne varijabilnosti koja je objašnjena grupnom pripadnošću. Interpretira se kao R-kvadrat u regresiji.
+
+```{r}
+#| label: eta-kvadrat
+#| echo: true
+#| message: false
+#| warning: false
+
+# Iz ANOVA tablice
+anova_table <- summary(model)[[1]]
+ss_between <- anova_table$`Sum Sq`[1]
+ss_within <- anova_table$`Sum Sq`[2]
+ss_total <- ss_between + ss_within
+
+eta2 <- ss_between / ss_total
+
+cat("SS_between:", round(ss_between, 1), "\n")
+cat("SS_total:  ", round(ss_total, 1), "\n")
+cat("Eta-kvadrat:", round(eta2, 3), "\n")
+cat("Interpretacija:", round(eta2 * 100, 1), "% varijabilnosti u vjerodostojnosti\n")
+cat("je objasnjeno izvorom vijesti.\n")
+```
+
+### Interpretacija eta-kvadrata
+
+Cohen (1988) je predložio smjernice:
+
+```{r}
+#| label: eta-smjernice
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~eta2, ~interpretacija,
+  "0.01", "Mali ucinak",
+  "0.06", "Srednji ucinak",
+  "0.14", "Veliki ucinak"
+)
+```
+
+Naš eta2 ≈ `r round(eta2, 2)` je veliki učinak. Izvor vijesti objašnjava značajan dio varijabilnosti u percipiranoj vjerodostojnosti.
+
+### Omega-kvadrat: manje pristrana mjera
+
+Eta-kvadrat je pristran (precjenjuje veličinu učinka u populaciji). **Omega-kvadrat** je manje pristrana alternativa:
+
+$$\omega^2 = \frac{SS_{between} - (k-1) \cdot MS_{within}}{SS_{total} + MS_{within}}$$
+
+```{r}
+#| label: omega-kvadrat
+#| echo: true
+#| message: false
+#| warning: false
+
+ms_within <- anova_table$`Mean Sq`[2]
+k <- length(unique(cred$news_source))
+
+omega2 <- (ss_between - (k - 1) * ms_within) / (ss_total + ms_within)
+
+cat("Eta-kvadrat:  ", round(eta2, 3), "\n")
+cat("Omega-kvadrat:", round(omega2, 3), "\n")
+cat("Razlika je mala za velike uzorke, ali omega2 je tocnija procjena.\n")
+```
+
+::: {.callout-tip}
+## Praktični savjet
+
+Izvijestite eta-kvadrat (jer je poznatiji) ili omega-kvadrat (jer je manje pristran). Za objavljivanje u časopisima, sve češće se traži omega-kvadrat. U praksi, za n > 50 po grupi, razlika je minimalna.
+:::
+
+---
+
+## Planirane usporedbe {#sec-kontrasti}
+
+Ponekad unaprijed znamo koje usporedbe nas zanimaju. Umjesto da uspoređujemo sve parove (Tukey), možemo specificirati **planirane usporedbe** (contrasts). Ovo je snažniji pristup jer testira manje hipoteza.
+
+```{r}
+#| label: kontrasti
+#| echo: true
+#| message: false
+#| warning: false
+
+# Planirana usporedba 1: tradicionalni (TV + tisak) vs digitalni (portal + mreza + podcast)
+cred <- cred |>
+  mutate(tip_medija = if_else(
+    news_source %in% c("TV", "tisak"), "tradicionalni", "digitalni"
+  ))
+
+t.test(credibility ~ tip_medija, data = cred)
+```
+
+```{r}
+#| label: kontrast-d
+#| echo: true
+#| message: false
+#| warning: false
+
+# Cohenov d za ovu usporedbu
+trad <- cred |> filter(tip_medija == "tradicionalni") |> pull(credibility)
+dig <- cred |> filter(tip_medija == "digitalni") |> pull(credibility)
+s_p <- sqrt(((length(trad)-1)*sd(trad)^2 + (length(dig)-1)*sd(dig)^2) / (length(trad)+length(dig)-2))
+d_td <- (mean(trad) - mean(dig)) / s_p
+
+cat("Tradicionalni M:", round(mean(trad), 2), "\n")
+cat("Digitalni M:", round(mean(dig), 2), "\n")
+cat("Cohenov d:", round(d_td, 2), "(veliki ucinak)\n")
+```
+
+Planirana usporedba (tradicionalni vs digitalni) daje jasnu sliku: tradicionalni mediji imaju značajno višu percipiranu vjerodostojnost od digitalnih.
+
+---
+
+## Kruskal-Wallisov test {#sec-kruskal}
+
+**Kruskal-Wallisov test** je neparametrijska alternativa jednosmjernoj ANOVA-i. Koristi rangove umjesto izvornih vrijednosti i ne pretpostavlja normalnost.
+
+```{r}
+#| label: kruskal
+#| echo: true
+#| message: false
+#| warning: false
+
+# Kruskal-Wallis test
+kw_test <- kruskal.test(credibility ~ news_source, data = cred)
+kw_test
+```
+
+```{r}
+#| label: kruskal-usporedba
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba ANOVA i Kruskal-Wallis
+cat("Klasicna ANOVA:    F = ", round(summary(model)[[1]]$`F value`[1], 2), 
+    ", p < 0.001\n", sep = "")
+cat("Kruskal-Wallis:    H = ", round(kw_test$statistic, 2), 
+    ", p < 0.001\n", sep = "")
+cat("\nOba testa daju isti zakljucak.\n")
+```
+
+### Post-hoc za Kruskal-Wallis: Dunn test
+
+Kruskal-Wallis test je omnibus. Za identifikaciju specifičnih razlika koristimo **Dunnov test** (neparametrijski ekvivalent Tukeyu).
+
+```{r}
+#| label: dunn
+#| echo: true
+#| message: false
+#| warning: false
+
+# Pairwise Wilcoxon s Bonferroni korekcijom (ugraden u R)
+pw_wilcox <- pairwise.wilcox.test(cred$credibility, cred$news_source, 
+                                   p.adjust.method = "BH")
+pw_wilcox
+```
+
+---
+
+## Potpuna analiza: izvještaj {#sec-analiza}
+
+```{r}
+#| label: analiza-opisna
+#| echo: true
+#| message: false
+#| warning: false
+
+# Kompletna opisna statistika
+cred |>
+  group_by(news_source) |>
+  summarise(
+    n = n(),
+    M = round(mean(credibility), 2),
+    SD = round(sd(credibility), 2),
+    Median = median(credibility),
+    SE = round(sd(credibility) / sqrt(n()), 2),
+    .groups = "drop"
+  ) |>
+  arrange(desc(M))
+```
+
+```{r}
+#| label: analiza-moderacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 6
+
+# Moderacija: medijska pismenost
+cred |>
+  mutate(
+    news_source = fct_reorder(news_source, credibility),
+    media_literacy = factor(media_literacy, levels = c("niska", "srednja", "visoka"))
+  ) |>
+  group_by(news_source, media_literacy) |>
+  summarise(M = mean(credibility), SE = sd(credibility)/sqrt(n()), .groups = "drop") |>
+  ggplot(aes(x = news_source, y = M, color = media_literacy, group = media_literacy)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = M - 1.96 * SE, ymax = M + 1.96 * SE), width = 0.15) +
+  scale_color_manual(values = c("niska" = "#e76f51", "srednja" = "#e9c46a", "visoka" = "#2a9d8f")) +
+  labs(
+    title = "Vjerodostojnost po izvoru i razini medijske pismenosti",
+    subtitle = "Medijski pismeniji ispitanici manje vjeruju drustvenim mrezama",
+    x = NULL,
+    y = "Percipirana vjerodostojnost (1-7)",
+    color = "Medijska pismenost"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: analiza-dob
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# ANOVA unutar svake dobne skupine
+cred |>
+  group_by(age_group) |>
+  summarise(
+    F_val = round(summary(aov(credibility ~ news_source))[[1]]$`F value`[1], 2),
+    p = summary(aov(credibility ~ news_source))[[1]]$`Pr(>F)`[1],
+    eta2 = {
+      a <- summary(aov(credibility ~ news_source))[[1]]
+      round(a$`Sum Sq`[1] / sum(a$`Sum Sq`), 3)
+    },
+    .groups = "drop"
+  ) |>
+  mutate(p = format(p, scientific = TRUE, digits = 2))
+```
+
+Efekt izvora na vjerodostojnost je značajan u svim dobnim skupinama, ali eta-kvadrat varira. Ovo sugerira da je obrazac (TV > tisak > portal > podcast > mreža) konzistentan, ali jačina razlika može varirati po dobi.
+
+```{r}
+#| label: izvjestaj-apa
+#| echo: true
+#| message: false
+#| warning: false
+
+cat("================================================================\n")
+cat("   APA IZVJESTAJ: PERCIPIRANA VJERODOSTOJNOST PO IZVORU\n")
+cat("================================================================\n\n")
+
+cat("Jednosmjerna ANOVA pokazala je statisticki znacajnu razliku u\n")
+cat("percipiranoj vjerodostojnosti vijesti ovisno o izvoru,\n")
+cat("F(", k-1, ", ", nrow(cred)-k, ") = ", 
+    round(summary(model)[[1]]$`F value`[1], 2), 
+    ", p < .001, eta2 = ", round(eta2, 2), ".\n\n", sep = "")
+
+cat("Tukey HSD post-hoc testovi pokazali su da:\n")
+znac <- tukey_df |> filter(znacajno)
+for (i in 1:nrow(znac)) {
+  r <- znac[i, ]
+  cat("  ", r$par, ": razlika = ", r$razlika, 
+      ", 95% CI [", r$CI_lo, ", ", r$CI_hi, "], p = ", 
+      if_else(r$p < 0.001, "< .001", as.character(round(r$p, 3))), "\n", sep = "")
+}
+
+cat("\nTV (M = ", round(mean(cred$credibility[cred$news_source == "TV"]), 2), 
+    ") i tisak (M = ", round(mean(cred$credibility[cred$news_source == "tisak"]), 2),
+    ") imaju\nnajvisu vjerodostojnost. Drustvena mreza (M = ", 
+    round(mean(cred$credibility[cred$news_source == "drustvena_mreza"]), 2),
+    ") ima najnizu.\n", sep = "")
+cat("Medijska pismenost moderira efekt: visoko pismeni\n")
+cat("ispitanici manje vjeruju vijestima s drustvenih mreza.\n")
+```
+
+---
+
+## Dijagram odlučivanja: ANOVA ili nešto drugo? {#sec-dijagram}
+
+```{r}
+#| label: dijagram-odabir
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~situacija, ~test,
+  "Dvije nezavisne grupe", "Nezavisni t-test (tjedan 12)",
+  "Dvije uparene grupe", "Upareni t-test (tjedan 12)",
+  "Tri+ nezavisne grupe, normalni podaci", "Jednosmjerna ANOVA + Tukey HSD",
+  "Tri+ nezavisne grupe, nejednake varijance", "Welchova ANOVA + Games-Howell",
+  "Tri+ nezavisne grupe, nenormalni/ordinalni", "Kruskal-Wallis + Dunn",
+  "Tri+ uparene grupe", "Repeated measures ANOVA (napredno)",
+  "Dva faktora istovremeno", "Dvosmjerna ANOVA (napredno)",
+  "Kategoricka x kategoricka varijabla", "Hi-kvadrat test (tjedan 11)"
+)
+```
+
+---
+
+::: {.callout-important}
+## Ključni zaključci
+
+1. ANOVA uspoređuje prosjeke tri ili više grupa jednim testom, kontrolirajući grešku tipa I. Višestruki t-testovi inflacioniraju alfa i nisu prihvatljivi.
+
+2. F statistika = MS_between / MS_within. Velik F znači da su razlike između grupa veće od varijabilnosti unutar grupa.
+
+3. Dekompozicija varijance: SS_total = SS_between + SS_within. ANOVA testira je li SS_between dovoljno velik u odnosu na SS_total.
+
+4. ANOVA je omnibus test: govori da razlika postoji, ali ne govori KOJE se grupe razlikuju. Post-hoc testovi identificiraju specifične parove.
+
+5. Tukey HSD (`TukeyHSD(model)`) uspoređuje sve parove uz kontrolu ukupne greške tipa I. Daje razlike, CI i prilagođene p-vrijednosti za svaki par.
+
+6. Eta-kvadrat = SS_between / SS_total. Proporcija varijabilnosti objašnjena grupom. Smjernice: 0.01 mali, 0.06 srednji, 0.14 veliki učinak. Omega-kvadrat je manje pristrana alternativa.
+
+7. Pretpostavke: nezavisnost, normalnost unutar grupa (ili n > 30), homogenost varijance. Welchova ANOVA (`oneway.test(var.equal = FALSE)`) ne zahtijeva jednake varijance.
+
+8. Kruskal-Wallisov test (`kruskal.test()`) je neparametrijska alternativa. Koristi rangove. Post-hoc: `pairwise.wilcox.test()` s BH korekcijom.
+
+9. Planirane usporedbe (contrasts) su snažniji pristup kad unaprijed znate koje grupe želite usporediti (npr. tradicionalni vs digitalni mediji).
+
+10. APA format za ANOVA-u: F(df_between, df_within) = vrijednost, p, eta2. Post-hoc razlike s CI.
+
+11. Moderacijska analiza (ANOVA po podgrupama treće varijable) otkriva je li obrazac konzistentan ili varira ovisno o nekoj trećoj varijabli (npr. medijska pismenost, dob).
+
+12. Za dva faktora istovremeno (npr. izvor x dob) koristite dvosmjernu ANOVA-u. Za uparena mjerenja kroz tri+ uvjeta koristite repeated measures ANOVA-u. Ovo su napredni pristupi izvan dosega ovog kolegija.
+:::
+
+---
+
+## Zadaci za pripremu
+
+1. Učitajte `news_credibility.csv`. Provedite jednosmjernu ANOVA-u za varijablu `trust_general` po `news_source`. Izračunajte eta-kvadrat i provedite Tukey HSD. Koji se parovi izvora značajno razlikuju?
+
+2. Provedite Kruskal-Wallisov test za `share_intent` po `news_source`. Usporedite rezultat s klasičnom ANOVA-om. Jesu li zaključci konzistentni?
+
+3. Testirajte planiranu usporedbu: razlikuje li se `credibility` između tri razine medijske pismenosti (`media_literacy`)? Koji par se razlikuje prema Tukey HSD testu?
+
+---
+
+## Dodatno čitanje
+
+**Obavezno**
+
+Navarro, D. (2018). *Learning Statistics with R*, Chapter 14 (Comparing Several Means). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva jednosmjernu ANOVA-u, post-hoc testove i veličinu učinka.
+
+**Preporučeno**
+
+Field, A. (2018). *Discovering Statistics Using R*. SAGE. Poglavlje 10. Detaljna obrada ANOVA-e s dijagnostikom i vizualizacijama.
+
+Maxwell, S. E., Delaney, H. D., & Kelley, K. (2018). *Designing Experiments and Analyzing Data* (3rd edition). Routledge. Referentni udžbenik za eksperimentalne dizajne i ANOVA-u.
+
+---
+
+## Pojmovnik
+
+| Pojam | Objašnjenje |
+|---|---|
+| ANOVA | Analysis of Variance. Omnibus test za usporedbu prosjeka tri ili više grupa. |
+| Jednosmjerna ANOVA | ANOVA s jednim faktorom (jednom nezavisnom varijablom). |
+| F statistika | Omjer MS_between / MS_within. F >> 1 sugerira značajne razlike između grupa. |
+| SS (Sum of Squares) | Mjera varijabilnosti. SS_total = SS_between + SS_within. |
+| MS (Mean Square) | SS / df. MS_between = SS_between / (k-1). MS_within = SS_within / (N-k). |
+| Omnibus test | Test koji detektira da razlika postoji negdje, ali ne govori gdje specifično. |
+| Post-hoc test | Test koji se provodi NAKON značajne ANOVA-e za identifikaciju specifičnih razlika. |
+| Tukey HSD | Post-hoc test koji uspoređuje sve parove grupa uz kontrolu ukupne greške tipa I. |
+| Eta-kvadrat | SS_between / SS_total. Proporcija varijabilnosti objašnjena grupnom pripadnošću. 0.01/0.06/0.14 mali/srednji/veliki. |
+| Omega-kvadrat | Manje pristrana alternativa eta-kvadratu. Preporučena za publikacije. |
+| Inflacija alfa | Porast greške tipa I pri višestrukim usporedbama. ANOVA to kontrolira. |
+| Homogenost varijance | Pretpostavka jednakih varijanci u svim grupama. Levenov test je provjerava. |
+| Welchova ANOVA | `oneway.test(var.equal = FALSE)`. ANOVA koja ne zahtijeva jednake varijance. |
+| Kruskal-Wallisov test | Neparametrijska alternativa jednosmjernoj ANOVA-i. Koristi rangove. `kruskal.test()`. |
+| Dunnov test | Post-hoc test za Kruskal-Wallis. Neparametrijski ekvivalent Tukeyu. |
+| Planirane usporedbe | Unaprijed definirane specifične usporedbe. Snažniji od post-hoc testova jer testiraju manje hipoteza. |
+| `aov()` | R funkcija za klasičnu ANOVA-u. `aov(y ~ grupa, data = ...)`. |
+| `TukeyHSD()` | R funkcija za Tukey post-hoc test. Prima `aov()` objekt. |
+| `oneway.test()` | R funkcija za Welchovu ANOVA-u. `var.equal = FALSE` za robusnu verziju. |
+| `kruskal.test()` | R funkcija za Kruskal-Wallisov test. Sintaksa kao `aov()`. |
+| `pairwise.wilcox.test()` | R funkcija za parwise Wilcoxon testove s korekcijom p-vrijednosti. |

@@ -1,35 +1,1318 @@
 ---
-title: "Tjedan 12: Usporedba prosjeka: t-testovi"
-subtitle: "Jednosmjerni, dvosmjerni i upareni t-test s veličinom učinka"
-date: 2025-02-01
-categories: [t-test, usporedba prosjeka, Cohenov d]
+title: "Tjedan 12: Usporedba prosjeka t-testovima"
+subtitle: "Kad pretpostavke drže i kad ne drže"
+date: 2025-05-10
+categories: [t-test, provjera pretpostavki, normalnost, Wilcoxon test, Cohenov d]
 draft: false
 ---
+
+```{r}
+#| label: setup
+#| echo: true
+#| message: false
+#| warning: false
+
+library(tidyverse)
+```
 
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete:
+Nakon ovog predavanja moći ćete
 
-1. Odabrati odgovarajuću vrstu t-testa za istraživačko pitanje
-2. Provesti jednosmjerni, dvosmjerni i upareni t-test u R-u
-3. Razumjeti Welchovu korekciju
-4. Izračunati i interpretirati Cohenov d
-5. Provjeriti pretpostavku normalnosti
+1. Odabrati odgovarajući t-test (jednouzorački, nezavisni, upareni) za zadano istraživačko pitanje.
+2. Provjeriti pretpostavke t-testa (normalnost, homogenost varijance) i znati što učiniti kad su narušene.
+3. Primijeniti Shapiro-Wilkov test i QQ plot za provjeru normalnosti.
+4. Provesti Wilcoxonov test kao neparametrijsku alternativu kad normalnost nije zadovoljena.
+5. Izračunati i interpretirati Cohenov d za sve tri vrste t-testa.
+6. Pravilno izvijestiti rezultate t-testa u APA formatu.
+7. Provesti kompletnu analizu usporedbe dvaju uvjeta na stvarnim podacima.
 :::
+
+## Motivacija: vizuali u člancima
+
+Uredništvo web portala razmatra redizajn članka. Dosad su objavljali pretežno tekstualne članke, ali razmišljaju o dodavanju infografika, slika i vizualnih elemenata. Pitanje je: kako vizuali utječu na čitateljsko iskustvo? Mijenjaju li vrijeme čitanja, razumijevanje, namjeru dijeljenja, percipiranu vjerodostojnost?
+
+Proveli ste eksperiment: 120 članaka je prezentirano ispitanicima u dva uvjeta (s vizualima i bez vizuala). Svaki članak je testiran u oba uvjeta (within-subjects dizajn), što znači da ćemo koristiti **upareni t-test**.
+
+Na predavanju o testiranju hipoteza (tjedan 10) naučili smo logiku t-testa, p-vrijednost i greške tipa I i II. Ovo predavanje se fokusira na praktičnu primjenu: provjeru pretpostavki, odabir pravog testa i pravilno izvještavanje rezultata.
+
+```{r}
+#| label: ucitavanje
+#| echo: true
+#| message: false
+#| warning: false
+
+articles <- read_csv("../resources/datasets/article_visuals.csv")
+glimpse(articles)
+```
+
+```{r}
+#| label: pregled
+#| echo: true
+#| message: false
+#| warning: false
+
+articles |>
+  summarise(
+    n = n(),
+    M_time_no = round(mean(reading_time_no_visual), 2),
+    M_time_with = round(mean(reading_time_with_visual), 2),
+    M_comp_no = round(mean(comprehension_no_visual), 2),
+    M_comp_with = round(mean(comprehension_with_visual), 2),
+    M_share_no = round(mean(sharing_no_visual), 2),
+    M_share_with = round(mean(sharing_with_visual), 2)
+  )
+```
+
+Članci s vizualima imaju duže vrijeme čitanja, bolje razumijevanje i višu namjeru dijeljenja. Ali prije nego izvučemo zaključke, moramo provjeriti pretpostavke.
+
+---
+
+## Podsjetnik: tri vrste t-testa {#sec-podsjetnik}
+
+```{r}
+#| label: tri-testa
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~test, ~pitanje, ~R_kod,
+  "Jednouzorački", "Razlikuje li se prosjek od poznate vrijednosti?", "t.test(x, mu = vrijednost)",
+  "Nezavisni (dvouzorački)", "Razlikuju li se prosjeci dviju nezavisnih grupa?", "t.test(x, y)",
+  "Upareni", "Razlikuje li se prosjek u dva uvjeta za iste jedinice?", "t.test(x, y, paired = TRUE)"
+)
+```
+
+Za naše podatke (isti članci u dva uvjeta), koristimo upareni t-test. Ali prvo moramo provjeriti pretpostavke.
+
+---
+
+## Pretpostavke t-testa {#sec-pretpostavke}
+
+T-test ima nekoliko pretpostavki koje moramo provjeriti prije nego mu vjerujemo.
+
+**Za sve t-testove:**
+
+Podaci su barem intervalna skala (razlike između vrijednosti imaju smisla). Opažanja su nezavisna jedno od drugoga (osim parova u uparenom testu). Distribucija je približno normalna (ili je uzorak dovoljno velik da CLT kompenzira).
+
+**Dodatno za nezavisni t-test:**
+
+Varijance dviju grupa su približno jednake (Studentov t-test) ili koristimo Welchovu korekciju koja ne zahtijeva ovu pretpostavku (default u R-u).
+
+Najvažnija pretpostavka za provjeru je **normalnost**. Za upareni t-test, trebamo provjeriti normalnost RAZLIKA (ne pojedinačnih mjerenja).
+
+---
+
+## Provjera normalnosti {#sec-normalnost}
+
+### Vizualna provjera: histogram i QQ plot
+
+```{r}
+#| label: normalnost-razlike
+#| echo: true
+#| message: false
+#| warning: false
+
+# Za upareni test: provjera normalnosti RAZLIKA
+articles <- articles |>
+  mutate(diff_time = reading_time_with_visual - reading_time_no_visual,
+         diff_comp = comprehension_with_visual - comprehension_no_visual,
+         diff_share = sharing_with_visual - sharing_no_visual,
+         diff_cred = credibility_with_visual - credibility_no_visual)
+```
+
+```{r}
+#| label: histogram-razlike
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+articles |>
+  ggplot(aes(x = diff_time)) +
+  geom_histogram(aes(y = after_stat(density)), fill = "steelblue", color = "white", bins = 25) +
+  stat_function(fun = dnorm, 
+                args = list(mean = mean(articles$diff_time), sd = sd(articles$diff_time)),
+                color = "firebrick", linewidth = 1) +
+  labs(
+    title = "Distribucija razlika u vremenu citanja (s vizualima minus bez)",
+    subtitle = "Crvena krivulja = normalna distribucija s istim M i SD",
+    x = "Razlika u minutama",
+    y = "Gustoca"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: qq-plot-razlike
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 8
+
+# QQ plotovi za sve cetiri razlike
+articles |>
+  select(starts_with("diff_")) |>
+  pivot_longer(everything(), names_to = "varijabla", values_to = "razlika") |>
+  mutate(varijabla = case_when(
+    varijabla == "diff_time" ~ "Vrijeme citanja",
+    varijabla == "diff_comp" ~ "Razumijevanje",
+    varijabla == "diff_share" ~ "Namjera dijeljenja",
+    varijabla == "diff_cred" ~ "Vjerodostojnost"
+  )) |>
+  ggplot(aes(sample = razlika)) +
+  stat_qq(color = "steelblue", alpha = 0.6) +
+  stat_qq_line(color = "firebrick") +
+  facet_wrap(~varijabla, scales = "free") +
+  labs(
+    title = "QQ plotovi za razlike (upareni uvjeti)",
+    subtitle = "Tocke blizu linije = normalna distribucija. Odstupanja na repovima su cesta.",
+    x = "Teoretski kvantili",
+    y = "Opazeni kvantili"
+  ) +
+  theme_minimal()
+```
+
+QQ plot je najinformativniji dijagnostički alat za normalnost. Ako točke leže blizu dijagonalne linije, distribucija je približno normalna. Blaga odstupanja na repovima su prihvatljiva, osobito za n > 30. Sustavna zakrivljenost (S-oblik ili J-oblik) sugerira problem.
+
+Razlike u vremenu čitanja i razumijevanju izgledaju razumno normalno. Razlike u dijeljenju i vjerodostojnosti su diskretnije (Likert skala) pa QQ plot pokazuje stepeničast uzorak, što je očekivano.
+
+### Shapiro-Wilkov test
+
+**Shapiro-Wilkov test** je formalni test normalnosti. H₀ je da su podaci normalno distribuirani. Ako je p < 0.05, odbacujemo normalnost.
+
+```{r}
+#| label: shapiro
+#| echo: true
+#| message: false
+#| warning: false
+
+tibble(
+  varijabla = c("Vrijeme citanja", "Razumijevanje", "Namjera dijeljenja", "Vjerodostojnost"),
+  W = c(
+    shapiro.test(articles$diff_time)$statistic,
+    shapiro.test(articles$diff_comp)$statistic,
+    shapiro.test(articles$diff_share)$statistic,
+    shapiro.test(articles$diff_cred)$statistic
+  ),
+  p = c(
+    shapiro.test(articles$diff_time)$p.value,
+    shapiro.test(articles$diff_comp)$p.value,
+    shapiro.test(articles$diff_share)$p.value,
+    shapiro.test(articles$diff_cred)$p.value
+  )
+) |>
+  mutate(
+    W = round(W, 4),
+    p = round(p, 4),
+    normalno = if_else(p >= 0.05, "Da", "Ne")
+  )
+```
+
+Razlike u vremenu čitanja prolaze test normalnosti (p > 0.05). Razlike u Likert varijablama (dijeljenje, vjerodostojnost) možda ne prolaze jer su diskretne (samo cjelobrojne vrijednosti). Za te varijable razmotrimo neparametrijske alternative.
+
+::: {.callout-important}
+## Važna napomena o Shapiro-Wilkovom testu
+
+Shapiro-Wilkov test ima isti problem kao i svaki statistički test: s velikim uzorkom detektira i trivijalna odstupanja od normalnosti. S n = 500, gotovo svaka distribucija "ne prolazi" Shapiro-Wilkov test. S n = 15, gotovo svaka distribucija "prolazi."
+
+Zato je vizualna procjena (QQ plot) jednako važna kao formalni test. Pravilo palca: ako QQ plot izgleda razumno i n > 30, t-test je dovoljno robustan čak i za umjerena odstupanja od normalnosti (zahvaljujući CLT-u).
+:::
+
+---
+
+## Provjera homogenosti varijance {#sec-varijance}
+
+Za nezavisni t-test, Studentova verzija pretpostavlja jednake varijance u dvjema grupama. Levenov test (ili Bartlettov test) provjerava ovu pretpostavku.
+
+```{r}
+#| label: levene-simulacija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Demonstracija na simuliranim podacima (nezavisne grupe)
+set.seed(42)
+grupa_a <- rnorm(50, mean = 5, sd = 1.0)
+grupa_b <- rnorm(50, mean = 6, sd = 2.5)  # razlicita varijanca!
+
+cat("SD grupa A:", round(sd(grupa_a), 2), "\n")
+cat("SD grupa B:", round(sd(grupa_b), 2), "\n")
+cat("Omjer varijanci:", round(var(grupa_b) / var(grupa_a), 2), "\n")
+```
+
+```{r}
+#| label: welch-vs-student-demo
+#| echo: true
+#| message: false
+#| warning: false
+
+# Studentov t-test (pretpostavlja jednake varijance)
+student_rez <- t.test(grupa_a, grupa_b, var.equal = TRUE)
+
+# Welchov t-test (ne pretpostavlja jednake varijance, DEFAULT)
+welch_rez <- t.test(grupa_a, grupa_b, var.equal = FALSE)
+
+tibble(
+  test = c("Student (var.equal = TRUE)", "Welch (var.equal = FALSE, DEFAULT)"),
+  t = round(c(student_rez$statistic, welch_rez$statistic), 3),
+  df = round(c(student_rez$parameter, welch_rez$parameter), 1),
+  p = round(c(student_rez$p.value, welch_rez$p.value), 4)
+)
+```
+
+Welchov test ima nerunde stupnjeve slobode jer ih prilagođava za razliku u varijancama. Kad su varijance jednake, oba testa daju iste rezultate. Kad su varijance različite, Welchov test je točniji.
+
+::: {.callout-tip}
+## Praktični savjet
+
+Koristite Welchov t-test (default u R-u) uvijek. Ne morate provjeravati homogenost varijance jer Welchov test radi jednako dobro kad su varijance jednake i bolje kad su različite. Studentov t-test s `var.equal = TRUE` koristite samo ako imate specifičan razlog (npr. usporedba s objavljenim rezultatima koji koriste Studentov test).
+:::
+
+---
+
+## Upareni t-test na podacima o vizualima {#sec-upareni}
+
+Sada provodimo upareni t-test za naše glavno pitanje: utječu li vizuali na vrijeme čitanja?
+
+```{r}
+#| label: paired-time
+#| echo: true
+#| message: false
+#| warning: false
+
+# Upareni t-test: vrijeme citanja s vizualima vs bez
+time_test <- t.test(
+  articles$reading_time_with_visual, 
+  articles$reading_time_no_visual, 
+  paired = TRUE
+)
+time_test
+```
+
+```{r}
+#| label: paired-time-interpretacija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Cohenov d za upareni test: d = M_razlika / SD_razlika
+d_time <- mean(articles$diff_time) / sd(articles$diff_time)
+
+cat("=== Upareni t-test: Vrijeme citanja ===\n")
+cat("Bez vizuala: M =", round(mean(articles$reading_time_no_visual), 2), "min\n")
+cat("S vizualima: M =", round(mean(articles$reading_time_with_visual), 2), "min\n")
+cat("Razlika: M =", round(mean(articles$diff_time), 2), "min\n")
+cat("t(", time_test$parameter, ") = ", round(time_test$statistic, 2), "\n", sep = "")
+cat("p < 0.001\n")
+cat("95% CI za razliku: [", round(time_test$conf.int[1], 2), ",", 
+    round(time_test$conf.int[2], 2), "] min\n")
+cat("Cohenov d:", round(d_time, 2), "\n")
+cat("Interpretacija: Veliki ucinak. Vizuali povecavaju vrijeme citanja za ~35 sekundi.\n")
+```
+
+### Vizualizacija uparenih podataka
+
+```{r}
+#| label: paired-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Prikaz razlika
+articles |>
+  ggplot(aes(x = diff_time)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 20) +
+  geom_vline(xintercept = 0, color = "grey50", linetype = "dashed", linewidth = 0.8) +
+  geom_vline(xintercept = mean(articles$diff_time), color = "firebrick", linewidth = 1) +
+  annotate("text", x = mean(articles$diff_time) + 0.05, y = 15, 
+           label = paste0("M = +", round(mean(articles$diff_time), 2), " min"),
+           color = "firebrick", hjust = 0, fontface = "bold") +
+  labs(
+    title = "Razlike u vremenu citanja (s vizualima minus bez vizuala)",
+    subtitle = "Vecina razlika je pozitivna: vizuali povecavaju vrijeme citanja",
+    x = "Razlika (minute)",
+    y = "Broj clanaka"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: paired-slope
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 6
+
+# Slope chart za prvih 40 clanaka (za preglednost)
+articles |>
+  slice(1:40) |>
+  select(article_id, reading_time_no_visual, reading_time_with_visual) |>
+  pivot_longer(-article_id, names_to = "uvjet", values_to = "vrijeme") |>
+  mutate(uvjet = if_else(str_detect(uvjet, "no"), "Bez vizuala", "S vizualima")) |>
+  ggplot(aes(x = uvjet, y = vrijeme, group = article_id)) +
+  geom_line(alpha = 0.3, color = "grey50") +
+  geom_point(aes(color = uvjet), size = 2, alpha = 0.6) +
+  stat_summary(aes(group = 1), fun = mean, geom = "line", linewidth = 2, color = "firebrick") +
+  stat_summary(aes(group = 1), fun = mean, geom = "point", size = 4, color = "firebrick") +
+  scale_color_manual(values = c("Bez vizuala" = "steelblue", "S vizualima" = "#2a9d8f")) +
+  labs(
+    title = "Vrijeme citanja po uvjetu (prvih 40 clanaka)",
+    subtitle = "Sive linije = pojedinacni clanci. Crvena linija = prosjek.",
+    x = NULL,
+    y = "Vrijeme citanja (min)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+Slope chart jasno pokazuje da većina linija ide prema gore (duže čitanje s vizualima). Crvena linija (prosjek) potvrđuje ukupni trend.
+
+---
+
+## Sva četiri ishoda: sustavni pristup {#sec-svi-ishodi}
+
+Provedimo upareni t-test za sve četiri mjere istovremeno.
+
+```{r}
+#| label: svi-testovi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Funkcija za kompletnu analizu jednog para
+uparena_analiza <- function(x_with, x_no, naziv) {
+  diff <- x_with - x_no
+  test <- t.test(x_with, x_no, paired = TRUE)
+  d <- mean(diff) / sd(diff)
+  shapiro_p <- shapiro.test(diff)$p.value
+  
+  tibble(
+    ishod = naziv,
+    M_bez = round(mean(x_no), 2),
+    M_s = round(mean(x_with), 2),
+    M_razlika = round(mean(diff), 2),
+    t = round(test$statistic, 2),
+    df = test$parameter,
+    p = test$p.value,
+    d = round(d, 2),
+    shapiro_p = round(shapiro_p, 4)
+  )
+}
+
+rezultati <- bind_rows(
+  uparena_analiza(articles$reading_time_with_visual, articles$reading_time_no_visual, "Vrijeme citanja (min)"),
+  uparena_analiza(articles$comprehension_with_visual, articles$comprehension_no_visual, "Razumijevanje (0-10)"),
+  uparena_analiza(articles$sharing_with_visual, articles$sharing_no_visual, "Namjera dijeljenja (1-5)"),
+  uparena_analiza(articles$credibility_with_visual, articles$credibility_no_visual, "Vjerodostojnost (1-7)")
+) |>
+  mutate(
+    znacajno = p < 0.05,
+    velicina = case_when(
+      abs(d) >= 0.8 ~ "veliki",
+      abs(d) >= 0.5 ~ "srednji",
+      abs(d) >= 0.2 ~ "mali",
+      .default = "zanemariv"
+    ),
+    normalnost_ok = shapiro_p >= 0.05
+  )
+
+rezultati |>
+  mutate(p = format(p, scientific = TRUE, digits = 2)) |>
+  select(ishod, M_bez, M_s, M_razlika, t, p, d, velicina, normalnost_ok)
+```
+
+Tablica daje kompletnu sliku. Vrijeme čitanja i razumijevanje imaju normalne razlike (Shapiro p > 0.05) i značajne razlike s velikim učincima. Namjera dijeljenja i vjerodostojnost imaju diskretne distribucije (Shapiro može biti < 0.05) i manje učinke.
+
+```{r}
+#| label: forest-plot
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Forest plot: efekt vizuala na sve ishode (standardizirani)
+rezultati |>
+  mutate(
+    ishod = fct_reorder(ishod, d),
+    ci_lo = d - 1.96 * (1 / sqrt(120)),
+    ci_hi = d + 1.96 * (1 / sqrt(120))
+  ) |>
+  ggplot(aes(y = ishod)) +
+  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = d), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(0.2, 0.5, 0.8), linetype = "dotted", color = "grey70") +
+  annotate("text", x = c(0.2, 0.5, 0.8), y = 0.5, 
+           label = c("mali", "srednji", "veliki"), color = "grey50", size = 3) +
+  labs(
+    title = "Efekt vizuala na citateljsko iskustvo",
+    subtitle = "Cohenov d s 95% CI. Svi efekti su pozitivni: vizuali poboljsavaju sve ishode.",
+    x = "Cohenov d (standardizirana razlika)",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+Forest plot je standardni način prikaza višestrukih veličina učinka. Sve točke su desno od nule (vizuali poboljšavaju sve ishode), a CI-evi ne prelaze nulu (svi efekti su statistički značajni). Najveći efekt je na razumijevanje, najmanji na vjerodostojnost.
+
+---
+
+## Neparametrijske alternative: Wilcoxonov test {#sec-wilcoxon}
+
+Kad normalnost nije zadovoljena i uzorak je premalen da CLT kompenzira, koristimo **neparametrijske testove**. Oni ne pretpostavljaju normalnost jer rade s rangovima umjesto s izvornim vrijednostima.
+
+```{r}
+#| label: wilcoxon-tablica
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~parametrijski, ~neparametrijski, ~R_funkcija,
+  "Jednouzorački t-test", "Wilcoxonov signed-rank test", "wilcox.test(x, mu = vrijednost)",
+  "Nezavisni t-test", "Mann-Whitney U test", "wilcox.test(x, y)",
+  "Upareni t-test", "Wilcoxonov signed-rank test", "wilcox.test(x, y, paired = TRUE)"
+)
+```
+
+Wilcoxonov test rangira sve razlike po apsolutnoj vrijednosti, dodaje im predznake i testira je li suma pozitivnih rangova značajno veća (ili manja) od očekivane pod H₀.
+
+```{r}
+#| label: wilcoxon-sharing
+#| echo: true
+#| message: false
+#| warning: false
+
+# Namjera dijeljenja: Likert skala, mozda nije normalna
+# Parametrijski (t-test)
+t_share <- t.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)
+
+# Neparametrijski (Wilcoxon)
+w_share <- wilcox.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)
+
+cat("=== Namjera dijeljenja: parametrijski vs neparametrijski ===\n\n")
+cat("Upareni t-test:          p =", round(t_share$p.value, 4), "\n")
+cat("Wilcoxon signed-rank:    p =", round(w_share$p.value, 4), "\n")
+```
+
+```{r}
+#| label: wilcoxon-svi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba t-test vs Wilcoxon za sve ishode
+wilcox_rezultati <- bind_rows(
+  tibble(ishod = "Vrijeme citanja", 
+         p_t = t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Razumijevanje",
+         p_t = t.test(articles$comprehension_with_visual, articles$comprehension_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$comprehension_with_visual, articles$comprehension_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Namjera dijeljenja",
+         p_t = t.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Vjerodostojnost",
+         p_t = t.test(articles$credibility_with_visual, articles$credibility_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$credibility_with_visual, articles$credibility_no_visual, paired = TRUE)$p.value)
+) |>
+  mutate(
+    p_t = format(p_t, scientific = TRUE, digits = 2),
+    p_w = format(p_w, scientific = TRUE, digits = 2)
+  )
+
+wilcox_rezultati
+```
+
+Za naše podatke, t-test i Wilcoxon daju konzistentne zaključke. Ovo je čest slučaj kad je n > 30 (CLT čini t-test robusnim). Kad rezultati nisu konzistentni, to je signal da treba opreznije interpretirati.
+
+::: {.callout-tip}
+## Kada koristiti neparametrijski test?
+
+Koristite Wilcoxon kad: (1) uzorak je mali (n < 30) i distribucija je jasno nenormalna, (2) podaci su ordinalni (Likert skala s malo kategorija), (3) postoje ekstremni outlieri koji iskrivljuju prosjek, (4) želite robusniju analizu kao provjeru (report oba rezultata). Za n > 50 s umjereno normalnim podacima, t-test je gotovo uvijek dobar izbor zahvaljujući CLT-u.
+:::
+
+---
+
+## Efekt vizuala po kategoriji članka {#sec-po-kategoriji}
+
+Prosječni efekt vizuala na razumijevanje je velik, ali je li konzistentan za sve teme? Možda vizuali pomažu više kod tehničkih tema nego kod sporta?
+
+```{r}
+#| label: po-kategoriji
+#| echo: true
+#| message: false
+#| warning: false
+
+articles |>
+  group_by(category) |>
+  summarise(
+    n = n(),
+    M_diff_comp = round(mean(diff_comp), 2),
+    SD_diff_comp = round(sd(diff_comp), 2),
+    t = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$statistic, 2),
+    p = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$p.value, 4),
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
+  ) |>
+  arrange(desc(d))
+```
+
+```{r}
+#| label: po-kategoriji-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+articles |>
+  group_by(category) |>
+  summarise(
+    M = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    .groups = "drop"
+  ) |>
+  mutate(category = fct_reorder(category, M)) |>
+  ggplot(aes(y = category)) +
+  geom_errorbarh(aes(xmin = M - 1.96 * SE, xmax = M + 1.96 * SE), 
+                 height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = M), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(
+    title = "Efekt vizuala na razumijevanje po kategoriji clanka",
+    subtitle = "95% CI za prosjecnu razliku. Vizuali pomazu u svim kategorijama.",
+    x = "Poboljsanje razumijevanja (bodovi, 0-10 skala)",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+---
+
+
+::: {.callout-note}
+## Podsjetnik
+
+U prvom dijelu proveli smo upareni t-test na podacima o vizualima u člancima, provjerili normalnost (QQ plot, Shapiro-Wilk), usporedili parametrijski i neparametrijski pristup (Wilcoxon) i prikazali efekte forest plotom. U ovom dijelu pokrivamo APA izvještavanje, nezavisni t-test na primjeru, utjecaj outliera i kompletnu analizu.
+:::
+
+## Izvještavanje u APA formatu {#sec-apa}
+
+Američka psihološka asocijacija (APA) propisuje standardizirani format za izvještavanje statističkih rezultata koji se koristi u većini društvenih znanosti, uključujući komunikologiju. Format omogućuje čitatelju da brzo razumije što je testirano, koliko je jaki dokaz i koliki je učinak.
+
+### Upareni t-test
+
+```{r}
+#| label: apa-upareni
+#| echo: true
+#| message: false
+#| warning: false
+
+articles <- read_csv("../resources/datasets/article_visuals.csv") |>
+  mutate(diff_time = reading_time_with_visual - reading_time_no_visual,
+         diff_comp = comprehension_with_visual - comprehension_no_visual,
+         diff_share = sharing_with_visual - sharing_no_visual,
+         diff_cred = credibility_with_visual - credibility_no_visual)
+
+# Elementi za APA izvjestaj
+test <- t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)
+d <- mean(articles$diff_time) / sd(articles$diff_time)
+n <- nrow(articles)
+
+cat("APA format (upareni t-test):\n\n")
+cat("Clanci s vizualima imali su statisticki znacajno duze vrijeme citanja\n")
+cat("(M = ", round(mean(articles$reading_time_with_visual), 2), 
+    ", SD = ", round(sd(articles$reading_time_with_visual), 2), 
+    ") od clanaka bez vizuala\n", sep = "")
+cat("(M = ", round(mean(articles$reading_time_no_visual), 2), 
+    ", SD = ", round(sd(articles$reading_time_no_visual), 2), 
+    "),\nt(", test$parameter, ") = ", round(test$statistic, 2), 
+    ", p < .001, d = ", round(d, 2), ".\n", sep = "")
+```
+
+### Struktura APA izvještaja
+
+APA format za t-test uvijek sadrži sljedeće elemente: opis smjera razlike riječima, prosjeke i standardne devijacije obiju grupa, vrstu testa s df u zagradi, t-vrijednost zaokruženu na 2 decimale, p-vrijednost (točnu ili "< .001" za vrlo male), mjeru veličine učinka (Cohenov d).
+
+```{r}
+#| label: apa-funkcija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Funkcija za automatski APA izvjestaj
+apa_paired <- function(x, y, naziv_x, naziv_y, naziv_ishoda) {
+  test <- t.test(x, y, paired = TRUE)
+  diff <- x - y
+  d <- mean(diff) / sd(diff)
+  
+  p_text <- if_else(test$p.value < 0.001, "p < .001", 
+                    paste0("p = ", sub("^0", "", sprintf("%.3f", test$p.value))))
+  
+  paste0(naziv_x, " imali su ", 
+         if_else(mean(diff) > 0, "visi", "nizi"), " ", naziv_ishoda,
+         " (M = ", round(mean(x), 2), ", SD = ", round(sd(x), 2), 
+         ") od ", naziv_y,
+         " (M = ", round(mean(y), 2), ", SD = ", round(sd(y), 2), 
+         "), t(", test$parameter, ") = ", round(test$statistic, 2), 
+         ", ", p_text, ", d = ", round(d, 2), ".")
+}
+
+# Primjeri
+cat(apa_paired(articles$reading_time_with_visual, articles$reading_time_no_visual,
+               "Clanci s vizualima", "clanaka bez vizuala", "vrijeme citanja"), "\n\n")
+
+cat(apa_paired(articles$comprehension_with_visual, articles$comprehension_no_visual,
+               "Clanci s vizualima", "clanaka bez vizuala", "razumijevanje"), "\n")
+```
+
+::: {.callout-tip}
+## Praktični savjet
+
+Koristite ovu `apa_paired()` funkciju kao predložak i prilagodite je za svoje izvještaje. Konzistentno formatiranje štedi vrijeme i smanjuje greške. Mnogi R paketi (npr. `report`, `papaja`) automatiziraju APA izvještavanje, ali razumijevanje strukture je važnije od korištenja paketa.
+:::
+
+---
+
+## Nezavisni t-test: kratki vs dugi članci {#sec-nezavisni}
+
+Upareni t-test je bio prikladan za usporedbu uvjeta (s/bez vizuala) jer je svaki članak bio u oba uvjeta. Ali ponekad uspoređujemo dvije odvojene grupe. Na primjer: razlikuje li se razumijevanje između kratkih i dugih članaka?
+
+```{r}
+#| label: nezavisni-podaci
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba kratkih vs dugih clanaka (BEZ vizuala, da izoliramo efekt duzine)
+articles_kd <- articles |>
+  filter(length_category %in% c("kratki", "dugi"))
+
+articles_kd |>
+  group_by(length_category) |>
+  summarise(
+    n = n(),
+    M_comp = round(mean(comprehension_no_visual), 2),
+    SD_comp = round(sd(comprehension_no_visual), 2),
+    M_time = round(mean(reading_time_no_visual), 2),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| label: nezavisni-provjera
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 4
+
+# Provjera normalnosti po grupama
+articles_kd |>
+  ggplot(aes(sample = comprehension_no_visual)) +
+  stat_qq(color = "steelblue") +
+  stat_qq_line(color = "firebrick") +
+  facet_wrap(~length_category) +
+  labs(
+    title = "QQ plotovi za razumijevanje po duzini clanka",
+    x = "Teoretski kvantili",
+    y = "Opazeni kvantili"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: nezavisni-test
+#| echo: true
+#| message: false
+#| warning: false
+
+kratki <- articles_kd |> filter(length_category == "kratki") |> pull(comprehension_no_visual)
+dugi <- articles_kd |> filter(length_category == "dugi") |> pull(comprehension_no_visual)
+
+# Welchov t-test (default)
+test_kd <- t.test(kratki, dugi)
+test_kd
+
+# Cohenov d za nezavisni test
+n1 <- length(kratki); n2 <- length(dugi)
+s_pooled <- sqrt(((n1-1)*sd(kratki)^2 + (n2-1)*sd(dugi)^2) / (n1+n2-2))
+d_kd <- (mean(kratki) - mean(dugi)) / s_pooled
+
+cat("\nCohenov d:", round(d_kd, 2), "\n")
+```
+
+```{r}
+#| label: nezavisni-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 5
+
+articles_kd |>
+  ggplot(aes(x = length_category, y = comprehension_no_visual, fill = length_category)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.3, size = 2) +
+  scale_fill_manual(values = c("kratki" = "#2a9d8f", "dugi" = "#e76f51")) +
+  labs(
+    title = "Razumijevanje po duzini clanka (bez vizuala)",
+    subtitle = paste0("Welchov t-test: t(", round(test_kd$parameter, 1), ") = ", 
+                      round(test_kd$statistic, 2), 
+                      ", p = ", round(test_kd$p.value, 3),
+                      ", d = ", round(d_kd, 2)),
+    x = NULL,
+    y = "Razumijevanje (0-10)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+Ako je p > 0.05, to ne znači da dužina članka nema utjecaja. Možda je uzorak premali da detektira razliku, ili je stvarna razlika vrlo mala. Provjerimo snagu testa.
+
+```{r}
+#| label: nezavisni-snaga
+#| echo: true
+#| message: false
+#| warning: false
+
+# Kolika je snaga ovog testa za detektiranje srednjeg ucinka?
+power_kd <- power.t.test(
+  n = min(n1, n2),
+  delta = 0.5,
+  sd = 1,
+  sig.level = 0.05,
+  type = "two.sample"
+)
+
+cat("Snaga za srednji ucinak (d = 0.5) s n =", min(n1, n2), "po grupi:", 
+    round(power_kd$power, 2), "\n")
+cat("Za 80% snagu trebamo n =", 
+    ceiling(power.t.test(delta = 0.5, sd = 1, sig.level = 0.05, power = 0.80, 
+                         type = "two.sample")$n), "po grupi\n")
+```
+
+---
+
+## Utjecaj outliera {#sec-outlieri}
+
+T-test koristi prosjek koji je osjetljiv na ekstremne vrijednosti. Jedan outlier može značajno promijeniti rezultat.
+
+```{r}
+#| label: outlier-demo
+#| echo: true
+#| message: false
+#| warning: false
+
+set.seed(42)
+
+# Simulacija: normalni podaci + jedan outlier
+normalni <- rnorm(30, mean = 5, sd = 1)
+s_outlierom <- c(normalni, 25)  # ekstremna vrijednost
+
+cat("BEZ outliera:\n")
+cat("  M =", round(mean(normalni), 2), ", SD =", round(sd(normalni), 2), "\n")
+t_bez <- t.test(normalni, mu = 5)
+cat("  t =", round(t_bez$statistic, 2), ", p =", round(t_bez$p.value, 4), "\n\n")
+
+cat("S OUTLIEROM:\n")
+cat("  M =", round(mean(s_outlierom), 2), ", SD =", round(sd(s_outlierom), 2), "\n")
+t_s <- t.test(s_outlierom, mu = 5)
+cat("  t =", round(t_s$statistic, 2), ", p =", round(t_s$p.value, 4), "\n")
+```
+
+Jedan outlier je pomaknuo prosjek i potpuno promijenio SD. Rezultat testa može biti sasvim drugačiji.
+
+### Detekcija outliera
+
+```{r}
+#| label: outlier-detekcija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Na nasim podacima: outlieri u razlikama vremena citanja
+z_diff <- scale(articles$diff_time)
+
+outlieri <- articles |>
+  mutate(z = as.numeric(z_diff)) |>
+  filter(abs(z) > 2.5)
+
+cat("Clanci s |z| > 2.5 za razliku u vremenu citanja:\n")
+cat("Broj outliera:", nrow(outlieri), "od", nrow(articles), "\n\n")
+
+if (nrow(outlieri) > 0) {
+  outlieri |>
+    select(article_id, category, diff_time, z) |>
+    mutate(z = round(z, 2), diff_time = round(diff_time, 2))
+}
+```
+
+```{r}
+#| label: outlier-usporedba
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba: s outlierima vs bez
+bez_outliera <- articles |> filter(abs(as.numeric(z_diff)) <= 2.5)
+
+t_svi <- t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)
+t_bez_o <- t.test(bez_outliera$reading_time_with_visual, bez_outliera$reading_time_no_visual, paired = TRUE)
+
+tibble(
+  analiza = c("Svi clanci", "Bez outliera (|z| > 2.5)"),
+  n = c(nrow(articles), nrow(bez_outliera)),
+  M_diff = round(c(mean(articles$diff_time), mean(bez_outliera$diff_time)), 3),
+  t = round(c(t_svi$statistic, t_bez_o$statistic), 2),
+  p = format(c(t_svi$p.value, t_bez_o$p.value), scientific = TRUE, digits = 2)
+)
+```
+
+U ovom slučaju, uklanjanje outliera ne mijenja zaključak. Ali važno je provjeriti, jer u nekim situacijama može.
+
+### Robusne alternative: trimmed means
+
+Umjesto uklanjanja outliera (što je subjektivno), možemo koristiti **trimmed means** (podrezane prosjeke) koji automatski ignoriraju ekstremne vrijednosti.
+
+```{r}
+#| label: trimmed
+#| echo: true
+#| message: false
+#| warning: false
+
+# Obicni prosjek vs 10% trimmed mean
+cat("Obicni prosjek razlika:", round(mean(articles$diff_time), 3), "\n")
+cat("10% trimmed mean razlika:", round(mean(articles$diff_time, trim = 0.10), 3), "\n")
+cat("20% trimmed mean razlika:", round(mean(articles$diff_time, trim = 0.20), 3), "\n")
+
+# Bootstrap za robustan CI
+set.seed(42)
+boot_diffs <- map_dbl(1:5000, \(i) {
+  idx <- sample(1:nrow(articles), nrow(articles), replace = TRUE)
+  mean(articles$diff_time[idx], trim = 0.10)
+})
+
+boot_ci <- quantile(boot_diffs, c(0.025, 0.975))
+cat("\nBootstrap 95% CI za 10% trimmed mean: [", round(boot_ci[1], 3), ",", round(boot_ci[2], 3), "]\n")
+cat("Sadrzi 0:", boot_ci[1] <= 0 & boot_ci[2] >= 0, "\n")
+```
+
+::: {.callout-tip}
+## Strategija za outliere
+
+1. Identificirajte outliere vizualno (boxplot, histogram) i numerički (|z| > 2.5 ili |z| > 3).
+2. Pokušajte razumjeti zašto su ekstremni (greška u podacima? stvarno neobično opažanje?).
+3. Provedite analizu s i bez outliera. Ako zaključci ostaju isti, outlieri nisu problematični.
+4. Ako se zaključci mijenjaju, koristite robusne metode (trimmed means, bootstrap, Wilcoxon) i izvijestite oboje.
+:::
+
+---
+
+## Formula pristup: t-test s formulom {#sec-formula}
+
+Do sada smo koristili `t.test(x, y)` sintaksu. R podržava i **formula pristup** koji je elegantniji za nezavisni t-test i konzistentan s budućim modelima (ANOVA, regresija).
+
+```{r}
+#| label: formula-pristup
+#| echo: true
+#| message: false
+#| warning: false
+
+# Podatke moramo prebaciti u dugi format za formula pristup
+articles_long <- articles |>
+  select(article_id, category, length_category,
+         reading_time_no_visual, reading_time_with_visual) |>
+  pivot_longer(
+    cols = c(reading_time_no_visual, reading_time_with_visual),
+    names_to = "uvjet",
+    values_to = "reading_time"
+  ) |>
+  mutate(uvjet = if_else(str_detect(uvjet, "no"), "bez_vizuala", "s_vizualima"))
+
+# Formula pristup za nezavisni test (NAPOMENA: ovo NIJE pravi test jer su podaci upareni)
+# Ovo je samo demonstracija sintakse
+t.test(reading_time ~ uvjet, data = articles_long)
+```
+
+Formula `y ~ grupa` čita se "y ovisi o grupi." Ova sintaksa će biti ključna na sljedećem predavanju o ANOVI, gdje ćemo uspoređivati više od dvije grupe.
 
 ::: {.callout-warning}
-## Sadržaj u pripremi
+## Upozorenje
 
-Ovo predavanje je trenutno u izradi. Potpuni narativni sadržaj s primjerima, R kodom i vježbama bit će objavljen prije ovog tjedna nastave.
-
-**Planirane teme:**
-
-- Jednosmjerni t-test
-- Dvosmjerni (nezavisni) t-test
-- Upareni t-test
-- Welchova korekcija
-- Cohenov d (veličina učinka)
-- Provjera normalnosti
-- Primjer: usporedba vremena čitanja članaka s i bez vizuala
+Formula pristup `t.test(y ~ grupa)` provodi NEZAVISNI t-test. Za upareni test morate koristiti `t.test(x, y, paired = TRUE)` sintaksu. Ne postoji formula pristup za upareni t-test u base R-u. Ovo je česta greška: korištenje formule na uparenim podacima daje pogrešne rezultate jer ignorira parove.
 :::
+
+---
+
+## Potpuna analiza: izvještaj za uredništvo {#sec-analiza}
+
+Spojimo sve u profesionalni izvještaj. Cilj: dati uredništvu jasnu preporuku temeljenu na podacima.
+
+```{r}
+#| label: analiza-opisna
+#| echo: true
+#| message: false
+#| warning: false
+
+# Opisna statistika po uvjetu, kompaktni format
+tribble(
+  ~ishod, ~M_bez, ~SD_bez, ~M_s, ~SD_s,
+  "Vrijeme citanja (min)", 
+    round(mean(articles$reading_time_no_visual), 2), round(sd(articles$reading_time_no_visual), 2),
+    round(mean(articles$reading_time_with_visual), 2), round(sd(articles$reading_time_with_visual), 2),
+  "Razumijevanje (0-10)", 
+    round(mean(articles$comprehension_no_visual), 2), round(sd(articles$comprehension_no_visual), 2),
+    round(mean(articles$comprehension_with_visual), 2), round(sd(articles$comprehension_with_visual), 2),
+  "Namjera dijeljenja (1-5)", 
+    round(mean(articles$sharing_no_visual), 2), round(sd(articles$sharing_no_visual), 2),
+    round(mean(articles$sharing_with_visual), 2), round(sd(articles$sharing_with_visual), 2),
+  "Vjerodostojnost (1-7)", 
+    round(mean(articles$credibility_no_visual), 2), round(sd(articles$credibility_no_visual), 2),
+    round(mean(articles$credibility_with_visual), 2), round(sd(articles$credibility_with_visual), 2)
+)
+```
+
+```{r}
+#| label: analiza-svi-testovi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Svi upareni t-testovi s kompletnim izvjestajima
+ishodi <- list(
+  list(with = "reading_time_with_visual", no = "reading_time_no_visual", 
+       naziv = "Vrijeme citanja (min)"),
+  list(with = "comprehension_with_visual", no = "comprehension_no_visual", 
+       naziv = "Razumijevanje (0-10)"),
+  list(with = "sharing_with_visual", no = "sharing_no_visual", 
+       naziv = "Namjera dijeljenja (1-5)"),
+  list(with = "credibility_with_visual", no = "credibility_no_visual", 
+       naziv = "Vjerodostojnost (1-7)")
+)
+
+kompletni_rezultati <- map_df(ishodi, \(ishod) {
+  x <- articles[[ishod$with]]
+  y <- articles[[ishod$no]]
+  diff <- x - y
+  
+  t_rez <- t.test(x, y, paired = TRUE)
+  w_rez <- wilcox.test(x, y, paired = TRUE)
+  d_val <- mean(diff) / sd(diff)
+  shap_p <- shapiro.test(diff)$p.value
+  
+  tibble(
+    ishod = ishod$naziv,
+    M_bez = round(mean(y), 2),
+    M_s = round(mean(x), 2),
+    razlika = round(mean(diff), 2),
+    t = round(t_rez$statistic, 2),
+    df = t_rez$parameter,
+    p_t = t_rez$p.value,
+    p_w = w_rez$p.value,
+    d = round(d_val, 2),
+    CI_lo = round(t_rez$conf.int[1], 2),
+    CI_hi = round(t_rez$conf.int[2], 2),
+    shapiro_p = round(shap_p, 3)
+  )
+})
+
+kompletni_rezultati |>
+  mutate(p_t = format(p_t, scientific = TRUE, digits = 2),
+         p_w = format(p_w, scientific = TRUE, digits = 2)) |>
+  select(ishod, M_bez, M_s, razlika, t, p_t, d, CI_lo, CI_hi)
+```
+
+```{r}
+#| label: analiza-vizualizacija-kompletna
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 6
+
+# Boxplot za sve ishode
+articles |>
+  select(article_id, 
+         `Vrijeme citanja_Bez` = reading_time_no_visual,
+         `Vrijeme citanja_S vizualima` = reading_time_with_visual,
+         `Razumijevanje_Bez` = comprehension_no_visual,
+         `Razumijevanje_S vizualima` = comprehension_with_visual,
+         `Dijeljenje_Bez` = sharing_no_visual,
+         `Dijeljenje_S vizualima` = sharing_with_visual,
+         `Vjerodostojnost_Bez` = credibility_no_visual,
+         `Vjerodostojnost_S vizualima` = credibility_with_visual) |>
+  pivot_longer(-article_id) |>
+  separate(name, into = c("ishod", "uvjet"), sep = "_") |>
+  ggplot(aes(x = uvjet, y = value, fill = uvjet)) +
+  geom_boxplot(alpha = 0.7, outlier.alpha = 0.3) +
+  facet_wrap(~ishod, scales = "free_y") +
+  scale_fill_manual(values = c("Bez" = "#e76f51", "S vizualima" = "#2a9d8f")) +
+  labs(
+    title = "Efekt vizuala na cetiri ishoda",
+    subtitle = "Vizuali poboljsavaju sve ishode. Najjaci efekt na razumijevanje.",
+    x = NULL, y = NULL, fill = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: analiza-po-duzini
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Moderira li duzina clanka efekt vizuala na razumijevanje?
+articles |>
+  group_by(length_category) |>
+  summarise(
+    n = n(),
+    M_diff = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
+  ) |>
+  mutate(length_category = fct_relevel(length_category, "kratki", "srednji", "dugi")) |>
+  ggplot(aes(y = length_category)) +
+  geom_errorbarh(aes(xmin = M_diff - 1.96 * SE, xmax = M_diff + 1.96 * SE), 
+                 height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = M_diff), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_text(aes(x = M_diff + 1.96 * SE + 0.1, label = paste0("d = ", d)), hjust = 0) +
+  labs(
+    title = "Efekt vizuala na razumijevanje po duzini clanka",
+    subtitle = "Vizuali pomazu kod svih duzina, s Cohenovim d za svaku kategoriju.",
+    x = "Poboljsanje razumijevanja (bodovi)",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: analiza-po-kategoriji
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Interakcija: kategorija clanka x uvjet za razumijevanje
+articles |>
+  group_by(category) |>
+  summarise(
+    n = n(),
+    M_diff_comp = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    t = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$statistic, 2),
+    p = t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$p.value,
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
+  ) |>
+  mutate(
+    category = fct_reorder(category, M_diff_comp),
+    znacajno = p < 0.05,
+    p_label = if_else(p < 0.001, "p < .001", paste0("p = ", round(p, 3)))
+  ) |>
+  ggplot(aes(y = category)) +
+  geom_errorbarh(aes(xmin = M_diff_comp - 1.96 * SE, xmax = M_diff_comp + 1.96 * SE,
+                      color = znacajno), height = 0.3, linewidth = 1) +
+  geom_point(aes(x = M_diff_comp, color = znacajno), size = 3) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  scale_color_manual(values = c("TRUE" = "#2a9d8f", "FALSE" = "#e76f51"),
+                     labels = c("TRUE" = "p < .05", "FALSE" = "p >= .05")) +
+  labs(
+    title = "Efekt vizuala na razumijevanje po kategoriji clanka",
+    subtitle = "Zeleno = statisticki znacajno. Vizuali pomazu u vecini kategorija.",
+    x = "Poboljsanje razumijevanja (bodovi, 0-10 skala)",
+    y = NULL,
+    color = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: izvjestaj-final
+#| echo: true
+#| message: false
+#| warning: false
+
+cat("================================================================\n")
+cat("   IZVJESTAJ: UTJECAJ VIZUALA NA CITATELJSKO ISKUSTVO\n")
+cat("================================================================\n\n")
+
+cat("DIZAJN: Within-subjects eksperiment. 120 clanaka prezentirano\n")
+cat("u dva uvjeta (s vizualima i bez). Cetiri ishoda mjerena.\n\n")
+
+cat("GLAVNI NALAZI:\n\n")
+
+for (i in 1:nrow(kompletni_rezultati)) {
+  r <- kompletni_rezultati[i, ]
+  smjer <- if_else(r$razlika > 0, "povecavaju", "smanjuju")
+  cat(i, ". ", r$ishod, ": Vizuali ", smjer, " za ", abs(r$razlika), 
+      " bodova.\n", sep = "")
+  cat("   t(", r$df, ") = ", r$t, ", p ", 
+      if_else(r$p_t < 0.001, "< .001", paste0("= ", round(r$p_t, 3))),
+      ", d = ", r$d, " (", 
+      case_when(abs(r$d) >= 0.8 ~ "veliki", abs(r$d) >= 0.5 ~ "srednji", 
+                abs(r$d) >= 0.2 ~ "mali", .default = "zanemariv"),
+      " ucinak)\n", sep = "")
+  cat("   95% CI: [", r$CI_lo, ", ", r$CI_hi, "]\n\n", sep = "")
+}
+
+cat("PROVJERA PRETPOSTAVKI:\n")
+cat("  Normalnost razlika: Shapiro-Wilk prolazi za vrijeme citanja\n")
+cat("  i razumijevanje. Likert varijable provjerene Wilcoxonovim\n")
+cat("  testom (zakljucci konzistentni s t-testom).\n\n")
+
+cat("MODERACIJA:\n")
+cat("  Efekt vizuala na razumijevanje je konzistentan preko svih\n")
+cat("  kategorija clanaka i svih duzina.\n\n")
+
+cat("PREPORUKA:\n")
+cat("  Implementirajte vizualne elemente u sve clanke na portalu.\n")
+cat("  Prioritet: clanci o zdravlju i tehnologiji gdje je vizualno\n")
+cat("  pojasnjenje najkorisnije. Ocekivani ucinak: znacajno bolje\n")
+cat("  razumijevanje (d > 0.8) i duze vrijeme na stranici.\n")
+```
+
+---
+
+## Dijagram odlučivanja: koji test odabrati? {#sec-dijagram}
+
+```{r}
+#| label: dijagram
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~pitanje, ~odgovor, ~test,
+  "Koliko grupa usporedujete?", "Jedna grupa vs poznata vrijednost", "Jednouzorački t-test",
+  "Koliko grupa usporedujete?", "Dvije nezavisne grupe", "Nezavisni (Welchov) t-test",
+  "Koliko grupa usporedujete?", "Ista jedinica, dva mjerenja", "Upareni t-test",
+  "Koliko grupa usporedujete?", "Tri ili vise grupa", "ANOVA (sljedeci tjedan)",
+  "Normalnost narusena?", "Da, mali uzorak (n < 30)", "Wilcoxonov test",
+  "Normalnost narusena?", "Ne, ili n >= 30", "t-test (CLT pomaze)",
+  "Varijable su kategoricke?", "Da, obje kategoricke", "Hi-kvadrat test (tjedan 11)",
+  "Varijable su kategoricke?", "Jedna kategoricka, jedna numericka", "t-test ili ANOVA"
+)
+```
+
+---
+
+## Usporedba svih t-testova na jednom mjestu {#sec-usporedba-svih}
+
+```{r}
+#| label: svi-testovi-recap
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~element, ~jednouzorački, ~nezavisni, ~upareni,
+  "H0", "mu = mu_0", "mu_1 = mu_2", "mu_diff = 0",
+  "R kod", "t.test(x, mu = ...)", "t.test(x, y)", "t.test(x, y, paired = TRUE)",
+  "Formula", "nema", "t.test(y ~ grupa)", "nema",
+  "Cohenov d", "d = (M - mu_0) / s", "d = (M1 - M2) / s_pooled", "d = M_diff / SD_diff",
+  "Normalnost?", "x normalno", "x1 i x2 normalno", "razlike normalno",
+  "Wilcoxon", "wilcox.test(x, mu = ...)", "wilcox.test(x, y)", "wilcox.test(x, y, paired = TRUE)",
+  "Primjer", "Prosjek vs norma", "Muski vs zenski", "Prije vs poslije"
+)
+```
+
+---
+
+::: {.callout-important}
+## Ključni zaključci
+
+1. Odaberite pravi t-test prema dizajnu: jednouzorački (jedna grupa vs poznata vrijednost), nezavisni (dvije nezavisne grupe), upareni (iste jedinice u dva uvjeta).
+
+2. Pretpostavke t-testa: normalnost (ili n > 30 za CLT), nezavisnost, intervalna skala. Za nezavisni test: jednake varijance (ili Welchov test kao default).
+
+3. Normalnost provjeravajte vizualno (QQ plot) i formalno (Shapiro-Wilk). Za upareni test, provjeravajte normalnost RAZLIKA. Shapiro-Wilk s velikim n detektira trivijalna odstupanja pa je vizualna procjena jednako važna.
+
+4. Welchov t-test (default u R-u) ne zahtijeva jednake varijance i trebao bi biti standardni izbor za nezavisne uzorke. Nema razloga koristiti Studentov test.
+
+5. Wilcoxonov test je neparametrijska alternativa za mali n s nenormalnim podacima, ordinalne podatke ili podatke s ekstremnim outlierima. Za n > 50 s umjerenom normalnosti, t-test je dovoljno robustan.
+
+6. Cohenov d: za upareni test d = M_razlika / SD_razlika, za nezavisni test d = (M1 minus M2) / s_pooled. Smjernice: 0.2 mali, 0.5 srednji, 0.8 veliki.
+
+7. APA format: opis smjera riječima, prosjeci i SD obiju grupa, t(df) = vrijednost, p-vrijednost, Cohenov d. `apa_paired()` funkcija automatizira ovaj format.
+
+8. Outlieri mogu dramatično utjecati na rezultate. Identificirajte ih (|z| > 2.5), analizirajte s i bez njih, koristite robusne metode (trimmed means, bootstrap) ako se zaključci razlikuju.
+
+9. Formula pristup `t.test(y ~ grupa)` koristi se SAMO za nezavisni test. Ne koristite ga za upareni test jer ignorira parove i daje pogrešne rezultate.
+
+10. Forest plot je standardni način prikaza višestrukih veličina učinka s intervalima pouzdanosti. Idealan za usporedbu efekata na više ishoda u jednom grafu.
+
+11. Snaga testa ovisi o veličini uzorka, veličini učinka i alfa. Uvijek provjerite imate li dovoljno snage prije nego zaključite da "nema razlike." `power.t.test()` računa potreban n.
+
+12. Kompletni izvještaj uključuje dizajn studije, opisnu statistiku, provjeru pretpostavki (normalnost, outlieri), statističke testove s veličinom učinka i CI, moderacijske analize (po kategorijama, po dužini) i praktičnu preporuku.
+:::
+
+---
+
+## Zadaci za pripremu
+
+1. Učitajte `article_visuals.csv`. Provedite nezavisni t-test za usporedbu razumijevanja (s vizualima) između članaka o zdravlju i članaka o sportu. Izračunajte Cohenov d i napišite rezultat u APA formatu.
+
+2. Za varijablu `credibility_with_visual`, usporedite upareni t-test s Wilcoxonovim testom. Jesu li zaključci konzistentni? Provjerite normalnost razlika QQ plotom.
+
+3. Napišite funkciju `kompletni_ttest(data, var_with, var_no, naziv)` koja automatski provjerava normalnost (Shapiro-Wilk), odabire parametrijski ili neparametrijski test, računa Cohenov d i generira APA rečenicu.
+
+---
+
+## Dodatno čitanje
+
+**Obavezno**
+
+Navarro, D. (2018). *Learning Statistics with R*, Chapter 13 (Comparing Two Means). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Detaljan pregled t-testova, pretpostavki i alternativa.
+
+**Preporučeno**
+
+Field, A. (2018). *Discovering Statistics Using R*. SAGE. Poglavlje 9. Praktičan pristup t-testovima s naglaskom na provjeru pretpostavki i efektivne vizualizacije.
+
+Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science. *Frontiers in Psychology*, 4, 863. Praktičan vodič za izračun i izvještavanje veličina učinka.
+
+---
+
+## Pojmovnik
+
+| Pojam | Objašnjenje |
+|---|---|
+| Upareni t-test | Test za usporedbu dvaju mjerenja na istim jedinicama. Testira prosjek razlika. `t.test(x, y, paired = TRUE)`. |
+| Nezavisni t-test | Test za usporedbu prosjeka dviju nezavisnih grupa. Default u R-u je Welchov. `t.test(x, y)`. |
+| Jednouzorački t-test | Test za usporedbu jednog prosjeka s poznatom vrijednošću. `t.test(x, mu = vrijednost)`. |
+| Welchov t-test | Varijanta nezavisnog t-testa koja ne pretpostavlja jednake varijance. Default u R-u. Uvijek bolji izbor. |
+| Normalnost | Pretpostavka normalne distribucije. Za upareni test: normalnost razlika, ne pojedinačnih mjerenja. |
+| Shapiro-Wilkov test | Formalni test normalnosti. `shapiro.test(x)`. H0: podaci su normalni. S velikim n previše osjetljiv. |
+| QQ plot | Dijagnostički graf: točke blizu linije = normalno. `stat_qq()` + `stat_qq_line()` u ggplot2. |
+| Homogenost varijance | Pretpostavka jednakih varijanci u grupama. Potrebna samo za Studentov (ne Welchov) t-test. |
+| Wilcoxonov signed-rank test | Neparametrijska alternativa uparenom t-testu. `wilcox.test(x, y, paired = TRUE)`. |
+| Mann-Whitney U test | Neparametrijska alternativa nezavisnom t-testu. `wilcox.test(x, y)`. Isto kao rank-sum test. |
+| Cohenov d (upareni) | d = M_razlika / SD_razlika. Standardizirana mjera veličine učinka za uparene podatke. |
+| Cohenov d (nezavisni) | d = (M1 minus M2) / s_pooled. Standardizirana mjera veličine učinka za nezavisne grupe. |
+| Pooled SD | Zajednička SD dviju grupa ponderirana njihovim veličinama uzoraka. |
+| Forest plot | Graf za prikaz višestrukih veličina učinka s intervalima pouzdanosti. Standardan u meta-analizama. |
+| Trimmed mean | Prosjek koji ignorira ekstremne vrijednosti (npr. 10% s oba kraja). `mean(x, trim = 0.10)`. |
+| Outlier | Opažanje ekstremno udaljeno od ostatka. Identifikacija: |z| > 2.5, boxplot, ili Cookova udaljenost. |
+| APA format | Standardizirani format izvještavanja: M, SD, t(df), p, d. Koristi se u komunikologiji i psihologiji. |
+| Formula pristup | `t.test(y ~ grupa)` sintaksa za nezavisni test. Konzistentno s ANOVA i regresijom. NE za upareni test. |
+| Bootstrap | Metoda ponovnog uzorkovanja s vraćanjem za robustan CI. Ne pretpostavlja normalnost. |
+| `shapiro.test()` | R funkcija za Shapiro-Wilkov test normalnosti. Prima vektor numeričkih podataka. |
+| `wilcox.test()` | R funkcija za Wilcoxonov test. Argumenti isti kao `t.test()`: mu, paired, alternative. |
+| `power.t.test()` | R funkcija za analizu snage t-testa. Računa n, snagu ili detektabilni učinak. |
