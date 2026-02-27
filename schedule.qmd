@@ -1,8 +1,11 @@
 ---
 title: "Tjedni raspored"
+subtitle: "Predavanja i seminari po tjednima"
 ---
 
 ## Raspored predavanja i seminara
+
+### Cjelina 1: Uvod i osnove programiranja
 
 | Tjedan | Datum | Tema predavanja | Seminarska aktivnost | Status |
 |:------:|:-----:|-----------------|---------------------|:------:|
@@ -10,24 +13,45 @@ title: "Tjedni raspored"
 | 2 | TBD | [Programiranje u R](lectures/week-06.qmd) | Vježba: pisanje vlastite funkcije | [Uskoro]{.badge-upcoming} |
 | 3 | TBD | [Uvod u R i tidyverse](lectures/week-02.qmd) | Radionica: instalacija R-a i Positrona | [Uskoro]{.badge-upcoming} |
 | 4 | TBD | [Rad s podacima u tidyverse](lectures/week-03.qmd) | Vježba: čišćenje i transformacija dataseta | [Uskoro]{.badge-upcoming} |
+
+### Cjelina 2: Deskriptivna statistika i vizualizacija
+
+| Tjedan | Datum | Tema predavanja | Seminarska aktivnost | Status |
+|:------:|:-----:|-----------------|---------------------|:------:|
 | 5 | TBD | [Deskriptivna statistika](lectures/week-04.qmd) | Vježba: deskriptivne statistike za medijski dataset | [Uskoro]{.badge-upcoming} |
 | 6 | TBD | [Vizualizacija podataka s ggplot2](lectures/week-05.qmd) | Radionica: vizualizacije u ggplot2 | [Uskoro]{.badge-upcoming} |
+
+### Cjelina 3: Statistička teorija
+
+| Tjedan | Datum | Tema predavanja | Seminarska aktivnost | Status |
+|:------:|:-----:|-----------------|---------------------|:------:|
 | 7 | TBD | [Uvod u vjerojatnost](lectures/week-07.qmd) | Vježba: vjerojatnost i distribucije u R-u | [Uskoro]{.badge-upcoming} |
 | 8 | TBD | [Uzorkovanje, procjena i intervali pouzdanosti](lectures/week-09.qmd) | Vježba: intervali pouzdanosti | [Uskoro]{.badge-upcoming} |
 | 9 | TBD | [Testiranje hipoteza](lectures/week-10.qmd) | Vježba: testovi hipoteza | [Uskoro]{.badge-upcoming} |
+
+### Cjelina 4: Inferencijalna statistika
+
+| Tjedan | Datum | Tema predavanja | Seminarska aktivnost | Status |
+|:------:|:-----:|-----------------|---------------------|:------:|
 | 10 | TBD | [Kategorički podaci: hi-kvadrat testovi](lectures/week-11.qmd) | Vježba: hi-kvadrat testovi | [Uskoro]{.badge-upcoming} |
 | 11 | TBD | [Usporedba prosjeka: t-testovi](lectures/week-12.qmd) | Vježba: t-testovi i interpretacija | [Uskoro]{.badge-upcoming} |
 | 12 | TBD | [Usporedba više grupa: ANOVA](lectures/week-13.qmd) | Vježba: ANOVA analiza | [Uskoro]{.badge-upcoming} |
 | 13 | TBD | [Linearna regresija](lectures/week-14.qmd) | Radionica: regresijski model | [Uskoro]{.badge-upcoming} |
+
+## Legenda statusa
+
+| Oznaka | Značenje |
+|--------|----------|
+| [Završeno]{.badge-completed} | Predavanje je održano, materijali dostupni |
+| [Aktualno]{.badge-current} | Trenutni tjedan nastave |
+| [Uskoro]{.badge-upcoming} | Predavanje još nije održano |
 
 ## Važni datumi
 
 | Događaj | Datum |
 |---------|:-----:|
 | Početak nastave | TBD |
-| Predaja praktičnog projekta | TBD |
+| Odabir teme praktičnog projekta | TBD |
+| Predaja nacrta projekta | TBD |
+| Predaja finalnog izvještaja | TBD |
 | Kraj nastave | TBD |
-
-## Bilješke
-
-*Prostor za bilješke i obavijesti s predavanja bit će ažuriran tijekom semestra.*

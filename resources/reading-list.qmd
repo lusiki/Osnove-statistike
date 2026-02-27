@@ -1,35 +1,36 @@
 ---
 title: "Popis literature"
+subtitle: "Obavezna i preporučena literatura za kolegij"
 ---
 
-Literatura je organizirana po tematskim klasterima. Obavezni izvori označeni su s **[O]** i besplatno su dostupni online ili putem knjižnice.
+Literatura je organizirana po tematskim klasterima. Obavezni izvori označeni su s **[O]** i besplatno su dostupni online.
 
 ## Statistika: temelji
 
 1. Navarro, D. (2018). *Learning Statistics with R: A tutorial for psychology students and other beginners* (Version 0.6). [learningstatisticswithr.com](https://learningstatisticswithr.com/) **[O]**
-    Sadržajna okosnica kolegija. Besplatna online knjiga pod CC BY-SA 4.0 licencom. Originalno pisana za studente psihologije, mi je koristimo kao konceptualni temelj s vlastitim primjerima iz komunikologije.
+    Sadržajna okosnica kolegija. Besplatna online knjiga pod CC BY-SA 4.0 licencom. Originalno pisana za studente psihologije; mi je koristimo kao konceptualni temelj s vlastitim primjerima iz komunikologije. Relevantna za sve tjedne.
 
 2. Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition). [openintro.org/book/os](https://www.openintro.org/book/os/)
-    Odličan besplatni udžbenik za nadopunu. Pokriva iste teme iz drugačijeg kuta.
+    Odličan besplatni udžbenik za nadopunu. Pokriva iste teme iz drugačijeg kuta. Posebno koristan za tjedne 7 do 13.
 
 3. Field, A. (2017). *Discovering Statistics Using IBM SPSS Statistics* (5th edition). Sage.
-    Klasični udžbenik s humorističnim pristupom. Koristi SPSS, ali objašnjenja koncepata su izvrsna.
+    Klasični udžbenik s humorističnim pristupom. Koristi SPSS, ali objašnjenja koncepata su izvrsna. Dostupan u knjižnici HKS-a.
 
 ## R i tidyverse
 
 4. Wickham, H. & Grolemund, G. (2023). *R for Data Science* (2nd edition). O'Reilly. [r4ds.hadley.nz](https://r4ds.hadley.nz/) **[O]**
-    Biblija tidyverse pristupa. Pokriva sve od učitavanja podataka do vizualizacije. Besplatno online.
+    Biblija tidyverse pristupa. Pokriva sve od učitavanja podataka do vizualizacije. Ključan resurs za tjedne 2 do 6.
 
 5. Ismay, C. & Kim, A. Y. (2019). *Statistical Inference via Data Science: A ModernDive into R and the Tidyverse*. [moderndive.com](https://moderndive.com/)
-    Kombinira statistiku i tidyverse na pristupačan način. Odličan dodatni resurs.
+    Kombinira statistiku i tidyverse na pristupačan način. Posebno koristan za tjedne 7 do 9.
 
 6. Chang, W. (2018). *R Graphics Cookbook* (2nd edition). O'Reilly. [r-graphics.org](https://r-graphics.org/)
-    Praktični vodič za ggplot2. Koristite ga kao referencu za specifične tipove grafika.
+    Praktični vodič za ggplot2. Koristite ga kao referencu za specifične tipove grafika. Relevantan za tjedan 6.
 
 ## Vizualizacija podataka
 
 7. Healy, K. (2018). *Data Visualization: A Practical Introduction*. Princeton University Press. [socviz.co](https://socviz.co/)
-    Izvrsna knjiga o principima dobre vizualizacije s primjerima u ggplot2.
+    Izvrsna knjiga o principima dobre vizualizacije s primjerima u ggplot2. Relevantan za tjedan 6.
 
 8. Wilke, C. O. (2019). *Fundamentals of Data Visualization*. O'Reilly. [clauswilke.com/dataviz](https://clauswilke.com/dataviz/)
     Fokus na principe vizualizacije, ne na kod. Korisno za razumijevanje što čini dobru grafiku.
@@ -48,13 +49,13 @@ Literatura je organizirana po tematskim klasterima. Obavezni izvori označeni su
 ## Reproducibilnost i otvorena znanost
 
 12. National Academies of Sciences. (2019). *Reproducibility and Replicability in Science*. National Academies Press.
-    Zašto je reproducibilnost važna i kako je postići.
+    Zašto je reproducibilnost važna i kako je postići. Relevantan za kontekst cijelog kolegija.
 
 13. Gandrud, C. (2020). *Reproducible Research with R and RStudio* (3rd edition). Chapman & Hall/CRC.
-    Praktični vodič za reproducibilna istraživanja koristeći R.
+    Praktični vodič za reproducibilna istraživanja koristeći R. Relevantan za praktični projekt.
 
 ::: {.callout-tip}
 ## Napomena o dostupnosti
 
-Svi izvori označeni s **[O]** besplatno su dostupni online. Ostale knjige dostupne su u knjižnici HKS-a ili putem sustava međuknjižnične posudbe. Za pomoć s pristupom obratite se nositelju kolegija.
+Svi izvori označeni s **[O]** besplatno su dostupni online. Ostale knjige dostupne su u knjižnici HKS-a ili putem sustava međuknjižnične posudbe. Za pomoć s pristupom obratite se nositelju kolegija na [luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr).
 :::

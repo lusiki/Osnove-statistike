@@ -10,6 +10,13 @@ execute:
 
 website:
   title: "Osnove statistike | HKS"
+  site-url: https://lusiki.github.io/Osnove-statistike/
+  repo-url: https://github.com/lusiki/Osnove-statistike
+  repo-actions: [source, issue]
+  open-graph:
+    title: "Osnove statistike"
+    description: "Kolegij iz statistike za studente komunikologije na Hrvatskom katoličkom sveučilištu"
+    locale: hr_HR
   navbar:
     background: "#1a1a2e"
     foreground: "#e6e6e6"

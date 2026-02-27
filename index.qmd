@@ -1,18 +1,18 @@
 ---
 title: "Osnove statistike"
-subtitle: "Kolegij za studente komunikologije | HKS"
+subtitle: "Kolegij za studente komunikologije"
 ---
 
-Dobrodošli na stranicu kolegija **Osnove statistike**! Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka.
-
-Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija, od analize angažmana na društvenim mrežama do istraživanja povjerenja u medije.
+::: {.hero-section}
+Statistika je jezik podataka, a podaci su danas svugdje. Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka. Kroz 13 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija.
+:::
 
 ::: {.callout-note}
 ## Osnovni podaci o kolegiju
 
 | | |
 |---|---|
-| **Studij** | Komunikologija, HKS |
+| **Studij** | Komunikologija, Hrvatsko katoličko sveučilište |
 | **Semestar** | Ljetni semestar 2024/2025 |
 | **ECTS** | 6 |
 | **Opterećenje** | 30P + 30S |
@@ -24,34 +24,59 @@ Kroz 13 tjedana naučit ćete kako prikupljati, analizirati i interpretirati pod
 
 ## Struktura kolegija
 
-Kolegij je organiziran u četiri cjeline:
+Kolegij je organiziran u četiri tematske cjeline koje prate logiku postupnog građenja znanja:
 
-**Cjelina 1: Uvod i osnove programiranja (tjedni 1 do 4).** Upoznajete se sa statističkim razmišljanjem i istraživačkim dizajnom, učite programirati u R-u te ovladavate tidyverse ekosustavom za učitavanje, čišćenje i transformaciju podataka.
+::: {.cjelina-grid}
 
-**Cjelina 2: Deskriptivna statistika i vizualizacija (tjedni 5 i 6).** Računate mjere centralne tendencije i raspršenosti te ih vizualizirate pomoću ggplot2, od histograma i boxplotova do naprednih grafičkih prikaza.
+::: {.cjelina-card}
+### Cjelina 1
+**Uvod i osnove programiranja** (tjedni 1 do 4)
 
-**Cjelina 3: Statistička teorija (tjedni 7 do 9).** Upoznajete se s teorijom vjerojatnosti, distribucijama, uzorkovanjem, procjenom parametara, intervalima pouzdanosti i temeljima testiranja hipoteza.
+Statističko razmišljanje, istraživački dizajn, programiranje u R-u, tidyverse ekosustav za učitavanje, čišćenje i transformaciju podataka.
+:::
 
-**Cjelina 4: Inferencijalna statistika (tjedni 10 do 13).** Primjenjujete inferencijalne metode poput hi-kvadrat testova, t-testova, ANOVA-e i linearne regresije na primjerima iz komunikologije.
+::: {.cjelina-card}
+### Cjelina 2
+**Deskriptivna statistika i vizualizacija** (tjedni 5 i 6)
+
+Mjere centralne tendencije i raspršenosti, vizualizacija podataka pomoću ggplot2.
+:::
+
+::: {.cjelina-card}
+### Cjelina 3
+**Statistička teorija** (tjedni 7 do 9)
+
+Teorija vjerojatnosti, distribucije, uzorkovanje, procjena parametara, intervali pouzdanosti i testiranje hipoteza.
+:::
+
+::: {.cjelina-card}
+### Cjelina 4
+**Inferencijalna statistika** (tjedni 10 do 13)
+
+Hi-kvadrat testovi, t-testovi, ANOVA i linearna regresija na primjerima iz komunikologije.
+:::
+
+:::
 
 ## Preuzmi cijelu knjigu
 
-Sva predavanja dostupna su i u obliku cjelovite knjige:
+::: {.callout-tip}
+## Sva predavanja u jednom dokumentu
 
-| Format | Preuzmi |
-|--------|---------|
-| PDF | [Osnove statistike.pdf](Osnove-statistike.pdf) |
-| Word | [Osnove statistike.docx](Osnove-statistike.docx) |
+Cijeli sadržaj kolegija dostupan je za preuzimanje kao jedinstveni dokument:
+
+[Preuzmi PDF](Osnove-statistike.pdf){.btn .btn-primary .btn-sm} &ensp; [Preuzmi Word](Osnove-statistike.docx){.btn .btn-outline-primary .btn-sm}
+:::
 
 ## Brzi pristup
 
 | Resurs | Opis |
 |--------|------|
-| [Silabus](syllabus.qmd) | Cjelokupni plan kolegija s opisima tjedana |
-| [Raspored](schedule.qmd) | Tjedni raspored s datumima i statusom |
-| [Popis literature](resources/reading-list.qmd) | Obavezna i preporučena literatura |
-| [Alati](resources/tools.qmd) | Softver i platforme za kolegij |
-| [Praktični projekt](projects/practical-project.qmd) | Upute i rubrika za završni projekt |
+| [Silabus](syllabus.qmd) | Detaljan plan kolegija s opisima svih 13 tjedana |
+| [Raspored](schedule.qmd) | Tjedni raspored predavanja i seminara |
+| [Popis literature](resources/reading-list.qmd) | Obavezna i preporučena literatura s anotacijama |
+| [Alati](resources/tools.qmd) | Softver, R paketi i platforme za kolegij |
+| [Praktični projekt](projects/practical-project.qmd) | Upute, scenariji i rubrika za završni projekt |
 
 ## Obavijesti
 

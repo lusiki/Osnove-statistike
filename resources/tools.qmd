@@ -1,18 +1,27 @@
 ---
 title: "Alati i platforme"
+subtitle: "Softver i resursi za kolegij"
 ---
 
-Pregled softvera i platformi koje koristimo na kolegiju.
+Pregled softvera i platformi koje koristimo na kolegiju. Svi alati su besplatni.
 
 ## Programiranje i analiza
 
 | Alat | Namjena | Pristup |
 |------|---------|---------|
 | [R](https://cran.r-project.org/) | Programski jezik za statističku analizu | Besplatno, open source |
-| [Positron](https://github.com/posit-dev/positron) | IDE za R (razvojno okruženje) | Besplatno, open source |
+| [Positron](https://github.com/posit-dev/positron) | IDE za R (razvojno okruženje, preporučeno) | Besplatno, open source |
 | [RStudio](https://posit.co/download/rstudio-desktop/) | Alternativni IDE za R | Besplatno (Desktop verzija) |
 
+::: {.callout-note}
+## Koji IDE odabrati?
+
+Na kolegiju preporučujemo **Positron** jer je moderan, brz i dizajniran za rad s podatcima. Ako ste već upoznati s RStudiom, on je također potpuno prihvatljiv.
+:::
+
 ## R paketi
+
+Ove pakete ćemo koristiti tijekom semestra. Instalirajte ih pokretanjem priložene naredbe u R konzoli.
 
 | Paket | Namjena | Instalacija |
 |-------|---------|-------------|
@@ -21,6 +30,16 @@ Pregled softvera i platformi koje koristimo na kolegiju.
 | janitor | Čišćenje naziva stupaca i tablice frekvencija | `install.packages("janitor")` |
 | scales | Formatiranje osi grafika | `install.packages("scales")` |
 | patchwork | Kombiniranje više grafika | `install.packages("patchwork")` |
+
+::: {.callout-tip}
+## Brza instalacija svih paketa odjednom
+
+Kopirajte i zalijepite sljedeću naredbu u R konzolu:
+
+```r
+install.packages(c("tidyverse", "broom", "janitor", "scales", "patchwork"))
+```
+:::
 
 ## Pisanje i dokumenti
 
@@ -48,9 +67,9 @@ Pregled softvera i platformi koje koristimo na kolegiju.
 
 Mnogi alati nude besplatne verzije ili posebne pogodnosti za studente:
 
-1. **GitHub Student Developer Pack** — besplatni Pro račun i pristup raznim alatima ([education.github.com](https://education.github.com/pack))
-2. **Posit Cloud** — besplatna online verzija RStudia, korisna ako imate problema s lokalnom instalacijom ([posit.cloud](https://posit.cloud/))
-3. **Google Workspace for Education** — besplatni Google alati putem fakultetskog računa
+1. **GitHub Student Developer Pack**: besplatni Pro račun i pristup raznim alatima ([education.github.com](https://education.github.com/pack))
+2. **Posit Cloud**: besplatna online verzija RStudia, korisna ako imate problema s lokalnom instalacijom ([posit.cloud](https://posit.cloud/))
+3. **Google Workspace for Education**: besplatni Google alati putem fakultetskog računa
 
 Za sve alate na kolegiju koristimo isključivo **besplatne verzije**. Ne trebate ništa kupovati.
 :::
