@@ -3,6 +3,8 @@ project:
   output-dir: _site
   resources:
     - Osnove-statistike.pdf
+    - lectures/*.pdf
+    - lectures/*.docx
 
 execute:
   freeze: auto

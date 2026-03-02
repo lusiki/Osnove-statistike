@@ -4,3 +4,16 @@ number-sections: true
 
 format:
   html: default
+  pdf:
+    documentclass: scrartcl
+    papersize: a4
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    lang: hr
+  docx:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    lang: hr
