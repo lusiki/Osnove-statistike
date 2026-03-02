@@ -29,7 +29,7 @@ Sadržajna okosnica kolegija inspirirana je knjigom *Learning Statistics with R*
 
 *Tjedni 1 do 4*
 
-Prva cjelina postavlja temelje. Prije nego što se upustimo u bilo kakvu analizu, trebamo razumjeti zašto statistika uopće postoji i kako nam pomaže razlučiti signal od šuma u podacima. Zatim gradimo praktične vještine u R-u: pisanje funkcija i skripti, učitavanje podataka, čišćenje i transformacija. Na kraju ove cjeline svaki student ima funkcionalan radni tok i može samostalno pripremiti dataset za analizu.
+Prva cjelina postavlja temelje. Prije nego što se upustimo u bilo kakvu analizu, trebamo razumjeti zašto statistika uopće postoji i kako nam pomaže razlučiti signal od šuma u podacima. Zatim gradimo praktične vještine u R-u: učitavanje podataka, čišćenje i transformacija, te pisanje funkcija i skripti. Na kraju ove cjeline svaki student ima funkcionalan radni tok i može samostalno pripremiti dataset za analizu.
 
 ### Tjedan 1: Zašto statistika? Uvod u istraživački dizajn {#t01}
 
@@ -39,15 +39,7 @@ Zašto bi komunikolog trebao razumjeti statistiku? Kroz Simpsonov paradoks u med
 [HTML](lectures/week-01.html){.btn-material} | [PDF](lectures/week-01.pdf){.btn-material} | [DOCX](lectures/week-01.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-01.qmd){.btn-material}
 :::
 
-### Tjedan 2: Programiranje u R {#t02}
-
-Prije nego što počnemo pisati analize, trebamo naučiti organizirati svoj kod. Ovo predavanje uvodi koncepte koji čine razliku između jednokratne analize i ponovljivog istraživanja: pisanje vlastitih funkcija, uvjetne naredbe (`if/else`, `case_when()`), petlje i funkcionalno programiranje s `purrr::map()`. Kroz primjer automatske analize newsletter kampanja, studenti usvajaju DRY princip i uče strukturirati skripte za ponovnu upotrebu.
-
-::: {.material-links}
-[HTML](lectures/week-04.html){.btn-material} | [PDF](lectures/week-04.pdf){.btn-material} | [DOCX](lectures/week-04.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-04.qmd){.btn-material}
-:::
-
-### Tjedan 3: Uvod u R i tidyverse {#t03}
+### Tjedan 2: Uvod u R i tidyverse {#t02}
 
 Studenti instaliraju R i Positron te odmah kreću s tidyverse pristupom, modernim ekosistemom paketa koji čini rad s podacima intuitivnim i čitljivim. Od početka koristimo tibbleove umjesto data.frameova, pipe operator (`|>`) za ulančavanje operacija i `readr` za učitavanje podataka. Na kraju tjedna svaki student samostalno učitava i pregledava dataset o korištenju društvenih mreža.
 
@@ -55,12 +47,20 @@ Studenti instaliraju R i Positron te odmah kreću s tidyverse pristupom, moderni
 [HTML](lectures/week-02.html){.btn-material} | [PDF](lectures/week-02.pdf){.btn-material} | [DOCX](lectures/week-02.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-02.qmd){.btn-material}
 :::
 
-### Tjedan 4: Rad s podacima u tidyverse {#t04}
+### Tjedan 3: Rad s podacima u tidyverse {#t03}
 
 Čišćenje i transformacija podataka oduzima oko 80% vremena svake analize, a upravo tu se gradi ili gubi kvaliteta istraživanja. Ovaj tjedan posvećen je praktičnom radu s dplyr glagolima (`filter()`, `select()`, `mutate()`, `summarise()`, `group_by()`) i tidyr funkcijama za preoblikovanje podataka (`pivot_longer()`, `pivot_wider()`). Na primjeru studentske ankete o medijskim navikama, studenti prolaze cijeli put od sirovih, neurednih podataka do dataseta spremnog za analizu.
 
 ::: {.material-links}
 [HTML](lectures/week-03.html){.btn-material} | [PDF](lectures/week-03.pdf){.btn-material} | [DOCX](lectures/week-03.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-03.qmd){.btn-material}
+:::
+
+### Tjedan 4: Programiranje u R {#t04}
+
+Prije nego što počnemo pisati analize, trebamo naučiti organizirati svoj kod. Ovo predavanje uvodi koncepte koji čine razliku između jednokratne analize i ponovljivog istraživanja: pisanje vlastitih funkcija, uvjetne naredbe (`if/else`, `case_when()`), petlje i funkcionalno programiranje s `purrr::map()`. Kroz primjer automatske analize newsletter kampanja, studenti usvajaju DRY princip i uče strukturirati skripte za ponovnu upotrebu.
+
+::: {.material-links}
+[HTML](lectures/week-04.html){.btn-material} | [PDF](lectures/week-04.pdf){.btn-material} | [DOCX](lectures/week-04.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-04.qmd){.btn-material}
 :::
 
 ## Cjelina 2: Deskriptivna statistika i vizualizacija {.cjelina-header}
@@ -158,9 +158,9 @@ Svi dosadašnji testovi uspoređivali su grupe. Regresija ide korak dalje i omog
 | Tjedan | Tip | Aktivnost |
 |:------:|:---:|-----------|
 | 1 | Diskusija | Primjeri loše interpretacije statistike u medijima |
-| 2 | Vježba | Pisanje vlastite funkcije za analizu podataka |
-| 3 | Radionica | Instalacija R-a i Positrona, prvi koraci |
-| 4 | Vježba | Čišćenje i transformacija dataseta |
+| 2 | Radionica | Instalacija R-a i Positrona, prvi koraci |
+| 3 | Vježba | Čišćenje i transformacija dataseta |
+| 4 | Vježba | Pisanje vlastite funkcije za analizu podataka |
 | 5 | Vježba | Izračun deskriptivnih statistika za medijski dataset |
 | 6 | Radionica | Izrada vizualizacija u ggplot2 |
 | 7 | Vježba | Računanje vjerojatnosti i rad s distribucijama u R-u |

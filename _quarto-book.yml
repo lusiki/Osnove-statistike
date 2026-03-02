@@ -15,24 +15,24 @@ book:
     - part: "Uvod i osnove programiranja"
       chapters:
         - lectures/week-01.qmd
-        - lectures/week-06.qmd
         - lectures/week-02.qmd
         - lectures/week-03.qmd
+        - lectures/week-04.qmd
     - part: "Deskriptivna statistika i vizualizacija"
       chapters:
-        - lectures/week-04.qmd
         - lectures/week-05.qmd
+        - lectures/week-06.qmd
     - part: "Statistička teorija"
       chapters:
         - lectures/week-07.qmd
+        - lectures/week-08.qmd
         - lectures/week-09.qmd
-        - lectures/week-10.qmd
     - part: "Inferencijalna statistika"
       chapters:
+        - lectures/week-10.qmd
         - lectures/week-11.qmd
         - lectures/week-12.qmd
         - lectures/week-13.qmd
-        - lectures/week-14.qmd
 
 format:
   pdf:

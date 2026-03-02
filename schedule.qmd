@@ -10,9 +10,9 @@ subtitle: "Predavanja i seminari po tjednima"
 | Tjedan | Datum | Tema predavanja | Seminarska aktivnost | Status |
 |:------:|:-----:|-----------------|---------------------|:------:|
 | 1 | TBD | [Zašto statistika? Uvod u istraživački dizajn](lectures/week-01.qmd) | Diskusija: loša interpretacija statistike u medijima | [Uskoro]{.badge-upcoming} |
-| 2 | TBD | [Programiranje u R](lectures/week-04.qmd) | Vježba: pisanje vlastite funkcije | [Uskoro]{.badge-upcoming} |
-| 3 | TBD | [Uvod u R i tidyverse](lectures/week-02.qmd) | Radionica: instalacija R-a i Positrona | [Uskoro]{.badge-upcoming} |
-| 4 | TBD | [Rad s podacima u tidyverse](lectures/week-03.qmd) | Vježba: čišćenje i transformacija dataseta | [Uskoro]{.badge-upcoming} |
+| 2 | TBD | [Uvod u R i tidyverse](lectures/week-02.qmd) | Radionica: instalacija R-a i Positrona | [Uskoro]{.badge-upcoming} |
+| 3 | TBD | [Rad s podacima u tidyverse](lectures/week-03.qmd) | Vježba: čišćenje i transformacija dataseta | [Uskoro]{.badge-upcoming} |
+| 4 | TBD | [Programiranje u R](lectures/week-04.qmd) | Vježba: pisanje vlastite funkcije | [Uskoro]{.badge-upcoming} |
 
 ### Cjelina 2: Deskriptivna statistika i vizualizacija
 
