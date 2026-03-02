@@ -11,6 +11,7 @@ book:
   author: "doc. dr. sc. Luka Šikić"
   date: today
   chapters:
+    - index.qmd
     - part: "Uvod i osnove programiranja"
       chapters:
         - lectures/week-01.qmd
