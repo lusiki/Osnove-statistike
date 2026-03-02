@@ -44,7 +44,7 @@ Zašto bi komunikolog trebao razumjeti statistiku? Kroz Simpsonov paradoks u med
 Prije nego što počnemo pisati analize, trebamo naučiti organizirati svoj kod. Ovo predavanje uvodi koncepte koji čine razliku između jednokratne analize i ponovljivog istraživanja: pisanje vlastitih funkcija, uvjetne naredbe (`if/else`, `case_when()`), petlje i funkcionalno programiranje s `purrr::map()`. Kroz primjer automatske analize newsletter kampanja, studenti usvajaju DRY princip i uče strukturirati skripte za ponovnu upotrebu.
 
 ::: {.material-links}
-[HTML](lectures/week-06.html){.btn-material} | [PDF](lectures/week-06.pdf){.btn-material} | [DOCX](lectures/week-06.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-06.qmd){.btn-material}
+[HTML](lectures/week-04.html){.btn-material} | [PDF](lectures/week-04.pdf){.btn-material} | [DOCX](lectures/week-04.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-04.qmd){.btn-material}
 :::
 
 ### Tjedan 3: Uvod u R i tidyverse {#t03}
@@ -74,7 +74,7 @@ Sada kada znamo učitati i pripremiti podatke, trebamo ih opisati i prikazati. O
 Kako jednim brojem opisati cijelu distribuciju? Predavanje obrađuje mjere centralne tendencije (aritmetička sredina, medijan, mod) i mjere varijabilnosti (raspon, standardna devijacija, IQR), sve izračunato pomoću `summarise()` i `group_by()`. Uvode se i z-vrijednosti za standardizaciju te Pearsonova i Spearmanova korelacija. Na primjeru podataka o korištenju TikToka po dobnim skupinama, studenti uče zašto samo prosjek nije dovoljan: bez informacije o raspršenosti, prosjek može biti potpuno obmanjujući.
 
 ::: {.material-links}
-[HTML](lectures/week-04.html){.btn-material} | [PDF](lectures/week-04.pdf){.btn-material} | [DOCX](lectures/week-04.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-04.qmd){.btn-material}
+[HTML](lectures/week-05.html){.btn-material} | [PDF](lectures/week-05.pdf){.btn-material} | [DOCX](lectures/week-05.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-05.qmd){.btn-material}
 :::
 
 ### Tjedan 6: Vizualizacija podataka s ggplot2 {#t06}
@@ -82,7 +82,7 @@ Kako jednim brojem opisati cijelu distribuciju? Predavanje obrađuje mjere centr
 Anscombeov kvartet demonstrira zašto su grafovi nezamjenjivi: četiri potpuno različita uzorka podataka imaju identičnu deskriptivnu statistiku, ali izgledaju sasvim drugačije kada ih nacrtamo. Predavanje uvodi gramatiku grafike, filozofiju ggplot2 paketa u kojoj se svaki graf gradi slaganjem slojeva: podaci, estetike, geometrije, facete i teme. Studenti izrađuju histograme, boxplotove, scatterplotove, density plotove i bar chartove koristeći podatke o angažmanu čitatelja na portalima.
 
 ::: {.material-links}
-[HTML](lectures/week-05.html){.btn-material} | [PDF](lectures/week-05.pdf){.btn-material} | [DOCX](lectures/week-05.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-05.qmd){.btn-material}
+[HTML](lectures/week-06.html){.btn-material} | [PDF](lectures/week-06.pdf){.btn-material} | [DOCX](lectures/week-06.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-06.qmd){.btn-material}
 :::
 
 ## Cjelina 3: Statistička teorija {.cjelina-header}
@@ -104,7 +104,7 @@ Ova cjelina čini konceptualni most između opisivanja podataka i donošenja zak
 Svako istraživanje javnog mnijenja navodi "marginu pogreške", ali što taj broj zapravo znači? Predavanje objašnjava temeljni problem statistike: kako iz dijela (uzorka) saznati nešto o cjelini (populaciji). Kroz simulaciju na populaciji od 50.000 osoba, studenti vizualiziraju distribuciju uzorkovanja, centralni granični teorem i standardnu pogrešku. Zatim konstruiraju intervale pouzdanosti i uče ih pravilno interpretirati: ne kao raspon u kojem se "nalazi pravi parametar s 95% vjerojatnosti", već kao postupak koji u 95% slučajeva daje interval koji obuhvaća pravi parametar.
 
 ::: {.material-links}
-[HTML](lectures/week-09.html){.btn-material} | [PDF](lectures/week-09.pdf){.btn-material} | [DOCX](lectures/week-09.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-09.qmd){.btn-material}
+[HTML](lectures/week-08.html){.btn-material} | [PDF](lectures/week-08.pdf){.btn-material} | [DOCX](lectures/week-08.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-08.qmd){.btn-material}
 :::
 
 ### Tjedan 9: Testiranje hipoteza {#t09}
@@ -112,7 +112,7 @@ Svako istraživanje javnog mnijenja navodi "marginu pogreške", ali što taj bro
 Je li opažena razlika u angažmanu između carousel i običnih objava na Instagramu stvarna ili samo posljedica slučajnosti? Testiranje hipoteza daje formalan okvir za odgovor na takva pitanja. Predavanje objašnjava logiku kroz analogiju sa suđenjem: nulta hipoteza je "nevin dok se ne dokaže krivnja". Studenti uče formulirati hipoteze, izračunati testnu statistiku i p-vrijednost, te razumjeti greške tipa I i II. Poseban naglasak stavljen je na veličinu učinka (Cohenov d) i statističku snagu, jer statistička značajnost bez praktične važnosti nema smisla.
 
 ::: {.material-links}
-[HTML](lectures/week-10.html){.btn-material} | [PDF](lectures/week-10.pdf){.btn-material} | [DOCX](lectures/week-10.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-10.qmd){.btn-material}
+[HTML](lectures/week-09.html){.btn-material} | [PDF](lectures/week-09.pdf){.btn-material} | [DOCX](lectures/week-09.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-09.qmd){.btn-material}
 :::
 
 ## Cjelina 4: Inferencijalna statistika {.cjelina-header}
@@ -126,7 +126,7 @@ Završna cjelina primjenjuje sve naučeno na konkretne statističke testove s ko
 Kada su varijable kategorije (tip medija, dobna skupina, spol), ne možemo računati prosjeke, ali možemo testirati postoji li veza među njima. Predavanje obrađuje hi-kvadrat test slaganja (odgovaraju li opažene frekvencije očekivanim?) i test nezavisnosti (postoji li veza između tipa medija i dobi publike?). Studenti uče čitati kontingencijske tablice, interpretirati standardizirane reziduale, koristiti Cramérovo V kao mjeru veličine učinka, te primijeniti Fisherov egzaktni test kada su očekivane frekvencije premale. Na anketi od 800 ispitanika otkrivamo generacijski jaz u medijskim navikama.
 
 ::: {.material-links}
-[HTML](lectures/week-11.html){.btn-material} | [PDF](lectures/week-11.pdf){.btn-material} | [DOCX](lectures/week-11.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-11.qmd){.btn-material}
+[HTML](lectures/week-10.html){.btn-material} | [PDF](lectures/week-10.pdf){.btn-material} | [DOCX](lectures/week-10.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-10.qmd){.btn-material}
 :::
 
 ### Tjedan 11: Usporedba prosjeka s t-testovima {#t11}
@@ -134,7 +134,7 @@ Kada su varijable kategorije (tip medija, dobna skupina, spol), ne možemo raču
 Čitaju li ljudi članke brže ili sporije kada imaju vizualne elemente? T-test je najčešći alat za usporedbu dviju grupa. Predavanje pokriva tri varijante: t-test za jedan uzorak (razlikuje li se naš prosjek od poznate vrijednosti?), t-test za nezavisne uzorke (razlikuju li se dvije grupe?) i upareni t-test (postoji li promjena unutar istih subjekata?). Za svaku varijantu studenti provjeravaju pretpostavke (Shapiro-Wilkov test, Q-Q plotovi), računaju Cohenov d i uče kada primijeniti Wilcoxonov neparametrijski test.
 
 ::: {.material-links}
-[HTML](lectures/week-12.html){.btn-material} | [PDF](lectures/week-12.pdf){.btn-material} | [DOCX](lectures/week-12.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-12.qmd){.btn-material}
+[HTML](lectures/week-11.html){.btn-material} | [PDF](lectures/week-11.pdf){.btn-material} | [DOCX](lectures/week-11.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-11.qmd){.btn-material}
 :::
 
 ### Tjedan 12: Usporedba više grupa s ANOVA-om {#t12}
@@ -142,7 +142,7 @@ Kada su varijable kategorije (tip medija, dobna skupina, spol), ne možemo raču
 Kada želimo usporediti vjerodostojnost vijesti iz pet različitih izvora (TV, portal, društvena mreža, novine, podcast), ne možemo provesti 10 zasebnih t-testova jer svaki test nosi rizik lažno pozitivnog rezultata, a s 10 testova taj rizik eksplodira. ANOVA rješava ovaj problem testirajući sve grupe odjednom. Predavanje objašnjava logiku F-statistike (omjer varijance između grupa i varijance unutar grupa), Tukeyjev HSD post-hoc test, eta-kvadrat kao mjeru veličine učinka, te Kruskal-Wallisov test kao neparametarsku alternativu.
 
 ::: {.material-links}
-[HTML](lectures/week-13.html){.btn-material} | [PDF](lectures/week-13.pdf){.btn-material} | [DOCX](lectures/week-13.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-13.qmd){.btn-material}
+[HTML](lectures/week-12.html){.btn-material} | [PDF](lectures/week-12.pdf){.btn-material} | [DOCX](lectures/week-12.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-12.qmd){.btn-material}
 :::
 
 ### Tjedan 13: Linearna regresija {#t13}
