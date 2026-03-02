@@ -24,7 +24,11 @@ jobs:
         uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true
-      - name: Render
+      - name: Render book PDF
+        run: quarto render --profile book
+      - name: Copy book PDF to project root
+        run: cp _book/Osnove-statistike.pdf Osnove-statistike.pdf
+      - name: Render website
         uses: quarto-dev/quarto-actions/render@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
