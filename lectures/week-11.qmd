@@ -33,9 +33,9 @@ Nakon ovog predavanja moći ćete:
 
 Zamislite da radite kao istraživačica u uredništvu jednog web portala. Portal objavljuje članke o politici, zdravlju, tehnologiji, sportu i kulturi — uglavnom tekstualne, s ponekom fotografijom za vizualni odmor. Uredništvo razmišlja o velikom redizajnu. Žele dodati infografike, podatkovne vizualizacije, ilustracije i interaktivne elemente. Ideja zvuči privlačno, ali glavni urednik nije uvjeren. "Vizuali koštaju," kaže. "Trebam dokaze da stvarno poboljšavaju čitateljsko iskustvo."
 
-I tako dobijete zadatak: osmisliti eksperiment koji će odgovoriti na pitanje utječu li vizualni elementi na četiri ključna ishoda — vrijeme čitanja, razumijevanje sadržaja, namjeru dijeljenja i percipiranu vjerodostojnost. Odabrali ste 120 članaka i svaki prezentirali ispitanicima u dva uvjeta: jednom s vizualima, jednom bez. Budući da je svaki članak testiran u oba uvjeta, radi se o within-subjects dizajnu — a statistički alat koji vam treba za takvu usporedbu zove se upareni t-test.
+I tako dobijete zadatak — osmisliti eksperiment koji će odgovoriti na pitanje utječu li vizualni elementi na četiri ključna ishoda — vrijeme čitanja, razumijevanje sadržaja, namjeru dijeljenja i percipiranu vjerodostojnost. Odabrali ste 120 članaka i svaki prezentirali ispitanicima u dva uvjeta: jednom s vizualima, jednom bez. Budući da je svaki članak testiran u oba uvjeta, radi se o within-subjects dizajnu — a statistički alat koji vam treba za takvu usporedbu zove se upareni t-test.
 
-Na predavanju o testiranju hipoteza naučili smo logiku koja stoji iza t-testa: postavljamo nultu hipotezu, izračunavamo testnu statistiku, gledamo p-vrijednost i donosimo odluku. Ovo predavanje se bavi onom drugom polovicom posla — onom koja se u udžbenicima često prebrzo preskoči. Kako zapravo provjeriti jesu li pretpostavke testa zadovoljene? Što učiniti kad nisu? Kako odabrati pravi test za pravi dizajn? I kako napisati rezultate tako da ih kolege i recenzenti mogu razumjeti?
+Na predavanju o testiranju hipoteza naučili smo logiku koja stoji iza t-testa — postavljamo nultu hipotezu, izračunavamo testnu statistiku, gledamo p-vrijednost i donosimo odluku. Ovo predavanje se bavi onom drugom polovicom posla — onom koja se u udžbenicima često prebrzo preskoči. Kako zapravo provjeriti jesu li pretpostavke testa zadovoljene? Što učiniti kad nisu? Kako odabrati pravi test za pravi dizajn? I kako napisati rezultate tako da ih kolege i recenzenti mogu razumjeti?
 
 Krenimo od podataka.
 
@@ -67,7 +67,7 @@ articles |>
   )
 ```
 
-Na prvi pogled, brojke govore u prilog vizualima: članci s vizualnim elementima imaju duže vrijeme čitanja, bolje razumijevanje i višu namjeru dijeljenja. Ali "na prvi pogled" nije dovoljno za istraživačicu koja zna što radi. Prije nego što izvučemo ikakve zaključke, moramo provjeriti jesu li pretpostavke statističkog testa koje namjeravamo koristiti uopće zadovoljene.
+Na prvi pogled, brojke govore u prilog vizualima — članci s vizualnim elementima imaju duže vrijeme čitanja, bolje razumijevanje i višu namjeru dijeljenja. Ali "na prvi pogled" nije dovoljno za istraživačicu koja zna što radi. Prije nego što izvučemo ikakve zaključke, moramo provjeriti jesu li pretpostavke statističkog testa koje namjeravamo koristiti uopće zadovoljene.
 
 
 ## Tri vrste t-testa {#sec-podsjetnik}
@@ -99,9 +99,9 @@ Svaki statistički test dolazi s pretpostavkama — uvjetima koji moraju biti ba
 
 Sve tri varijante t-testa dijele tri temeljne pretpostavke. Kao prvo, podaci moraju biti barem na intervalnoj skali, što znači da razlike između vrijednosti imaju smisla (razlika između 3 i 5 je ista kao razlika između 7 i 9). Kao drugo, opažanja moraju biti nezavisna jedno od drugoga. U uparenom testu to znači da su parovi nezavisni, iako mjerenja unutar para naravno nisu. Kao treće, distribucija mora biti približno normalna — ili uzorak dovoljno velik da centralni granični teorem kompenzira.
 
-Nezavisni t-test ima jednu dodatnu pretpostavku: varijance dviju grupa trebale bi biti približno jednake. To je pretpostavka klasičnog Studentovog t-testa. Dobra vijest je da postoji Welchova korekcija koja tu pretpostavku ne zahtijeva, i upravo je ona default u R-u. O tome ćemo više za koji odlomak.
+Nezavisni t-test ima jednu dodatnu pretpostavku — varijance dviju grupa trebale bi biti približno jednake. To je pretpostavka klasičnog Studentovog t-testa. Dobra vijest je da postoji Welchova korekcija koja tu pretpostavku ne zahtijeva, i upravo je ona default u R-u. O tome ćemo više za koji odlomak.
 
-Od svih ovih pretpostavki, ona koju ćete najčešće morati aktivno provjeravati je normalnost. A kod uparenog t-testa, pazite na važan detalj: ne provjeravate normalnost pojedinačnih mjerenja, nego normalnost *razlika* između dvaju uvjeta. Zvuči kao sitnica, ali ta sitnica može potpuno promijeniti zaključak.
+Od svih ovih pretpostavki, ona koju ćete najčešće morati aktivno provjeravati je normalnost. A kod uparenog t-testa, pazite na važan detalj — ne provjeravate normalnost pojedinačnih mjerenja, nego normalnost *razlika* između dvaju uvjeta. Zvuči kao sitnica, ali ta sitnica može potpuno promijeniti zaključak.
 
 
 ## Provjera normalnosti {#sec-normalnost}
@@ -149,7 +149,7 @@ articles |>
   theme_minimal()
 ```
 
-Histogram je koristan, ali još informativniji dijagnostički alat je QQ plot (quantile-quantile plot). Ideja QQ plota je jednostavna: on uspoređuje kvantile vaših podataka s kvantilima savršene normalne distribucije. Ako su vaši podaci normalno distribuirani, točke će ležati uz dijagonalnu liniju. Što više odstupaju, to je distribucija manje normalna.
+Histogram je koristan, ali još informativniji dijagnostički alat je QQ plot (quantile-quantile plot). Ideja QQ plota je jednostavna — on uspoređuje kvantile vaših podataka s kvantilima savršene normalne distribucije. Ako su vaši podaci normalno distribuirani, točke će ležati uz dijagonalnu liniju. Što više odstupaju, to je distribucija manje normalna.
 
 ```{r}
 #| label: qq-plot-razlike
@@ -182,7 +182,7 @@ articles |>
   theme_minimal()
 ```
 
-Pogledajte četiri panela. Razlike u vremenu čitanja i razumijevanju lijepo prate dijagonalu — distribucija je razumno normalna. Razlike u namjeri dijeljenja i vjerodostojnosti pokazuju stepeničast uzorak, što je očekivano: te varijable su mjerene Likert skalom (cjelobrojne vrijednosti od 1 do 5 ili 1 do 7), pa ne mogu biti savršeno glatke. Blaga odstupanja na repovima su prihvatljiva, osobito kad je uzorak veći od 30.
+Pogledajte četiri panela. Razlike u vremenu čitanja i razumijevanju lijepo prate dijagonalu — distribucija je razumno normalna. Razlike u namjeri dijeljenja i vjerodostojnosti pokazuju stepeničast uzorak, što je očekivano — te varijable su mjerene Likert skalom (cjelobrojne vrijednosti od 1 do 5 ili 1 do 7), pa ne mogu biti savršeno glatke. Blaga odstupanja na repovima su prihvatljiva, osobito kad je uzorak veći od 30.
 
 ### Shapiro-Wilkov test
 
@@ -221,9 +221,9 @@ Razlike u vremenu čitanja prolaze test normalnosti (p > 0.05), što znači da n
 ::: {.callout-important}
 ## Paradoks Shapiro-Wilkovog testa
 
-Shapiro-Wilkov test ima isti paradoks kao i svaki statistički test: njegova osjetljivost ovisi o veličini uzorka. S velikim uzorkom (recimo n = 500) detektirat će i sasvim trivijalna odstupanja od normalnosti koja nemaju nikakav praktični značaj. S malim uzorkom (n = 15) propustit će i prilično grube deformacije distribucije.
+Shapiro-Wilkov test ima isti paradoks kao i svaki statistički test — njegova osjetljivost ovisi o veličini uzorka. S velikim uzorkom (recimo n = 500) detektirat će i sasvim trivijalna odstupanja od normalnosti koja nemaju nikakav praktični značaj. S malim uzorkom (n = 15) propustit će i prilično grube deformacije distribucije.
 
-Zato je vizualna procjena putem QQ plota jednako važna kao formalni test. Praktično pravilo glasi ovako: ako QQ plot izgleda razumno i uzorak ima više od 30 opažanja, t-test je dovoljno robustan čak i za umjerena odstupanja od normalnosti — zahvaljujući centralnom graničnom teoremu koji osigurava da će distribucija prosjeka biti približno normalna bez obzira na oblik izvorne distribucije.
+Zato je vizualna procjena putem QQ plota jednako važna kao formalni test. Praktično pravilo je sljedeće — ako QQ plot izgleda razumno i uzorak ima više od 30 opažanja, t-test je dovoljno robustan čak i za umjerena odstupanja od normalnosti jer centralni granični teorem osigurava da će distribucija prosjeka biti približno normalna bez obzira na oblik izvorne distribucije.
 :::
 
 
@@ -269,12 +269,12 @@ tibble(
 )
 ```
 
-Primijetite jednu zanimljivu stvar: Welchov test ima neokrugle stupnjeve slobode. To je zato što ih prilagođava za razliku u varijancama. Kad su varijance jednake, oba testa daju praktički identične rezultate. Kad su varijance različite, Welchov test je točniji — a Studentov test može dati lažno pozitivne ili lažno negativne rezultate.
+Primijetite jednu zanimljivu stvar — Welchov test ima neokrugle stupnjeve slobode. To je zato što ih prilagođava za razliku u varijancama. Kad su varijance jednake, oba testa daju praktički identične rezultate. Kad su varijance različite, Welchov test je točniji, a Studentov test može dati lažno pozitivne ili lažno negativne rezultate.
 
 ::: {.callout-tip}
 ## Zaboravite na Studentov t-test
 
-Evo savjeta koji će vam pojednostaviti život: koristite Welchov t-test uvijek. Ne morate uopće provjeravati homogenost varijance jer Welchov test radi jednako dobro kad su varijance jednake i bolje kad su različite. On je default u R-u (`var.equal = FALSE`) iz dobrog razloga.
+Evo savjeta koji će vam pojednostaviti život — koristite Welchov t-test uvijek. Ne morate uopće provjeravati homogenost varijance jer Welchov test radi jednako dobro kad su varijance jednake i bolje kad su različite. On je default u R-u (`var.equal = FALSE`) iz dobrog razloga.
 
 Studentov t-test s `var.equal = TRUE` koristite samo ako imate specifičan razlog — na primjer, kad trebate reproducirati rezultate iz objavljenog rada koji je koristio Studentov test.
 :::
@@ -356,7 +356,7 @@ articles |>
 
 Isprekidana siva linija označava nulu — "nema razlike." Crvena linija označava prosječnu razliku. Većina stupaca leži desno od nule, što znači da su članci s vizualima dosljedno imali duže vrijeme čitanja. Poneki članak ima negativnu razliku (čitatelji su ga čitali kraće s vizualima), ali to je iznimka, ne pravilo.
 
-Još je jedan tip grafa posebno koristan za uparene podatke: slope chart. On prikazuje svaku jedinicu kao liniju koja povezuje dva uvjeta, pa možete doslovno vidjeti kako se svaki članak ponaša.
+Još je jedan tip grafa posebno koristan za uparene podatke — slope chart. On prikazuje svaku jedinicu kao liniju koja povezuje dva uvjeta, pa možete doslovno vidjeti kako se svaki članak ponaša.
 
 ```{r}
 #| label: paired-slope
@@ -499,7 +499,7 @@ tribble(
 )
 ```
 
-Wilcoxonov signed-rank test, neparametrijska zamjena za upareni t-test, radi ovako: uzme sve razlike između dvaju uvjeta, rangira ih po apsolutnoj vrijednosti, zatim svakom rangu vrati originalni predznak i testira je li suma pozitivnih rangova značajno veća (ili manja) od očekivane pod nultom hipotezom. Jer radi s rangovima, jedan ekstremni outlier ne može dominirati rezultatom — a to je ključna prednost.
+Wilcoxonov signed-rank test, neparametrijska zamjena za upareni t-test, radi na sljedeći način — uzme sve razlike između dvaju uvjeta, rangira ih po apsolutnoj vrijednosti, zatim svakom rangu vrati originalni predznak i testira je li suma pozitivnih rangova značajno veća (ili manja) od očekivane pod nultom hipotezom. Jer radi s rangovima, jedan ekstremni outlier ne može dominirati rezultatom, što je ključna prednost.
 
 Usporedimo parametrijski i neparametrijski pristup na varijabli namjere dijeljenja, koja je mjerena Likert skalom i možda ne zadovoljava pretpostavku normalnosti.
 
@@ -629,7 +629,7 @@ U prvom dijelu ovog predavanja proveli smo upareni t-test na podacima o vizualim
 
 Provesti analizu je pola posla. Druga polovica je napisati rezultate tako da ih drugi istraživači mogu razumjeti i reproducirati. U komunikologiji (kao i u psihologiji i većini društvenih znanosti) standardni format za izvještavanje statističkih rezultata propisuje American Psychological Association (APA).
 
-APA format za t-test može djelovati rigidno, ali ta rigidnost ima svrhu: omogućuje čitatelju da brzo razumije što je testirano, koliko je jak dokaz i koliki je učinak, bez potrebe da tumači autorov slobodni stil pisanja.
+APA format za t-test može djelovati rigidno, ali ta rigidnost ima svrhu — omogućuje čitatelju da brzo razumije što je testirano, koliko je jak dokaz i koliki je učinak, bez potrebe da tumači autorov slobodni stil pisanja.
 
 ### Upareni t-test u APA formatu
 
@@ -708,7 +708,7 @@ Koristite ovu `apa_paired()` funkciju kao predložak i prilagodite je za vlastit
 
 ## Nezavisni t-test: kratki protiv dugih članaka {#sec-nezavisni}
 
-Upareni t-test bio je prikladan za usporedbu uvjeta jer je svaki članak bio u oba uvjeta. Ali ponekad uspoređujete dvije grupe koje nemaju nikakvu vezu jedna s drugom. Na primjer: razlikuje li se razumijevanje između kratkih i dugih članaka? Svaki članak pripada samo jednoj kategoriji dužine, pa nam treba nezavisni t-test.
+Upareni t-test bio je prikladan za usporedbu uvjeta jer je svaki članak bio u oba uvjeta. Ali ponekad uspoređujete dvije grupe koje nemaju nikakvu vezu jedna s drugom. Na primjer — razlikuje li se razumijevanje između kratkih i dugih članaka? Svaki članak pripada samo jednoj kategoriji dužine, pa nam treba nezavisni t-test.
 
 ```{r}
 #| label: nezavisni-podaci
@@ -833,7 +833,7 @@ cat("Za 80% snagu trebamo n =",
 
 ## Oprez s outlierima {#sec-outlieri}
 
-T-test koristi aritmetički prosjek, a prosjek ima jednu poznatu slabost: izuzetno je osjetljiv na ekstremne vrijednosti. Jedan jedini outlier može značajno pomaknuti prosjek i potpuno promijeniti rezultat testa. Pogledajmo to na simuliranom primjeru.
+T-test koristi aritmetički prosjek, a prosjek ima jednu poznatu slabost — izuzetno je osjetljiv na ekstremne vrijednosti. Jedan jedini outlier može značajno pomaknuti prosjek i potpuno promijeniti rezultat testa. Pogledajmo to na simuliranom primjeru.
 
 ```{r}
 #| label: outlier-demo
@@ -858,7 +858,7 @@ t_s <- t.test(s_outlierom, mu = 5)
 cat("  t =", round(t_s$statistic, 2), ", p =", round(t_s$p.value, 4), "\n")
 ```
 
-Jedna jedina vrijednost od 25 — u distribuciji čiji je prosjek oko 5 — dramatično je pomaknula i prosjek i standardnu devijaciju. Rezultat testa se potpuno promijenio. U praksi ovakve situacije nisu rijetke: pogrešno unesena vrijednost, ispitanik koji je odgovarao nasumično, ili stvarno neobičan slučaj koji ne pripada istoj populaciji.
+Jedna jedina vrijednost od 25 — u distribuciji čiji je prosjek oko 5 — dramatično je pomaknula i prosjek i standardnu devijaciju. Rezultat testa se potpuno promijenio. U praksi ovakve situacije nisu rijetke — pogrešno unesena vrijednost, ispitanik koji je odgovarao nasumično, ili stvarno neobičan slučaj koji ne pripada istoj populaciji.
 
 ### Kako detektirati outliere
 
@@ -912,7 +912,7 @@ U ovom slučaju uklanjanje outliera ne mijenja zaključak — efekt je robustan.
 
 ### Robusne alternative: podrezani prosjeci
 
-Uklanjanje outliera je uvijek donekle subjektivna odluka. Zašto baš |z| > 2.5, a ne 3.0? Alternativni pristup koji izbjegava tu arbitrarnost su trimmed means, odnosno podrezani prosjeci. Umjesto da odlučujete koje konkretne točke izbaciti, jednostavno kažete: "ignoriraj 10% najekstremnijih vrijednosti s oba kraja" — i prosjek se automatski stabilizira.
+Uklanjanje outliera je uvijek donekle subjektivna odluka. Zašto baš |z| > 2.5, a ne 3.0? Alternativni pristup koji izbjegava tu arbitrarnost su trimmed means, odnosno podrezani prosjeci. Umjesto da odlučujete koje konkretne točke izbaciti, jednostavno kažete da trebate ignorirati 10% najekstremnijih vrijednosti s oba kraja, pa se prosjek automatski stabilizira.
 
 ```{r}
 #| label: trimmed

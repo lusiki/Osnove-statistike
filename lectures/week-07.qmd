@@ -22,7 +22,7 @@ Nakon ovog predavanja moći ćete
 
 1. Objasniti što je vjerojatnost i zašto je temelj sve statističke analize.
 2. Opisati razliku između frekvencijskog i bayesijanskog pristupa vjerojatnosti.
-3. Primijeniti osnovna pravila vjerojatnosti: komplementarno pravilo, pravilo zbrajanja i pravilo množenja.
+3. Primijeniti osnovna pravila vjerojatnosti, uključujući komplementarno pravilo, pravilo zbrajanja i pravilo množenja.
 4. Izračunati vjerojatnost nezavisnih i zavisnih događaja.
 5. Objasniti što je binomna distribucija i prepoznati situacije u kojima se primjenjuje.
 6. Koristiti `dbinom()`, `pbinom()` i `rbinom()` za izračun i simulaciju binomnih vjerojatnosti.
@@ -218,7 +218,7 @@ mean(posts$content_type == "video" | posts$is_viral)
 
 Vjerojatnost da se dogode i A i B ovisi o tome jesu li događaji nezavisni.
 
-Ako su **nezavisni** (jedan ne utječe na drugi):
+Ako su **nezavisni** (jedan ne utječe na drugi), koristimo formulu
 
 $$P(\text{A i B}) = P(\text{A}) \times P(\text{B})$$
 
@@ -304,11 +304,9 @@ Zamislite da imate 20 objava na Instagramu i svaka ima istu vjerojatnost od 2% d
 
 ### Parametri binomne distribucije
 
-Binomna distribucija ima dva parametra:
+Binomna distribucija ima dva parametra.
 
-**n** je broj pokušaja (u našem primjeru, 20 objava).
-
-**p** je vjerojatnost uspjeha u jednom pokušaju (u našem primjeru, 0.02 ili 2%).
+**n** je broj pokušaja (u našem primjeru, 20 objava). **p** je vjerojatnost uspjeha u jednom pokušaju (u našem primjeru, 0.02 ili 2%).
 
 Piše se X ~ Binomial(n, p) i čita "X slijedi binomnu distribuciju s n pokušaja i vjerojatnošću p".
 
@@ -332,7 +330,7 @@ dbinom(x = 1, size = 20, prob = 0.02)
 dbinom(x = 2, size = 20, prob = 0.02)
 ```
 
-Šansa da nijedna objava ne postane viralna je oko 67%. Šansa za točno jednu viralnu je oko 27%. Šansa za točno dvije je oko 5%. Brzo pada. Ovo ima smisla: kad je vjerojatnost uspjeha samo 2%, većinu vremena nećete imati nijedan uspjeh u 20 pokušaja.
+Šansa da nijedna objava ne postane viralna je oko 67%. Šansa za točno jednu viralnu je oko 27%. Šansa za točno dvije je oko 5%. Brzo pada. Ovo ima smisla jer kad je vjerojatnost uspjeha samo 2%, većinu vremena nećete imati nijedan uspjeh u 20 pokušaja.
 
 ### Vizualizacija binomne distribucije
 
@@ -466,7 +464,7 @@ expand_grid(
   theme_minimal()
 ```
 
-Kad je p malo (0.05), distribucija je jako iskrivljena udesno i koncentrirana oko 0 i 1. Kad je p umjereno (0.20), distribucija se širi i centar se pomiče udesno. Kad je p = 0.50, distribucija je simetrična i izgleda gotovo poput zvona. Ova simetrija kod p = 0.5 nas vodi prema najvažnijoj distribuciji u statistici: normalnoj.
+Kad je p malo (0.05), distribucija je jako iskrivljena udesno i koncentrirana oko 0 i 1. Kad je p umjereno (0.20), distribucija se širi i centar se pomiče udesno. Kad je p = 0.50, distribucija je simetrična i izgleda gotovo poput zvona. Ova simetrija kod p = 0.5 nas vodi prema najvažnijoj distribuciji u cijeloj statistici, a to je normalna.
 
 ### Primjena: A/B test emaila
 
@@ -485,7 +483,7 @@ cat("P(X >= 14 | p = 0.22) =", round(p_14_ili_vise, 3), "\n")
 
 Šansa da vidimo 14 ili više otvaranja ako je pravi open rate samo 22% iznosi oko `r round((1 - pbinom(13, 50, 0.22)) * 100, 0)`%. To nije zanemarivo. Ne možemo s velikom sigurnošću tvrditi da je B bolji samo na temelju ovog jednog uzorka.
 
-Ovo je srž statističkog razmišljanja i prethodnica formalnih testova hipoteza koje ćemo učiti u tjednu 10. Pitanje je uvijek isto: koliko je vjerovatno vidjeti ovakav ili ekstremniji rezultat čistom slučajnošću?
+Ovo je srž statističkog razmišljanja i prethodnica formalnih testova hipoteza koje ćemo učiti u tjednu 10. Pitanje je uvijek isto — koliko je vjerovatno vidjeti ovakav ili ekstremniji rezultat čistom slučajnošću?
 
 ```{r}
 #| label: ab-test-simulacija
@@ -522,7 +520,7 @@ Crvena crta pokazuje rezultat naslova B (14 otvaranja). Vidimo da je to na desno
 ::: {.callout-important}
 ## Važna napomena
 
-Binomna distribucija se primjenjuje kad imate fiksni broj nezavisnih pokušaja, svaki s istom vjerojatnošću uspjeha. Primjeri iz komunikologije: broj lajkova (svaki pratitelj nezavisno odlučuje), broj otvaranja emaila (svaki pretplatnik nezavisno odlučuje), broj konverzija na landing stranici (svaki posjetitelj nezavisno odlučuje). Pretpostavka nezavisnosti je važna: ako jedan lajk poveća vidljivost pa uzrokuje sljedeći lajk (viralnost), stroga binomna pretpostavka je narušena.
+Binomna distribucija se primjenjuje kad imate fiksni broj nezavisnih pokušaja, svaki s istom vjerojatnošću uspjeha. Primjeri iz komunikologije uključuju broj lajkova (svaki pratitelj nezavisno odlučuje), broj otvaranja emaila (svaki pretplatnik nezavisno odlučuje), broj konverzija na landing stranici (svaki posjetitelj nezavisno odlučuje). Pretpostavka nezavisnosti je važna jer ako jedan lajk poveća vidljivost pa uzrokuje sljedeći lajk (viralnost), stroga binomna pretpostavka je narušena.
 :::
 
 ---
@@ -575,7 +573,7 @@ posts |>
   theme_minimal()
 ```
 
-Kad primijenimo logaritamsku transformaciju, distribucija počinje nalikovati na zvonoliku krivulju. Ovo je važno zapažanje: mnoge varijable u komunikologiji koje izgledaju neprirodno iskrivljene zapravo su log-normalno distribuirane. Na logaritamskoj skali, postaju normalne. Normalnu distribuciju ćemo detaljno obraditi u drugom dijelu predavanja.
+Kad primijenimo logaritamsku transformaciju, distribucija počinje nalikovati na zvonoliku krivulju. Ovo je važno zapažanje jer mnoge varijable u komunikologiji koje izgledaju neprirodno iskrivljene zapravo su log-normalno distribuirane. Na logaritamskoj skali, postaju normalne. Normalnu distribuciju ćemo detaljno obraditi u drugom dijelu predavanja.
 
 ```{r}
 #| label: empirijska-po-platformi
@@ -606,7 +604,7 @@ Platforme se razlikuju po distribuciji angažmana. YouTube i TikTok imaju širu 
 ::: {.callout-note}
 ## Podsjetnik
 
-U prvom dijelu naučili smo osnovna pravila vjerojatnosti (komplement, zbrajanje, množenje, uvjetna vjerojatnost) i binomnu distribuciju za modeliranje diskretnih ishoda (uspjeh/neuspjeh). U ovom dijelu prelazimo na kontinuirane varijable i upoznajemo najvažniju distribuciju u cijeloj statistici: normalnu.
+U prvom dijelu naučili smo osnovna pravila vjerojatnosti (komplement, zbrajanje, množenje, uvjetna vjerojatnost) i binomnu distribuciju za modeliranje diskretnih ishoda (uspjeh/neuspjeh). U ovom dijelu prelazimo na kontinuirane varijable i upoznajemo najvažniju distribuciju u cijeloj statistici, a to je normalna.
 :::
 
 ## Normalna distribucija {#sec-normalna}
@@ -615,11 +613,7 @@ Normalna distribucija (ili Gaussova krivulja, ili zvonolika krivulja) je najvaž
 
 ### Parametri normalne distribucije
 
-Normalna distribucija ima dva parametra:
-
-**μ (mi)** je srednja vrijednost (prosjek), koja određuje centar distribucije.
-
-**σ (sigma)** je standardna devijacija, koja određuje širinu distribucije.
+Normalna distribucija ima dva parametra. **μ (mi)** je srednja vrijednost (prosjek), koja određuje centar distribucije. **σ (sigma)** je standardna devijacija, koja određuje širinu distribucije.
 
 Piše se X ~ N(μ, σ) i čita "X slijedi normalnu distribuciju s prosjekom μ i standardnom devijacijom σ."
 
@@ -984,9 +978,7 @@ Razlika je dramatična. Netransformirani lajkovi jako odstupaju od normalne dist
 
 ### Čitanje QQ-plota
 
-Različiti obrasci na QQ-plotu govore različite priče:
-
-Točke na ravnoj liniji znače normalnu distribuciju. Točke koje se savijaju prema gore na desnom kraju znače pozitivan skew (dugačak desni rep). Točke koje se savijaju prema dolje na lijevom kraju znače negativan skew (dugačak lijevi rep). Točke koje se savijaju prema gore na oba kraja (oblik slova S) znače "teže repove" od normalne distribucije (više ekstrema nego što normalna predviđa).
+Različiti obrasci na QQ-plotu govore različite priče. Točke na ravnoj liniji znače normalnu distribuciju. Točke koje se savijaju prema gore na desnom kraju znače pozitivan skew (dugačak desni rep). Točke koje se savijaju prema dolje na lijevom kraju znače negativan skew (dugačak lijevi rep). Točke koje se savijaju prema gore na oba kraja (oblik slova S) znače "teže repove" od normalne distribucije (više ekstrema nego što normalna predviđa).
 
 ```{r}
 #| label: qqplot-usporedba
@@ -1214,17 +1206,17 @@ Crvena crta označava opaženu razliku. Histogram prikazuje distribuciju razlika
 
 1. Vjerojatnost je broj između 0 i 1 koji izražava izvjesnost. Frekvencijski pristup definira ju kao dugoročnu relativnu frekvenciju.
 
-2. Zakon velikih brojeva: s više ponavljanja, relativna frekvencija konvergira prema pravoj vjerojatnosti.
+2. Zakon velikih brojeva — s više ponavljanja, relativna frekvencija konvergira prema pravoj vjerojatnosti.
 
-3. Osnovna pravila: komplement P(ne A) = 1 − P(A), zbrajanje za isključive P(A ili B) = P(A) + P(B), množenje za nezavisne P(A i B) = P(A) × P(B). Uvjetna vjerojatnost P(A|B) je temelj za segmentnu analizu.
+3. Osnovna pravila — komplement P(ne A) = 1 − P(A), zbrajanje za isključive P(A ili B) = P(A) + P(B), množenje za nezavisne P(A i B) = P(A) × P(B). Uvjetna vjerojatnost P(A|B) je temelj za segmentnu analizu.
 
-4. Binomna distribucija modelira broj uspjeha u n nezavisnih pokušaja s vjerojatnošću p. R funkcije: `dbinom()`, `pbinom()`, `rbinom()`.
+4. Binomna distribucija modelira broj uspjeha u n nezavisnih pokušaja s vjerojatnošću p. R funkcije su `dbinom()`, `pbinom()`, `rbinom()`.
 
 5. Normalna distribucija je definirana prosjekom μ i standardnom devijacijom σ. Pravilo 68-95-99.7 daje postotak podataka unutar 1, 2 i 3 SD od prosjeka.
 
 6. Z-score z = (x − μ) / σ izražava koliko je vrijednost udaljena od prosjeka u jedinicama SD. Omogućuje usporedbu varijabli na različitim skalama.
 
-7. R funkcije za normalnu: `dnorm()` za gustoću, `pnorm()` za kumulativnu vjerojatnost (P(X ≤ x)), `qnorm()` za kvantile (obrnuto od pnorm), `rnorm()` za simulaciju.
+7. R funkcije za normalnu uključuju `dnorm()` za gustoću, `pnorm()` za kumulativnu vjerojatnost (P(X ≤ x)), `qnorm()` za kvantile (obrnuto od pnorm) i `rnorm()` za simulaciju.
 
 8. Obrazac d/p/q/r vrijedi za sve distribucije u R-u.
 
@@ -1234,7 +1226,7 @@ Crvena crta označava opaženu razliku. Histogram prikazuje distribuciju razlika
 
 11. Z-score služi za identifikaciju outliera (|z| > 2 ili 3) i za usporedbu opažanja između grupa s različitim skalama.
 
-12. Svaki statistički test koji ćemo učiti temelji se na pitanju: kolika je vjerojatnost vidjeti ovakav ili ekstremniji rezultat čistom slučajnošću? Ovo predavanje daje konceptualni temelj za to pitanje.
+12. Svaki statistički test koji ćemo učiti temelji se na pitanju — kolika je vjerojatnost vidjeti ovakav ili ekstremniji rezultat čistom slučajnošću? Ovo predavanje daje konceptualni temelj za to pitanje.
 :::
 
 ---
@@ -1242,21 +1234,21 @@ Crvena crta označava opaženu razliku. Histogram prikazuje distribuciju razlika
 ::: {.callout-warning}
 ## Priprema za kolokvij (tjedan 8)
 
-Sljedeći tjedan je **kolokvij** koji pokriva gradivo iz tjedana 1 do 7. Kolokvij će uključivati:
+Sljedeći tjedan je **kolokvij** koji pokriva gradivo iz tjedana 1 do 7. Kolokvij će uključivati
 
 1. Konceptualna pitanja o istraživačkom dizajnu, mjerenju i vrstama varijabli (tjedan 1).
-2. Čitanje i pisanje R koda: tibbleovi, pipe, dplyr glagoli, ggplot2 (tjedni 2 do 5).
+2. Čitanje i pisanje R koda — tibbleovi, pipe, dplyr glagoli, ggplot2 (tjedni 2 do 5).
 3. Interpretaciju deskriptivnih statistika i grafova (tjedan 4 i 5).
 4. Razumijevanje funkcija i DRY principa (tjedan 6).
 5. Izračun i interpretaciju vjerojatnosti, uključujući binomnu i normalnu distribuciju (tjedan 7).
 
-Za pripremu:
+Za pripremu trebate
 
 1. Ponovite pojmovnike iz svakog tjedna. Svaki pojmovnik sadrži ključne koncepte.
 2. Pokrenite sve primjere iz predavanja 2 do 7 i pokušajte ih modificirati.
-3. Vježbajte čitanje R koda: za zadani pipeline, opišite riječima što svaki korak radi.
-4. Vježbajte interpretaciju: za zadani graf ili tablicu, napišite 2 do 3 rečenice o tome što rezultat znači.
-5. Vježbajte izračun: za zadanu situaciju, izračunajte odgovarajuću vjerojatnost koristeći `pbinom()` ili `pnorm()`.
+3. Vježbajte čitanje R koda. Za zadani pipeline, opišite riječima što svaki korak radi.
+4. Vježbajte interpretaciju. Za zadani graf ili tablicu, napišite 2 do 3 rečenice o tome što rezultat znači.
+5. Vježbajte izračun. Za zadanu situaciju, izračunajte odgovarajuću vjerojatnost koristeći `pbinom()` ili `pnorm()`.
 :::
 
 ---

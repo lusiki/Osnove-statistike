@@ -33,7 +33,7 @@ Nakon ovog predavanja moći ćete
 
 ## Prljava tajna analize podataka
 
-Postoji jedna stvar o kojoj vam udžbenici statistike rijetko govore. Otvorite bilo koji udžbenik i vidjet ćete poglavlje o t-testu, poglavlje o regresiji, poglavlje o ANOVA-i. Sve lijepo i uredno. Ali nitko vam ne kaže da ćete 80% vremena u bilo kojoj analizi provesti na nečemu što se ne pojavljuje ni u jednom od tih poglavlja: na čišćenju i pripremi podataka.
+Postoji jedna stvar o kojoj vam udžbenici statistike rijetko govore. Otvorite bilo koji udžbenik i vidjet ćete poglavlje o t-testu, poglavlje o regresiji, poglavlje o ANOVA-i. Sve lijepo i uredno. Ali nitko vam ne kaže da ćete 80% vremena u bilo kojoj analizi provesti na nečemu što se ne pojavljuje ni u jednom od tih poglavlja. Radi se o čišćenju i pripremi podataka.
 
 Ovo nije pretjerivanje. Stvarni podaci su gotovo uvijek neuredni. Anketa prikupljena putem Google Formsa dolazi s imenima stupaca poput "Koliko često pratite vijesti na društvenim mrežama? (odaberite jedan odgovor)". Ispitanici u polje za spol upisuju "Ženski", "ženski", "Ž", "female" i "Zensko", a sve to treba biti ista kategorija. Stupac koji bi trebao sadržavati brojeve sadrži i tekst poput "ne gledam" ili prazne ćelije. Neki ispitanici imaju 19 godina, a jedan ima 199 jer mu je prst skliznuo na tipkovnici.
 
@@ -79,7 +79,7 @@ Ovo je tipičan izgled sirovih podataka iz ankete. Prije bilo kakve analize, mor
 
 ## Korak nula: čišćenje imena stupaca {#sec-clean-names}
 
-Prva stvar koju radimo sa svakim novim datasetom je standardizacija imena stupaca. Imena poput `TV (min/dan)` i `Povjerenje društvene mreže (1-10)` su problematična jer sadrže razmake, zagrade i specijalne znakove. Kad ih želite koristiti u kodu, morate ih stavljati u obrnute navodnike: `` `TV (min/dan)` ``. To je neugodno, nečitljivo i podložno greškama.
+Prva stvar koju radimo sa svakim novim datasetom je standardizacija imena stupaca. Imena poput `TV (min/dan)` i `Povjerenje društvene mreže (1-10)` su problematična jer sadrže razmake, zagrade i specijalne znakove. Kad ih želite koristiti u kodu, morate ih stavljati u obrnute navodnike (poput `` `TV (min/dan)` ``). To je neugodno, nečitljivo i podložno greškama.
 
 Paket janitor ima funkciju `clean_names()` koja automatski pretvara sva imena u snake_case format, uključujući mala slova, zamjenu razmaka podvlakama i uklanjanje specijalnih znakova.
 
@@ -116,7 +116,7 @@ glimpse(raw)
 
 ---
 
-## filter(): odabir redova po uvjetu {#sec-filter}
+## filter() za odabir redova po uvjetu {#sec-filter}
 
 Funkcija `filter()` je dplyr glagol za odabir redova koji zadovoljavaju jedan ili više uvjeta. Rezultat je tibble koji sadrži samo retke za koje su svi uvjeti TRUE. Redovi za koje je uvjet FALSE ili NA se odbacuju.
 
@@ -305,7 +305,7 @@ Svaki put kad koristite `filter()` ili `drop_na()`, dokumentirajte koliko redova
 
 ---
 
-## select(): odabir i preimenovanje stupaca {#sec-select}
+## select() za odabir i preimenovanje stupaca {#sec-select}
 
 Dok `filter()` radi s redovima, `select()` radi sa stupcima. Koristi se za tri svrhe, a to su odabir stupaca koji vam trebaju, uklanjanje stupaca koji vam ne trebaju i preimenovanje stupaca.
 
@@ -440,7 +440,7 @@ raw |>
 
 ---
 
-## mutate(): kreiranje i transformacija varijabli {#sec-mutate}
+## mutate() za kreiranje i transformaciju varijabli {#sec-mutate}
 
 Funkcija `mutate()` je najsvestraniji dplyr glagol. Služi za kreiranje novih stupaca na temelju postojećih, transformaciju postojećih stupaca i rekodiranje vrijednosti. Rezultat je tibble s istim brojem redova ali potencijalno novim ili izmijenjenim stupcima.
 
@@ -504,7 +504,7 @@ raw |>
 
 Kad date mutate stupcu isto ime kao postojeći stupac, novi vrijednosti zamjenjuju stare. Ovo je korisno za čišćenje podataka (na primjer, pretvorbu teksta u mala slova), ali budite oprezni jer originalne vrijednosti nestaju. Dobra praksa je raditi transformacije na kopiji dataseta, ne na originalu.
 
-### Čišćenje stupca spol: str_to_lower() i case_when() {#sec-case-when}
+### Čišćenje stupca spol pomoću str_to_lower() i case_when() {#sec-case-when}
 
 Pogledajmo koliko je neuredan stupac `spol` u našim podacima.
 
@@ -520,7 +520,7 @@ raw |>
 
 Imamo dvanaestak varijanti istih dviju kategorija. "Ženski", "ženski", "Ž", "ž", "Zensko", "female" bi sve trebalo biti jedna kategorija. Ovo je klasičan problem u anketnim podacima i jedan od najčešćih razloga za čišćenje.
 
-Funkcija `case_when()` je najfleksibilniji alat za rekodiranje. Radi kao niz IF-THEN pravila: za svaki redak, R provjerava uvjete redom i dodjeljuje vrijednost prvog uvjeta koji je ispunjen.
+Funkcija `case_when()` je najfleksibilniji alat za rekodiranje. Radi kao niz IF-THEN pravila. Za svaki redak, R provjerava uvjete redom i dodjeljuje vrijednost prvog uvjeta koji je ispunjen.
 
 ```{r}
 #| label: cistenje-spol
@@ -753,7 +753,7 @@ R stavlja NA na kraj sortiranog dataseta, neovisno o tome sortirate li uzlazno i
 
 Prava snaga dplyr-a nije u pojedinačnim glagolima nego u njihovoj kombinaciji. Pipe operator (`|>`) omogućuje ulančavanje operacija u jednu koherentnu sekvencu koja čita dataseta od početka do kraja, korak po korak.
 
-Pogledajmo realistični primjer. Želimo odgovoriti na pitanje: koji gradovi imaju studente koji najviše koriste društvene mreže?
+Pogledajmo realistični primjer. Želimo odgovoriti na pitanje te saznati koji gradovi imaju studente koji najviše koriste društvene mreže.
 
 ```{r}
 #| label: pipeline-primjer-1
@@ -778,7 +778,7 @@ raw |>
 
 Svaki korak je sam za sebe jasan, a zajedno tvore kompletnu analizu. Ovo je radni obrazac koji ćete koristiti stotine puta.
 
-Pogledajmo drugi primjer. Želimo profil tipičnog korisnika koji često prati vijesti.
+Pogledajmo drugi primjer. Trebamo profil tipičnog korisnika koji često prati vijesti.
 
 ```{r}
 #| label: pipeline-primjer-2
@@ -886,7 +886,7 @@ Tablica pokazuje jasne razlike. Studenti različitih dobnih skupina imaju razli�
 #| message: false
 #| warning: false
 
-# Povjerenje u medije: tko kome vjeruje?
+# Povjerenje u medije — tko kome vjeruje
 clean |>
   summarise(
     trust_tv_prosjek = round(mean(trust_tv), 1),
@@ -909,7 +909,7 @@ Studenti u prosjeku najviše vjeruju portalima, zatim televiziji, a najmanje dru
 
 ---
 
-## group_by() i summarise(): statistike po grupama {#sec-group-by}
+## group_by() i summarise() za statistike po grupama {#sec-group-by}
 
 Kombinaciju `group_by()` i `summarise()` smo već koristili u dosadašnjim primjerima, ali zaslužuje detaljniju obradu jer je ovo daleko najvažniji obrazac u cijelom tidyverse radnom toku. Gotovo svaka analiza u komunikologiji uključuje usporedbu između grupa: razlikuju li se muškarci i žene po korištenju medija? Razlikuju li se gradovi po povjerenju? Razlikuju li se generacije po izvorima vijesti?
 
@@ -1011,7 +1011,7 @@ Primijetite `ungroup()` na kraju. Kad koristite `group_by()` s `mutate()`, grupi
 
 ---
 
-## across(): ista operacija na više stupaca {#sec-across}
+## across() za istu operaciju na više stupaca {#sec-across}
 
 Do sada smo u `summarise()` ručno pisali svaku statistiku za svaki stupac. Kad imate pet ili deset numeričkih stupaca, to postaje zamorno. Funkcija `across()` rješava ovaj problem jer primjenjuje istu funkciju (ili više funkcija) na više stupaca odjednom.
 
@@ -1052,7 +1052,7 @@ clean |>
   )
 ```
 
-Kad proslijedite imenovanu listu funkcija, `across()` kreira zasebne stupce za svaku kombinaciju stupca i funkcije. Argument `.names = "{.col}_{.fn}"` kontrolira kako se novi stupci imenuju: `{.col}` je ime izvornog stupca, `{.fn}` je ime funkcije iz liste.
+Kad proslijedite imenovu listu funkcija, `across()` kreira zasebne stupce za svaku kombinaciju stupca i funkcije. Argument `.names = "{.col}_{.fn}"` kontrolira kako se novi stupci imenuju — `{.col}` je ime izvornog stupca, `{.fn}` je ime funkcije iz liste.
 
 ### across() s group_by()
 
@@ -1112,17 +1112,17 @@ Funkcija `across()` čini kod kompaktnijim ali i teže čitljivim za početnike.
 
 ---
 
-## pivot_longer() i pivot_wider(): preoblikovanje podataka {#sec-pivot}
+## pivot_longer() i pivot_wider() za preoblikovanje podataka {#sec-pivot}
 
 Ponekad podaci dolaze u obliku koji nije pogodan za analizu ili vizualizaciju i moramo ih preoblikovati. Dva najčešća slučaja su pretvaranje širokog formata u dugački i obrnuto.
 
-### Tidy data: princip urednih podataka
+### Tidy data — princip urednih podataka
 
 Wickham (2014) definira **uredne podatke** (tidy data) kao tablicu u kojoj svaki redak predstavlja jedno opažanje, svaki stupac jednu varijablu i svaka ćelija jednu vrijednost. Zvuči jednostavno, ali mnogi dataseti ne zadovoljavaju ovaj princip.
 
 Pogledajmo konkretan primjer. Naši podaci o povjerenju imaju tri zasebna stupca: `trust_tv`, `trust_portal`, `trust_sm`. Za neke analize (posebno vizualizaciju), bilo bi korisnije imati jedan stupac `medij` s vrijednostima "TV", "portal" i "društvene mreže" i jedan stupac `povjerenje` s numeričkom ocjenom.
 
-### pivot_longer(): od širokog prema dugačkom
+### pivot_longer() za pretvaranje od širokog prema dugačkom formatu
 
 ```{r}
 #| label: pivot-longer
@@ -1143,7 +1143,7 @@ trust_long |>
   head(12)
 ```
 
-Funkcija `pivot_longer()` pretvara stupce u redove. Argumenti su:
+Funkcija `pivot_longer()` pretvara stupce u redove. Ključni argumenti funkcije su sljedeći.
 
 **`cols`** specificira koje stupce pretvaramo (ovdje sve koji počinju s "trust").
 
@@ -1191,7 +1191,7 @@ trust_long |>
 
 Ova tablica jasno pokazuje obrasce koje bi bilo teško vidjeti u širokom formatu. Dugački format je posebno koristan za vizualizaciju jer ggplot2 (koji ćemo učiti sljedeći tjedan) radi prirodno s dugačkim podacima.
 
-### pivot_wider(): od dugačkog prema širokom
+### pivot_wider() za pretvaranje od dugačkog prema širokom formatu
 
 Obrnuta operacija, `pivot_wider()`, pretvara redove u stupce. Korisna je kad želite tablicu u obliku koji je čitljiv za ljude (široki format), a ne za računalo (dugački format).
 
@@ -1266,7 +1266,7 @@ Zapamtite sljedeće pravilo. `pivot_longer()` koristite kad želite pretvoriti p
 
 ---
 
-## Spajanje tablica: left_join() {#sec-join}
+## Spajanje tablica pomoću left_join() {#sec-join}
 
 U stvarnim istraživanjima, podaci rijetko dolaze u jednoj tablici. Možda imate jednu tablicu s demografskim podacima ispitanika i drugu s rezultatima eksperimenta. Ili jednu tablicu s podacima o člancima i drugu s podacima o komentarima. Da biste ih analizirali zajedno, morate ih spojiti.
 
@@ -1330,7 +1330,7 @@ clean_s_regijom |>
   arrange(desc(prosjek_sm))
 ```
 
-Ovo je moć spajanja tablica: informacija koja je bila u zasebnoj tablici sada je dio naše analize i omogućuje grupiranje po varijabli koja nije postojala u izvornim podacima.
+Ovo je moć spajanja tablica — informacija koja je bila u zasebnoj tablici sada je dio naše analize i omogućuje grupiranje po varijabli koja nije postojala u izvornim podacima.
 
 ### Vrste joinova
 
@@ -1360,7 +1360,7 @@ clean |>
 
 ---
 
-## Stringovi: osnove rada s tekstom {#sec-stringovi}
+## Stringovi — osnove rada s tekstom {#sec-stringovi}
 
 U komunikologiji se često radi s tekstualnim podacima, kao što su imena platformi, naslovi članaka i otvoreni odgovori u anketama. Paket stringr (dio tidyverse) pruža konzistentan skup funkcija za rad s tekstom.
 
@@ -1424,7 +1424,7 @@ Funkcija `str_replace()` zamjenjuje prvo pojavljivanje uzorka, a `str_replace_al
 
 ---
 
-## Sve zajedno: kompletna analiza od sirovih do gotovih podataka {#sec-kompletna}
+## Sve zajedno — kompletna analiza od sirovih do gotovih podataka {#sec-kompletna}
 
 Zaokružimo ovo predavanje tako da napišemo kompletnu analizu koja prolazi kroz sve faze, a to su učitavanje, čišćenje, transformacija, analiza i prezentacija rezultata. Ovo je obrazac koji ćete ponavljati u svakom projektu.
 

@@ -65,7 +65,7 @@ Hi-kvadrat testovi, t-testovi, ANOVA i linearna regresija na primjerima iz komun
 
 Cijeli sadržaj kolegija dostupan je za preuzimanje kao jedinstveni dokument:
 
-[Preuzmi PDF](Osnove-statistike.pdf){.btn .btn-primary .btn-sm} &ensp; [Preuzmi Word](Osnove-statistike.docx){.btn .btn-outline-primary .btn-sm}
+[Preuzmi PDF](Osnove-statistike.pdf){.btn .btn-primary .btn-sm}
 :::
 
 ## Brzi pristup

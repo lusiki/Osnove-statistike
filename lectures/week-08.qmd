@@ -42,7 +42,7 @@ Ovo predavanje daje odgovore na ta pitanja. Koncepti koje ćemo naučiti (distri
 
 ## Naši podaci: populacija i uzorci {#sec-podaci}
 
-Za ovo predavanje imamo luksuz koji u stvarnom životu nikad nemamo: poznajemo cijelu populaciju. Dataset sadrži 50 000 odraslih osoba iz fiktivnog hrvatskog grada, s podacima o dobi, spolu, obrazovanju, primarnom izvoru vijesti, povjerenju u medije i dnevnoj medijskoj konzumaciji.
+Za ovo predavanje imamo luksuz koji u stvarnom životu nikad nemamo — poznajemo cijelu populaciju. Dataset sadrži 50 000 odraslih osoba iz fiktivnog hrvatskog grada, s podacima o dobi, spolu, obrazovanju, primarnom izvoru vijesti, povjerenju u medije i dnevnoj medijskoj konzumaciji.
 
 ```{r}
 #| label: ucitavanje-populacije
@@ -54,7 +54,7 @@ pop <- read_csv("../resources/datasets/media_population.csv")
 glimpse(pop)
 ```
 
-Zato što poznajemo cijelu populaciju, možemo izračunati prave populacijske parametre i onda vidjeti koliko dobro ih procjenjuju uzorci različitih veličina. Ovo je pedagoški trik: u stvarnom istraživanju nikad ne znate populacijske parametre (da ih znate, ne biste trebali statistiku). Ali ovdje ih znamo pa možemo procijeniti kvalitetu naših procjena.
+Zato što poznajemo cijelu populaciju, možemo izračunati prave populacijske parametre i onda vidjeti koliko dobro ih procjenjuju uzorci različitih veličina. Ovo je pedagoški trik jer u stvarnom istraživanju nikad ne znate populacijske parametre (da ih znate, ne biste trebali statistiku). Ali ovdje ih znamo pa možemo procijeniti kvalitetu naših procjena.
 
 ```{r}
 #| label: populacijski-parametri
@@ -145,7 +145,7 @@ cat("Uzorak 2 (n=100):", u2, "\n")
 cat("Uzorak 3 (n=100):", u3, "\n")
 ```
 
-Svaki uzorak daje malo drugačiji prosjek. Ovo je normalno i neizbježno. Ključna pitanja su sljedeća: koliko ti prosjeci variraju? I kako ta varijacija ovisi o veličini uzorka?
+Svaki uzorak daje malo drugačiji prosjek. Ovo je normalno i neizbježno. Ključna pitanja su sljedeća — koliko ti prosjeci variraju? I kako ta varijacija ovisi o veličini uzorka?
 
 ---
 
@@ -310,9 +310,7 @@ Kad čitate medijske izvještaje o anketama, uvijek tražite veličinu uzorka i 
 
 ## Centralni granični teorem {#sec-clt}
 
-**Centralni granični teorem** (Central Limit Theorem, CLT) je najvažniji teorem u cijeloj statistici. Kaže sljedeće:
-
-Distribucija uzorkovanja prosjeka je približno normalna, neovisno o obliku izvorne distribucije, pod uvjetom da je uzorak dovoljno velik.
+**Centralni granični teorem** (Central Limit Theorem, CLT) je najvažniji teorem u cijeloj statistici. On kaže da je distribucija uzorkovanja prosjeka približno normalna, neovisno o obliku izvorne distribucije, pod uvjetom da je uzorak dovoljno velik.
 
 Ovo je izuzetno moćno jer znači da možemo koristiti normalnu distribuciju za donošenje zaključaka o prosjecima čak i kad izvorna varijabla nije normalna.
 
@@ -636,7 +634,7 @@ Ovaj graf je jedna od najvažnijih vizualizacija u cijelom kolegiju. Svaki horiz
 ::: {.callout-important}
 ## Važna napomena
 
-Česta pogrešna interpretacija je "postoji 95% šansa da je pravi prosjek unutar ovog intervala." Ispravna interpretacija je: "ako bismo ponovili uzorkovanje mnogo puta i svaki put konstruirali 95% CI, 95% tih intervala bi pokrilo pravi prosjek." Razlika zvuči suptilno, ali je konceptualno važna. Pravi prosjek je fiksan broj (nije slučajan). Interval je slučajan (jer ovisi o uzorku). Vjerojatnost se odnosi na postupak, ne na parametar.
+Česta pogrešna interpretacija je "postoji 95% šansa da je pravi prosjek unutar ovog intervala." Ispravna interpretacija — "ako bismo ponovili uzorkovanje mnogo puta i svaki put konstruirali 95% CI, 95% tih intervala bi pokrilo pravi prosjek." Razlika zvuči suptilno, ali je konceptualno važna. Pravi prosjek je fiksan broj (nije slučajan). Interval je slučajan (jer ovisi o uzorku). Vjerojatnost se odnosi na postupak, ne na parametar.
 :::
 
 ---
@@ -990,7 +988,7 @@ Ovo objašnjava zašto su većina medijskih anketa u rasponu 500 do 1500 ispitan
 
 ### Obrnuto: koliki uzorak trebam?
 
-Češće pitanje u praksi je obrnuto: imam ciljanu marginu pogreške, koliki mi uzorak treba?
+Češće pitanje u praksi je obrnuto — imam ciljanu marginu pogreške, koliki mi uzorak treba?
 
 $$n = \frac{z^{*2} \times \hat{p}(1-\hat{p})}{MoE^2}$$
 
@@ -1120,7 +1118,7 @@ Kad sretnete medijski izvještaj o anketi, postavite sedam pitanja. Koliki je uz
 
 Ponekad ne možemo pretpostaviti normalnost distribucije uzorkovanja, bilo zato što je uzorak premalen ili zato što nas zanima statistika za koju nemamo jednostavnu formulu za SE (medijan, omjer medijana i prosjeka, razlika između 90. i 10. percentila). **Bootstrap** je računalna metoda koja rješava ovaj problem.
 
-Ideja je elegantna: budući da ne možemo uzimati nove uzorke iz populacije (jer nemamo pristup cijeloj populaciji), uzimamo nove uzorke iz uzorka, s vraćanjem (with replacement).
+Ideja je elegantna. Budući da ne možemo uzimati nove uzorke iz populacije (jer nemamo pristup cijeloj populaciji), uzimamo nove uzorke iz uzorka, s vraćanjem (with replacement).
 
 ```{r}
 #| label: bootstrap-demo
@@ -1150,7 +1148,7 @@ cat("t-test   95% CI: [", round(t_ci[1], 3), ",", round(t_ci[2], 3), "]\n")
 cat("Pravi prosjek:   ", round(mean(pop$media_trust), 3), "\n")
 ```
 
-Bootstrap i t-test daju vrlo slične rezultate kad su pretpostavke t-testa zadovoljene. Prednost bootstrapa je fleksibilnost: možemo ga koristiti za bilo koju statistiku.
+Bootstrap i t-test daju vrlo slične rezultate kad su pretpostavke t-testa zadovoljene. Prednost bootstrapa je njegova fleksibilnost — možemo ga koristiti za bilo koju statistiku.
 
 ```{r}
 #| label: bootstrap-medijan
@@ -1183,7 +1181,7 @@ Koristite bootstrap kad nemate formulu za SE željene statistike, sumnjate u nor
 
 ## Potpuna analiza: povjerenje u medije po demografskim skupinama {#sec-analiza}
 
-Spojimo sve naučeno u jednu koherentnu analizu. Situacija je sljedeća: provedena je anketa na 600 ispitanika o medijskim navikama. Trebamo procijeniti povjerenje u medije ukupno i po ključnim podgrupama te interpretirati rezultate.
+Spojimo sve naučeno u jednu koherentnu analizu. Situacija je sljedeća — provedena je anketa na 600 ispitanika o medijskim navikama. Trebamo procijeniti povjerenje u medije ukupno i po ključnim podgrupama te interpretirati rezultate.
 
 ```{r}
 #| label: anketa-simulacija
@@ -1352,7 +1350,7 @@ cat("   pogreške i ne može se smatrati statistički značajnom.\n")
 Intervali pouzdanosti su intuitivno privlačni ali se često krivo interpretiraju. Evo najčešćih grešaka i ispravnih verzija.
 
 **Pogrešno**: "Postoji 95% šansa da je pravi prosjek unutar intervala [4.67, 5.01]."
-**Ispravno**: Pravi prosjek je fiksan broj. On ili jest ili nije unutar intervala. 95% se odnosi na postupak: 95% intervala konstruiranih ovom metodom pokrit će pravi parametar.
+**Ispravno**: Pravi prosjek je fiksan broj. On ili jest ili nije unutar intervala. 95% se odnosi na postupak — 95% intervala konstruiranih ovom metodom pokrit će pravi parametar.
 
 **Pogrešno**: "95% podataka pada unutar intervala [4.67, 5.01]."
 **Ispravno**: CI se odnosi na parametar (prosjek), ne na pojedinačna opažanja. Pojedinačne vrijednosti pokriva prediktivni interval, koji je mnogo širi.
@@ -1408,7 +1406,7 @@ CI za prosjek je uzak (±0.28). Prediktivni interval je širok (±3.9). Ovo su d
 
 2. Svaki uzorak daje malo drugačiju procjenu. Distribucija tih procjena kroz ponovljene uzorke naziva se distribucija uzorkovanja. Njezina standardna devijacija je standardna pogreška (SE).
 
-3. Standardna pogreška SE = s/√n mjeri koliko prosjeci uzoraka tipično variraju. Preciznost raste s korijenom veličine uzorka: da biste prepolovili SE, morate učetverostručiti n.
+3. Standardna pogreška SE = s/√n mjeri koliko prosjeci uzoraka tipično variraju. Preciznost raste s korijenom veličine uzorka — da biste prepolovili SE, morate učetverostručiti n.
 
 4. Centralni granični teorem kaže da je distribucija uzorkovanja prosjeka približno normalna za dovoljno velik n (pravilo palca n ≥ 30), neovisno o obliku izvorne distribucije.
 
@@ -1418,13 +1416,13 @@ CI za prosjek je uzak (±0.28). Prediktivni interval je širok (±3.9). Ovo su d
 
 7. `t.test()` računa interval pouzdanosti za prosjek. `prop.test()` računa CI za proporciju. Obje funkcije automatski koriste ispravne formule.
 
-8. 95% CI znači: 95% ovako konstruiranih intervala pokriva pravi parametar. NE znači "95% šansa da je parametar unutar intervala." Parametar je fiksan. Interval je slučajan.
+8. 95% CI znači da 95% ovako konstruiranih intervala pokriva pravi parametar. NE znači "95% šansa da je parametar unutar intervala." Parametar je fiksan. Interval je slučajan.
 
 9. Margina pogreške za proporcije je približno 1/√n, što daje za n = 1000 oko ±3.1%, a za n = 400 oko ±4.9%. To objašnjava uobičajene veličine uzoraka u anketama.
 
-10. Kad planirate istraživanje, odredite ciljanu preciznost unaprijed i iz nje izvedite potrebnu veličinu uzorka. Formula: n = z*² × p(1−p) / MoE².
+10. Kad planirate istraživanje, odredite ciljanu preciznost unaprijed i iz nje izvedite potrebnu veličinu uzorka koristeći formulu n = z*² × p(1−p) / MoE².
 
-11. Bootstrap je računalna alternativa za CI kad nemamo formulu za SE željene statistike. Ideja: uzorkuj iz uzorka s vraćanjem, izračunaj statistiku, ponovi mnogo puta.
+11. Bootstrap je računalna alternativa za CI kad nemamo formulu za SE željene statistike. Ideja je sljedeća — uzorkuj iz uzorka s vraćanjem, izračunaj statistiku, ponovi mnogo puta.
 
 12. Kod čitanja medijskih anketa uvijek provjerite veličinu uzorka, metodu uzorkovanja, marginu pogreške i jesu li prijavljivane razlike veće od margine. Ako razlika između dvaju postotaka nije veća od dvostruke margine pogreške, zaključak da je neka opcija "u vodstvu" nije opravdan.
 :::

@@ -21,7 +21,7 @@ library(tidyverse)
 Nakon ovog predavanja moći ćete
 
 1. Objasniti logiku gramatike grafike (grammar of graphics) i zašto je ggplot2 organiziran oko slojeva.
-2. Identificirati tri obavezne komponente svakog ggplot2 grafa: podatke, estetike (`aes()`) i geometriju (`geom_*()`).
+2. Identificirati tri obavezne komponente svakog ggplot2 grafa — podatke, estetike (`aes()`) i geometriju (`geom_*()`) — te razumjeti njihovu ulogu.
 3. Kreirati histograme i grafove gustoće za vizualizaciju distribucija jedne kontinuirane varijable.
 4. Kreirati stupčaste grafove (`geom_bar()` i `geom_col()`) za prikaz kategoričkih varijabli i njihovih frekvencija ili sažetaka.
 5. Kreirati boxplotove i violin grafove za usporedbu distribucija jedne varijable između grupa.
@@ -34,7 +34,7 @@ Nakon ovog predavanja moći ćete
 
 Prošli tjedan naučili smo izračunati prosjek, medijan, standardnu devijaciju i korelaciju. To su korisni brojevi, ali sami po sebi rijetko govore cijelu priču. Anscombe je 1973. konstruirao četiri dataseta koji imaju identičan prosjek (7.5 za x, identičan za y), identičnu standardnu devijaciju, identičnu korelaciju (0.816) i identičnu regresijsku liniju. A kad ih nacrtate, vidite četiri potpuno različita uzorka. Jedan je linearan, drugi je zakrivljen, treći ima jedan outlier koji povlači liniju, četvrti ima grupirane točke s jednim ekstremom. Bez vizualizacije, sva četiri izgledaju jednako.
 
-Ista logika vrijedi za svaku analizu koju ćete raditi kao komunikolozi. Recimo da vam netko kaže "prosječno vrijeme čitanja članaka na našem portalu je 83 sekunde". Zvuči informativno. Ali to vam ne govori je li distribucija simetrična ili iskrivljena. Možda većina čitatelja provede 30 sekundi, a nekolicina koja čita detaljno diže prosjek. Ili možda postoje dva jasna klastera: oni koji odmah odu (bounce) i oni koji čitaju do kraja. Histogram bi to pokazao u sekundi. Broj sam po sebi ne može.
+Ista logika vrijedi za svaku analizu koju ćete raditi kao komunikolozi. Recimo da vam netko kaže "prosječno vrijeme čitanja članaka na našem portalu je 83 sekunde". Zvuči informativno. Ali to vam ne govori je li distribucija simetrična ili iskrivljena. Možda većina čitatelja provede 30 sekundi, a nekolicina koja čita detaljno diže prosjek. Ili možda postoje dva jasna klastera — oni koji odmah odu (bounce) i oni koji čitaju do kraja. Histogram bi to pokazao u sekundi. Broj sam po sebi ne može.
 
 U ovom tjednu učimo ggplot2, paket za vizualizaciju koji je dio tidyverse ekosustava. ggplot2 nije samo alat za crtanje grafova. On implementira konzistentnu logiku (gramatiku grafike) koja vam omogućuje da razmišljate o vizualizaciji na strukturiran način. Kad jednom shvatite tu logiku, moći ćete kreirati bilo koji graf od istih temeljnih komponenti.
 
@@ -94,7 +94,7 @@ Tri elementa su obavezna za svaki ggplot2 graf.
 
 **Geometrija** (geometry, `geom_*()`) — oblik kojim se podaci prikazuju, kao što su točke za scatterplot (`geom_point()`), stupci za bar chart (`geom_bar()`) ili linije za linijski graf (`geom_line()`).
 
-Osim ova tri, graf može imati i dodatne slojeve: statističke transformacije (stat), prilagodbe skala (scale), podjelu u panele (facet), koordinatni sustav (coord) i vizualnu temu (theme). Svaki od ovih elemenata se dodaje operatorom `+`.
+Osim ova tri, graf može imati i dodatne slojeve poput statističkih transformacija (stat), prilagodbi skala (scale), podjele u panele (facet), koordinatnog sustava (coord) i vizualne teme (theme). Svaki od ovih elemenata se dodaje operatorom `+`.
 
 Pogledajmo najjednostavniji mogući ggplot2 kod.
 
@@ -244,7 +244,7 @@ Ključan detalj je `aes(y = after_stat(density))` unutar `geom_histogram()`. Ovo
 
 ## Stupčasti grafovi: kategoričke varijable {#sec-bar}
 
-Stupčasti grafovi (bar charts) prikazuju frekvencije ili sažetke za kategoričke varijable. U ggplot2 postoje dvije varijante: `geom_bar()` koja sama broji opažanja i `geom_col()` koja prikazuje unaprijed izračunate vrijednosti.
+Stupčasti grafovi (bar charts) prikazuju frekvencije ili sažetke za kategoričke varijable. U ggplot2 postoje dvije varijante — `geom_bar()` koja sama broji opažanja i `geom_col()` koja prikazuje unaprijed izračunate vrijednosti.
 
 ### geom_bar(): automatsko prebrojavanje
 
@@ -288,7 +288,7 @@ ggplot(clanci, aes(x = fct_infreq(category))) +
   )
 ```
 
-Sad je odmah vidljivo da Politika ima najviše članaka, a Crna kronika najmanje. Funkcija `fct_infreq()` slaže kategorije od najčešće prema najrjeđoj. Za obrnuti redoslijed, omotajte u `fct_rev()`: `fct_rev(fct_infreq(category))`.
+Sad je odmah vidljivo da Politika ima najviše članaka, a Crna kronika najmanje. Funkcija `fct_infreq()` slaže kategorije od najčešće prema najrjeđoj. Za obrnuti redoslijed, omotajte u `fct_rev()` — `fct_rev(fct_infreq(category))`.
 
 ### Horizontalni stupčasti graf
 
@@ -311,7 +311,7 @@ ggplot(clanci, aes(y = fct_infreq(source))) +
   )
 ```
 
-Trik je jednostavan: umjesto `x` koristite `y` u `aes()`, i ggplot automatski crta horizontalne stupce. Postavili smo `y = NULL` u `labs()` da uklonimo nepotrebnu oznaku osi jer su imena portala samorazumljiva.
+Trik je jednostavan — umjesto `x` koristite `y` u `aes()`, i ggplot automatski crta horizontalne stupce. Postavili smo `y = NULL` u `labs()` da uklonimo nepotrebnu oznaku osi jer su imena portala samorazumljiva.
 
 ### Grupirani i složeni stupčasti grafovi
 
@@ -400,7 +400,7 @@ Stupčasti graf prosjeka skriva distribuciju podataka. Kad vidite samo stupac vi
 
 ## Boxplot: usporedba distribucija između grupa {#sec-boxplot}
 
-Boxplot (dijagram pravokutnika) prikazuje pet ključnih brojeva distribucije: minimum, prvi kvartil (Q1), medijan, treći kvartil (Q3) i maksimum, plus identificira potencijalne outliere. Za usporedbu distribucija između grupa, boxplot je jedan od najkorisnijih grafova.
+Boxplot (dijagram pravokutnika) prikazuje pet ključnih brojeva distribucije — minimum, prvi kvartil (Q1), medijan, treći kvartil (Q3) i maksimum. Također identificira potencijalne outliere. Za usporedbu distribucija između grupa, boxplot je jedan od najkorisnijih grafova.
 
 ```{r}
 #| label: boxplot-osnovni
@@ -419,7 +419,7 @@ ggplot(clanci, aes(x = category, y = time_on_page)) +
   )
 ```
 
-Čitanje boxplota ide kako slijedi: deblja crta unutar pravokutnika je medijan, donji rub pravokutnika je Q1 (25. percentil), a gornji rub je Q3 (75. percentil). Visina pravokutnika je interkvartilni raspon (IQR = Q3 − Q1), koji obuhvaća srednjih 50% podataka. Linije (whiskers) se protežu do najudaljenije točke koja je unutar 1.5 × IQR od ruba pravokutnika, dok su točke izvan toga potencijalni outlieri.
+Čitanje boxplota ide na sljedeći način. Deblja crta unutar pravokutnika je medijan, donji rub pravokutnika je Q1 (25. percentil), a gornji rub je Q3 (75. percentil). Visina pravokutnika je interkvartilni raspon (IQR = Q3 − Q1), koji obuhvaća srednjih 50% podataka. Linije (whiskers) se protežu do najudaljenije točke koja je unutar 1.5 × IQR od ruba pravokutnika, dok su točke izvan toga potencijalni outlieri.
 
 Iz ovog grafa jasno vidimo da znanstveni članci imaju ne samo viši medijan vremena čitanja nego i veću varijabilnost. Lifestyle članci su koncentrirani na nižim vrijednostima. Svaka kategorija ima outliere na desnoj strani, što je očekivano za metriku angažmana.
 
@@ -499,7 +499,7 @@ ggplot(clanci, aes(x = word_count, y = time_on_page)) +
   )
 ```
 
-Vidimo pozitivan trend: članci s više riječi tendiraju imati duže vrijeme čitanja. Ali odnos nije savršen i postoji značajna varijabilnost. `alpha = 0.3` je bitan jer s 1000 točaka bi se bez transparentnosti mnoge preklapale i graf bi bio nečitljiv.
+Vidimo pozitivan trend — članci s više riječi tendiraju imati duže vrijeme čitanja. Ali odnos nije savršen i postoji značajna varijabilnost. `alpha = 0.3` je bitan jer s 1000 točaka bi se bez transparentnosti mnoge preklapale i graf bi bio nečitljiv.
 
 ### Dodavanje linije trenda
 
@@ -571,7 +571,7 @@ clanci |>
   )
 ```
 
-Argument `se = FALSE` uklanja interval pouzdanosti da graf ne bude pretrpan. Sad vidimo da je pozitivan odnos između broja riječi i vremena čitanja prisutan u svim kategorijama, ali se kategorije razlikuju po razini (intercept): za isti broj riječi, znanstveni članci imaju duže prosječno čitanje od lifestyle članaka.
+Argument `se = FALSE` uklanja interval pouzdanosti da graf ne bude pretrpan. Sada vidimo da je pozitivan odnos između broja riječi i vremena čitanja prisutan u svim kategorijama. Međutim, kategorije se razlikuju po razini (intercept) — za isti broj riječi, znanstveni članci imaju duže prosječno čitanje od lifestyle članaka.
 
 ### Kodiranje veličine i oblika
 
@@ -734,7 +734,7 @@ tribble(
 )
 ```
 
-Ova tablica je vaš vodič za odabir grafa. Prije nego nacrtate bilo što, postavite si pitanje: koje varijable imam i kakve su (kontinuirane ili kategoričke)? Odgovor vas automatski vodi do pravog tipa grafa.
+Ova tablica je vaš vodič za odabir grafa. Prije nego nacrtate bilo što, postavite si pitanje — koje varijable imam i kakve su (kontinuirane ili kategoričke)? Odgovor vas automatski vodi do pravog tipa grafa.
 
 ---
 
@@ -742,7 +742,7 @@ Ova tablica je vaš vodič za odabir grafa. Prije nego nacrtate bilo što, posta
 ::: {.callout-note}
 ## Podsjetnik
 
-U prvom dijelu naučili smo četiri temeljna tipa grafova: histogram/density za distribucije, bar chart za kategorije, boxplot/violin za usporedbu grupa i scatterplot za odnos dviju varijabli. U ovom dijelu učimo kako grafove učiniti profesionalnima i prezentabilnima.
+U prvom dijelu naučili smo četiri temeljna tipa grafova — histogram/density za distribucije, bar chart za kategorije, boxplot/violin za usporedbu grupa i scatterplot za odnos dviju varijabli. U ovom dijelu učimo kako grafove učiniti profesionalnima i prezentabilnima.
 :::
 
 ## Facetiranje: mali višestruki grafovi {#sec-facet}
@@ -816,11 +816,11 @@ ggplot(clanci, aes(x = time_on_page)) +
   )
 ```
 
-Opcije za `scales` su: `"fixed"` (default, iste osi), `"free_x"` (slobodna x os), `"free_y"` (slobodna y os) i `"free"` (obje slobodne). Koristite slobodne osi samo kad imate dobar razlog jer otežavaju izravnu usporedbu između panela.
+Opcije za `scales` uključuju `"fixed"` (default, iste osi), `"free_x"` (slobodna x os), `"free_y"` (slobodna y os) i `"free"` (obje slobodne). Koristite slobodne osi samo kad imate dobar razlog jer otežavaju izravnu usporedbu između panela.
 
 ### facet_grid(): paneli u matrici dviju varijabli
 
-Dok `facet_wrap()` dijeli po jednoj varijabli i slaže panele u mrežu, `facet_grid()` kreira matricu panela po dvjema varijablama: jedna definira retke, druga stupce.
+Dok `facet_wrap()` dijeli po jednoj varijabli i slaže panele u mrežu, `facet_grid()` kreira matricu panela po dvjema varijablama — jedna definira retke, druga stupce.
 
 ```{r}
 #| label: facet-grid
@@ -882,7 +882,7 @@ Facetiranje je gotovo uvijek bolje od preklapanja mnogo grupa u jednom grafu. Ka
 
 ## Teme: vizualni izgled grafa {#sec-teme}
 
-Svaki ggplot2 graf ima temu koja kontrolira sve vizualne elemente koji nisu podaci: pozadinu, mrežu (grid lines), fontove, margine, poziciju legende i slično. Defaultna tema (`theme_gray()`) ima sivu pozadinu s bijelom mrežom. Za profesionalni rad, gotovo uvijek ćete koristiti neku drugu temu.
+Svaki ggplot2 graf ima temu koja kontrolira sve vizualne elemente koji nisu podaci — pozadinu, mrežu (grid lines), fontove, margine, poziciju legende i slično. Defaultna tema (`theme_gray()`) ima sivu pozadinu s bijelom mrežom. Za profesionalni rad, gotovo uvijek ćete koristiti neku drugu temu.
 
 ### Ugrađene teme
 
@@ -1081,7 +1081,7 @@ ggplot(clanci, aes(x = word_count, y = time_on_page, color = scroll_depth)) +
 ::: {.callout-important}
 ## Važna napomena
 
-Boja ima dva kanala u ggplot2: `color` za rubove i linije i `fill` za ispunu. Svaki ima vlastite scale funkcije. Za boxplot koristite `scale_fill_*()`, za scatterplot `scale_color_*()`, za bar chart `scale_fill_*()`. Ako koristite krivi kanal, boja se neće promijeniti i nećete dobiti grešku, samo prazan vizualni rezultat.
+Boja ima dva kanala u ggplot2 — `color` za rubove i linije i `fill` za ispunu. Svaki ima vlastite scale funkcije. Za boxplot koristite `scale_fill_*()`, za scatterplot `scale_color_*()`, za bar chart `scale_fill_*()`. Ako koristite krivi kanal, boja se neće promijeniti i nećete dobiti grešku, samo prazan vizualni rezultat.
 :::
 
 ---
@@ -1195,7 +1195,7 @@ clanci |>
   )
 ```
 
-Svaka kategorija ima vlastitu liniju jer je `color = category` mapirana unutar `aes()`. Politika i sport imaju različite dnevne ritmove, što ima smisla: sportski sadržaj se više objavljuje popodne i navečer (kad su rezultati utakmica), dok je politika koncentrirana u jutarnjim satima.
+Svaka kategorija ima vlastitu liniju jer je `color = category` mapirana unutar `aes()`. Politika i sport imaju različite dnevne ritmove, što ima smisla. Sportski sadržaj se više objavljuje popodne i navečer (kad su rezultati utakmica), dok je politika koncentrirana u jutarnjim satima.
 
 ---
 
@@ -1272,7 +1272,7 @@ Argument `widths = c(1, 2)` daje drugom grafu dvostruku širinu — slično, `he
 
 ## Spremanje grafova: ggsave() {#sec-ggsave}
 
-Funkcija `ggsave()` sprema zadnji ggplot2 graf u datoteku. Podržava sve uobičajene formate: PNG, PDF, SVG, JPEG, TIFF.
+Funkcija `ggsave()` sprema zadnji ggplot2 graf u datoteku. Podržava sve uobičajene formate poput PNG, PDF, SVG, JPEG i TIFF.
 
 ```{r}
 #| label: ggsave-primjer
@@ -1377,7 +1377,7 @@ Ako u podatcima postoji NA u varijabli koja definira grupu, ggplot će napraviti
 
 ## Kompletna analiza: od pitanja do gotovog grafa {#sec-kompletna}
 
-Zaokružimo predavanje kompletnim primjerom koji prolazi sve korake: definiranje pitanja, priprema podataka, odabir grafa, izgradnja i poliranje.
+Zaokružimo predavanje kompletnim primjerom koji prolazi sve korake — definiranje pitanja, priprema podataka, odabir grafa, izgradnja i poliranje.
 
 **Pitanje** — Kako se angažman čitatelja (vrijeme čitanja i dijeljenje) razlikuje ovisno o stilu naslova i kategoriji članka?
 
@@ -1459,7 +1459,7 @@ clanci |>
   theme(legend.position = "bottom")
 ```
 
-Ovaj graf otkriva zanimljiv paradoks. Senzacionalistički naslovi privlače klikove i dijeljenja, ali čitatelji provode manje vremena na članku. Informativni i narativni naslovi imaju manje dijeljenja ali duže čitanje. Ovo je klasična dilema digitalnog novinarstva: optimizirate li za klikove ili za dubinski angažman?
+Ovaj graf otkriva zanimljiv paradoks. Senzacionalistički naslovi privlače klikove i dijeljenja, ali čitatelji provode manje vremena na članku. Informativni i narativni naslovi imaju manje dijeljenja ali duže čitanje. Ovo je klasična dilema digitalnog novinarstva — optimizirate li za klikove ili za dubinski angažman?
 
 ```{r}
 #| label: kompletna-graf-3
@@ -1529,12 +1529,12 @@ Tri grafa zajedno ispričali su kompletnu priču. Od sažetka podataka do usmjer
 ::: {.callout-warning}
 ## Priprema za sljedeći tjedan
 
-Sljedeći tjedan bavimo se **programiranjem u R-u**: pisanje funkcija, uvjetne naredbe, petlje i organizacija ponovljivih analiza. Fokus nije na tome da postanete programeri, nego na tome da napišete čist, ponovljiv kod koji možete pokrenuti ponovno kad dobijete nove podatke.
+Sljedeći tjedan bavimo se **programiranjem u R-u**. Naučit ćete pisanje funkcija, uvjetne naredbe, petlje i organizaciju ponovljivih analiza. Fokus nije na tome da postanete programeri, nego na tome da napišete čist, ponovljiv kod koji možete pokrenuti ponovno kad dobijete nove podatke.
 
 Za pripremu:
 
 1. Ponovite sve tipove grafova iz ovog predavanja. Za svaki pokušajte promijeniti barem jedan argument i vidjeti što se događa.
-2. Napravite tri grafa iz podataka `article_engagement.csv` koji odgovaraju na pitanje: razlikuju li se portali po angažmanu čitatelja? Koristite barem jedan histogram, jedan boxplot i jedan bar chart.
+2. Napravite tri grafa iz podataka `article_engagement.csv` koji odgovaraju na sljedeće pitanje — razlikuju li se portali po angažmanu čitatelja? Koristite barem jedan histogram, jedan boxplot i jedan bar chart.
 3. Kombinirajte ta tri grafa pomoću patchwork u jednu kompoziciju s zajedničkim naslovom.
 4. Pročitajte poglavlje 8 iz Navarro (Learning Statistics with R) o osnovama programiranja.
 :::

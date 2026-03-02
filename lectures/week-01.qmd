@@ -22,11 +22,11 @@ Nakon ovog predavanja moći ćete
 
 ## Imate li uopće izbora?
 
-Zamislite da radite u novinarskoj redakciji i da vam šef kaže: naš portal gubi čitatelje, trebamo promijeniti pristup. Vi pitate što točno ne valja, a on odgovara: ljudi ne klikaju na naše članke. I onda doda: mislim da su naslovi previše dosadni. Promijenite stil naslova, stavite više clickbaita, i sve će biti u redu.
+Zamislite da radite u novinarskoj redakciji i da vam šef kaže da naš portal gubi čitatelje i da trebamo promijeniti pristup. Vi pitate što točno ne valja, a on odgovara: ljudi ne klikaju na naše članke. I onda doda: mislim da su naslovi previše dosadni. Promijenite stil naslova, stavite više clickbaita, i sve će biti u redu.
 
 Zvuči uvjerljivo. Ali razmislite na trenutak. Otkud šefu to znanje? Možda je u pravu. Možda su naslovi zaista problem. Ali možda je problem nešto sasvim drugo, poput vremena objave, duljine članaka, tematike, konkurentskih portala koji su lansirali novu aplikaciju, ili činjenica da je ljeto i ljudi su na moru umjesto za računalom. Bez podataka, ova rasprava je čisto nagađanje. Svatko ima svoju teoriju, svi su uvjereni u svoje, a odluka se na kraju donosi na temelju toga tko je najglasnije govorio na sastanku.
 
-Statistika postoji upravo zato da bismo izbjegli ovakve situacije. Njezin temeljni cilj nije komplicirati vam život formulama i grčkim slovima (iako se ponekad čini tako). Cilj je pružiti alate kojima se od gomile podataka dolazi do zaključaka u koje se možemo pouzdati, barem više nego u nagađanje šefa na jutarnjem sastanku. I tu dolazimo do pitanja iz naslova: imate li uopće izbora? Trebate li vi, kao budući komunikolog, zaista učiti statistiku?
+Statistika postoji upravo zato da bismo izbjegli ovakve situacije. Njezin temeljni cilj nije komplicirati vam život formulama i grčkim slovima (iako se ponekad čini tako). Cilj je pružiti alate kojima se od gomile podataka dolazi do zaključaka u koje se možemo pouzdati, barem više nego u nagađanje šefa na jutarnjem sastanku. I tu dolazimo do pitanja iz naslova — imate li uopće izbora? Trebate li vi, kao budući komunikolog, zaista učiti statistiku?
 
 Kratak odgovor je da. Duži odgovor zaslužuje objašnjenje.
 
@@ -58,9 +58,9 @@ Razmislite o sljedećim primjerima.
 
 Postoji jedan fenomen koji savršeno ilustrira zašto nam je statistika potrebna, a zove se **Simpsonov paradoks**. To je situacija u kojoj trend koji vidite u ukupnim podacima potpuno nestane ili se čak preokrene kad podatke razbijete po grupama. Zvuči apstraktno, pa pogledajmo konkretan primjer iz svijeta medija.
 
-Zamislite da analizirate podatke o tome koji format vijesti generira više angažmana na dva medijska portala. Portal A i Portal B oba objavljuju vijesti u dva formata: tekst i video. Gledate ukupne podatke i vidite da Portal A ima veći prosječni angažman po članku nego Portal B. Zaključak je, čini se, očigledan: Portal A radi nešto bolje.
+Zamislite da analizirate podatke o tome koji format vijesti generira više angažmana na dva medijska portala. Portal A i Portal B oba objavljuju vijesti u dva formata — tekst i video. Gledate ukupne podatke i vidite da Portal A ima veći prosječni angažman po članku nego Portal B. Zaključak je, čini se, očigledan: Portal A radi nešto bolje.
 
-Ali onda razbijete podatke po formatu. I otkrijete nešto zapanjujuće: za tekstualne članke, Portal B ima veći prosječni angažman. Za video sadržaje, Portal B opet ima veći prosječni angažman. Kako je to moguće? Kako Portal A može biti bolji ukupno, a Portal B bolji u svakoj pojedinoj kategoriji?
+Ali onda razbijete podatke po formatu. I otkrijete nešto zapanjujuće — za tekstualne članke, Portal B ima veći prosječni angažman. Za video sadržaje, Portal B opet ima veći prosječni angažman. Kako je to moguće? Kako Portal A može biti bolji ukupno, a Portal B bolji u svakoj pojedinoj kategoriji?
 
 Odgovor leži u proporcijama. Portal A objavljuje pretežno video sadržaj (koji općenito ima veći angažman), dok Portal B objavljuje pretežno tekstualni sadržaj (koji općenito ima manji angažman). Kad gledate ukupni prosjek, Portal A izgleda bolje jer ima veći udio visoko angažirajućeg formata (videa), ne zato što je zapravo bolji u bilo čemu.
 
@@ -70,7 +70,7 @@ Portal A ima ukupni prosjek 186, Portal B ima 75. Ali Portal B je bolji i u vide
 
 Simpsonov paradoks nije egzotična statistička kurioznost. Pojavljuje se u stvarnom životu češće nego što biste očekivali. Klasičan primjer iz akademskog svijeta je slučaj pristupa na sveučilište Berkeley iz 1970ih, gdje su ukupni podaci sugerirali diskriminaciju žena, ali kad su se podaci razbili po odjelima, žene su zapravo imale veću stopu prijema u većini pojedinih odjela. Problem je bio u tome što su se žene više prijavljivale na kompetitivnije odjele s nižom stopom prijema za sve.
 
-Za komunikologe, Simpsonov paradoks je posebno relevantan jer medijska istraživanja redovito uključuju podatke koji se mogu raščlaniti na više načina: po platformi, po dobnoj skupini publike, po vremenu dana, po tipu sadržaja. Svaki put kad gledate agregirane podatke bez raščlambe, riskirate da donesete zaključak koji je ne samo netočan, nego dijametralno suprotan stvarnosti.
+Za komunikologe, Simpsonov paradoks je posebno relevantan jer medijska istraživanja redovito uključuju podatke koji se mogu raščlaniti na više načina — po platformi, po dobnoj skupini publike, po vremenu dana, po tipu sadržaja. Svaki put kad gledate agregirane podatke bez raščlambe, riskirate da donesete zaključak koji je ne samo netočan, nego dijametralno suprotan stvarnosti.
 
 > Statistika nije skup trikova za impresioniranje publike brojevima. Statistika je disciplinirani način razmišljanja koji vas štiti od donošenja krivih zaključaka, uključujući zaključke koji se na prvi pogled čine savršeno logičnima.
 
@@ -132,11 +132,11 @@ S intervalnim podacima možemo raditi sve dosad navedeno plus izračunavati arit
 
 Omjerna (ratio) razina ima sve karakteristike intervalne, plus ima apsolutnu nultu točku koja znači potpuno odsustvo mjerne veličine. Vrijeme provedeno na platformi je omjerna varijabla jer 0 minuta zaista znači da osoba uopće nije koristila platformu, a 60 minuta je zaista dvostruko više od 30 minuta. Broj dijeljenja objave, broj pratitelja, prihod od oglašavanja, stopa klikanja (click through rate), sve su to omjerne varijable.
 
-S omjernim podacima možemo raditi apsolutno sve: zbrajati, oduzimati, množiti, dijeliti, izračunavati omjere. Izjava "Portal A ima dvostruko više čitatelja od Portala B" ima smisla jer je broj čitatelja omjerna varijabla.
+S omjernim podacima možemo raditi apsolutno sve — zbrajati, oduzimati, množiti, dijeliti, izračunavati omjere. Izjava "Portal A ima dvostruko više čitatelja od Portala B" ima smisla jer je broj čitatelja omjerna varijabla.
 
 ### Diskretne i kontinuirane varijable
 
-Osim razina mjerenja, postoji još jedna važna razlika: varijable mogu biti **diskretne** ili **kontinuirane**. Diskretna varijabla može poprimiti samo određene, odvojene vrijednosti. Broj komentara na članak je diskretan jer ne možete imati 3.7 komentara. Kontinuirana varijabla može teoretski poprimiti bilo koju vrijednost unutar nekog raspona. Vrijeme provedeno na stranici je kontinuirano jer možete provesti 3 minute i 27.438 sekundi.
+Osim razina mjerenja, postoji još jedna važna razlika — varijable mogu biti **diskretne** ili **kontinuirane**. Diskretna varijabla može poprimiti samo određene, odvojene vrijednosti. Broj komentara na članak je diskretan jer ne možete imati 3.7 komentara. Kontinuirana varijabla može teoretski poprimiti bilo koju vrijednost unutar nekog raspona. Vrijeme provedeno na stranici je kontinuirano jer možete provesti 3 minute i 27.438 sekundi.
 
 Ova razlika je važna jer utječe na izbor grafičkih prikaza (histogrami za kontinuirane, stupičasti grafikoni za diskretne) i na izbor statističkih testova. U praksi, mnoge varijable koje su tehnički diskretne tretiramo kao kontinuirane kad imaju dovoljno velik raspon mogućih vrijednosti. Na primjer, broj bodova na testu od 0 do 100 je tehnički diskretan, ali razlika između susjednih vrijednosti je toliko mala da ga bez problema tretiramo kao kontinuiranog.
 
@@ -212,7 +212,7 @@ Navarro u knjizi koristi termin "treća varijabla" (third variable problem) i na
 
 Kako onda možemo utvrditi da jedna stvar zaista uzrokuje drugu, a ne samo da su povezane? Odgovor je eksperiment. Eksperiment je istraživački dizajn u kojem istraživač aktivno **manipulira** nezavisnom varijablom i promatra učinak te manipulacije na zavisnu varijablu, uz kontrolu svih ostalih relevantnih čimbenika.
 
-Zamislite klasičan primjer iz komunikologije: A/B test naslova na web portalu. Istraživač pripremi dva naslova za isti članak, jedan neutralan ("Rezultati istraživanja o utjecaju društvenih mreža na mlade") i jedan senzacionalistički ("Šokantan nalaz: društvene mreže uništavaju generaciju Z"). Zatim nasumično odabere koji čitatelji će vidjeti koji naslov. Nakon određenog vremena, mjeri stopu klikanja za svaki naslov.
+Zamislite klasičan primjer iz komunikologije — A/B test naslova na web portalu. Istraživač pripremi dva naslova za isti članak, jedan neutralan ("Rezultati istraživanja o utjecaju društvenih mreža na mlade") i jedan senzacionalistički ("Šokantan nalaz: društvene mreže uništavaju generaciju Z"). Zatim nasumično odabere koji čitatelji će vidjeti koji naslov. Nakon određenog vremena, mjeri stopu klikanja za svaki naslov.
 
 Ovaj dizajn ima tri ključna svojstva pravog eksperimenta.
 
@@ -227,7 +227,7 @@ Kad su ova tri uvjeta ispunjena, logika eksperimenta je jednostavna i snažna. A
 ::: {.callout-important}
 ## Važna napomena
 
-U komunikologiji, pravi eksperimenti su mogući ali imaju ograničenja. Mnoge stvari koje nas zanimaju ne možemo manipulirati: ne možemo nasumično dodijeliti ljude različitim razinama medijske pismenosti, ne možemo kontrolirati koliko netko koristi društvene mreže u svakodnevnom životu, ne možemo manipulirati ničijim socioekonomskim statusom. Za takva pitanja moramo koristiti neeksperimentalne dizajne, uz puno veći oprez pri donošenju zaključaka.
+U komunikologiji, pravi eksperimenti su mogući ali imaju ograničenja. Mnoge stvari koje nas zanimaju ne možemo manipulirati — ne možemo nasumično dodijeliti ljude različitim razinama medijske pismenosti, ne možemo kontrolirati koliko netko koristi društvene mreže u svakodnevnom životu, ne možemo manipulirati ničijim socioekonomskim statusom. Za takva pitanja moramo koristiti neeksperimentalne dizajne, uz puno veći oprez pri donošenju zaključaka.
 :::
 
 ### Interna valjanost eksperimenta
@@ -274,7 +274,7 @@ Kvalitativna istraživanja općenito (dubinski intervjui, fokus grupe, etnografi
 
 ## Eksterna valjanost: možemo li generalizirati? {#sec-eksterna-valjanost}
 
-Čak i kad imamo savršeno dizajniran eksperiment s visokom internom valjanošću, ostaje pitanje: vrijede li naši rezultati izvan specifičnog konteksta u kojem smo ih dobili? To je pitanje **eksterne valjanosti**.
+Čak i kad imamo savršeno dizajniran eksperiment s visokom internom valjanošću, ostaje pitanje — vrijede li naši rezultati izvan specifičnog konteksta u kojem smo ih dobili? To je pitanje **eksterne valjanosti**.
 
 Eksterna valjanost se pojavljuje u nekoliko oblika.
 
@@ -289,7 +289,7 @@ U komunikologiji je eksterna valjanost poseban izazov jer su medijska ponašanja
 ::: {.callout-tip}
 ## Praktični savjet
 
-Kad čitate istraživačke rezultate u medijima (ili u akademskim radovima), uvijek se pitajte: tko su bili ispitanici? Gdje i kada je istraživanje provedeno? Na kojoj platformi ili u kojem kontekstu? Ova pitanja vam pomažu procijeniti koliko je opravdano generalizirati nalaze na situaciju koja vas zanima. Izjava "istraživanje je pokazalo da..." gotovo nikad ne znači "ovo vrijedi uvijek i svugdje".
+Kad čitate istraživačke rezultate u medijima (ili u akademskim radovima), uvijek se pitajte — tko su bili ispitanici? Gdje i kada je istraživanje provedeno? Na kojoj platformi ili u kojem kontekstu? Ova pitanja vam pomažu procijeniti koliko je opravdano generalizirati nalaze na situaciju koja vas zanima. Izjava "istraživanje je pokazalo da..." gotovo nikad ne znači "ovo vrijedi uvijek i svugdje".
 :::
 
 ---

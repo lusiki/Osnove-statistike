@@ -32,7 +32,7 @@ Nakon ovog predavanja moći ćete
 
 ## Motivacija: vjerodostojnost vijesti po izvoru
 
-Istraživačko pitanje: percipiraju li ljudi istu vijest kao više ili manje vjerodostojnu ovisno o tome iz kojeg izvora dolazi? Konkretno: razlikuje li se percipirana vjerodostojnost vijesti ovisno o tome pripisuje li se izvoru TV, web portal, društvena mreža, tisak ili podcast?
+Istraživačko pitanje — percipiraju li ljudi istu vijest kao više ili manje vjerodostojnu ovisno o tome iz kojeg izvora dolazi? Konkretno, razlikuje li se percipirana vjerodostojnost vijesti ovisno o tome pripisuje li se izvoru TV, web portal, društvena mreža, tisak ili podcast?
 
 Imamo pet grupa. Prošli tjedan naučili smo t-test za usporedbu dviju grupa. Zašto ne bismo jednostavno proveli t-test za svaki par?
 
@@ -73,7 +73,7 @@ tibble(grupe = n_grupa, parovi = n_parova, alpha = alpha_inflated) |>
   theme_minimal()
 ```
 
-ANOVA rješava ovaj problem: testira sve grupe odjednom jednim testom, održavajući alfa na 0.05.
+ANOVA rješava ovaj problem — testira sve grupe odjednom jednim testom, održavajući alfa na 0.05.
 
 ---
 
@@ -140,7 +140,7 @@ cred |>
 
 ANOVA (Analysis of Variance) uspoređuje varijabilnost IZMEĐU grupa s varijabilnošću UNUTAR grupa.
 
-Intuicija je sljedeća: ako se grupe stvarno razlikuju, prosjeci grupa bit će razbacani daleko jedni od drugih (velika varijabilnost između grupa). Istovremeno, unutar svake grupe postoji prirodna varijabilnost pojedinaca. Ako je varijabilnost između grupa puno veća od varijabilnosti unutar grupa, onda su razlike između grupa "stvarne" (nije samo šum).
+Intuicija je sljedeća. Ako se grupe stvarno razlikuju, prosjeci grupa bit će razbacani daleko jedni od drugih (velika varijabilnost između grupa). Istovremeno, unutar svake grupe postoji prirodna varijabilnost pojedinaca. Ako je varijabilnost između grupa puno veća od varijabilnosti unutar grupa, onda su razlike između grupa "stvarne" (nije samo šum).
 
 $$F = \frac{\text{varijabilnost IZMEĐU grupa}}{\text{varijabilnost UNUTAR grupa}} = \frac{MS_{between}}{MS_{within}}$$
 
@@ -253,15 +253,15 @@ model <- aov(credibility ~ news_source, data = cred)
 summary(model)
 ```
 
-ANOVA tablica sadrži sve elemente koje smo ručno izračunali: df, SS (Sum Sq), MS (Mean Sq), F vrijednost i p-vrijednost (Pr(>F)). Rezultat potvrđuje: postoji statistički značajna razlika u percipiranoj vjerodostojnosti ovisno o izvoru vijesti.
+ANOVA tablica sadrži sve elemente koje smo ručno izračunali, uključujući df, SS (Sum Sq), MS (Mean Sq), F vrijednost i p-vrijednost (Pr(>F)). Rezultat potvrđuje da postoji statistički značajna razlika u percipiranoj vjerodostojnosti ovisno o izvoru vijesti.
 
-Ali ANOVA je **omnibus test**: govori da se barem dvije grupe razlikuju, ali ne govori KOJE. Za to trebamo post-hoc testove (drugi dio).
+Ali ANOVA je **omnibus test** — govori da se barem dvije grupe razlikuju, ali ne govori KOJE. Za to trebamo post-hoc testove (drugi dio).
 
 ---
 
 ## Pretpostavke ANOVA-e {#sec-pretpostavke}
 
-ANOVA ima tri pretpostavke, a to su: nezavisnost opažanja (dizajn istraživanja), normalnost distribucije unutar svake grupe (ili dovoljno velik n), homogenost varijance (jednake varijance u svim grupama).
+ANOVA ima tri pretpostavke. Neovisnost opažanja (dizajn istraživanja), normalnost distribucije unutar svake grupe (ili dovoljno velik n) i homogenost varijance (jednake varijance u svim grupama).
 
 ### Provjera normalnosti
 
@@ -345,7 +345,7 @@ var_by_group <- cred |>
 var_by_group
 
 cat("\nOmjer max/min varijance:", round(max(var_by_group$var) / min(var_by_group$var), 2), "\n")
-cat("Pravilo palca: ako je omjer < 3, homogenost je prihvatljiva.\n")
+cat("Pravilo palca — ako je omjer < 3, homogenost je prihvatljiva.\n")
 ```
 
 ```{r}
@@ -476,7 +476,7 @@ U prvom dijelu naučili smo logiku ANOVA-e (F = varijabilnost između / varijabi
 
 ## Post-hoc testovi: Tukey HSD {#sec-tukey}
 
-ANOVA je omnibus test: govori da se barem dvije grupe razlikuju, ali ne govori koje. **Post-hoc testovi** uspoređuju sve parove grupa uz kontrolu greške tipa I.
+ANOVA je omnibus test — govori da se barem dvije grupe razlikuju, ali ne govori koje. **Post-hoc testovi** uspoređuju sve parove grupa uz kontrolu greške tipa I.
 
 Najčešći post-hoc test je **Tukey HSD** (Honestly Significant Difference). On testira sve parove istovremeno i prilagođava p-vrijednosti tako da ukupna greška tipa I ostane na alfa = 0.05.
 
@@ -606,7 +606,7 @@ cat("je objasnjeno izvorom vijesti.\n")
 
 ### Interpretacija eta-kvadrata
 
-Cohen (1988) je predložio sljedeće smjernice:
+Cohen (1988) je predložio sljedeće smjernice za interpretaciju eta-kvadrata.
 
 ```{r}
 #| label: eta-smjernice
@@ -690,7 +690,7 @@ cat("Digitalni M:", round(mean(dig), 2), "\n")
 cat("Cohenov d:", round(d_td, 2), "(veliki ucinak)\n")
 ```
 
-Planirana usporedba (tradicionalni vs digitalni) daje jasnu sliku: tradicionalni mediji imaju značajno višu percipiranu vjerodostojnost od digitalnih.
+Planirana usporedba (tradicionalni vs digitalni) daje jasnu sliku — tradicionalni mediji imaju značajno višu percipiranu vjerodostojnost od digitalnih.
 
 ---
 
@@ -886,21 +886,21 @@ tribble(
 
 2. F statistika = MS_between / MS_within. Velik F znači da su razlike između grupa veće od varijabilnosti unutar grupa.
 
-3. Dekompozicija varijance: SS_total = SS_between + SS_within. ANOVA testira je li SS_between dovoljno velik u odnosu na SS_total.
+3. Dekompozicija varijance — SS_total = SS_between + SS_within. ANOVA testira je li SS_between dovoljno velik u odnosu na SS_total.
 
-4. ANOVA je omnibus test: govori da razlika postoji, ali ne govori KOJE se grupe razlikuju. Post-hoc testovi identificiraju specifične parove.
+4. ANOVA je omnibus test — govori da razlika postoji, ali ne govori KOJE se grupe razlikuju. Post-hoc testovi identificiraju specifične parove.
 
 5. Tukey HSD (`TukeyHSD(model)`) uspoređuje sve parove uz kontrolu ukupne greške tipa I. Daje razlike, CI i prilagođene p-vrijednosti za svaki par.
 
-6. Eta-kvadrat = SS_between / SS_total. Proporcija varijabilnosti objašnjena grupom. Smjernice: 0.01 mali, 0.06 srednji, 0.14 veliki učinak. Omega-kvadrat je manje pristrana alternativa.
+6. Eta-kvadrat = SS_between / SS_total. Proporcija varijabilnosti objašnjena grupom. Smjernice za interpretaciju — 0.01 mali, 0.06 srednji, 0.14 veliki učinak. Omega-kvadrat je manje pristrana alternativa.
 
-7. Pretpostavke: nezavisnost, normalnost unutar grupa (ili n > 30), homogenost varijance. Welchova ANOVA (`oneway.test(var.equal = FALSE)`) ne zahtijeva jednake varijance.
+7. Pretpostavke uključuju nezavisnost, normalnost unutar grupa (ili n > 30) i homogenost varijance. Welchova ANOVA (`oneway.test(var.equal = FALSE)`) ne zahtijeva jednake varijance.
 
 8. Kruskal-Wallisov test (`kruskal.test()`) je neparametrijska alternativa. Koristi rangove. Post-hoc: `pairwise.wilcox.test()` s BH korekcijom.
 
 9. Planirane usporedbe (contrasts) su snažniji pristup kad unaprijed znate koje grupe želite usporediti (npr. tradicionalni vs digitalni mediji).
 
-10. APA format za ANOVA-u: F(df_between, df_within) = vrijednost, p, eta2. Post-hoc razlike s CI.
+10. APA format za ANOVA-u uključuje F(df_between, df_within) = vrijednost, p, eta2, kao i post-hoc razlike s CI.
 
 11. Moderacijska analiza (ANOVA po podgrupama treće varijable) otkriva je li obrazac konzistentan ili varira ovisno o nekoj trećoj varijabli (npr. medijska pismenost, dob).
 
@@ -915,7 +915,7 @@ tribble(
 
 2. Provedite Kruskal-Wallisov test za `share_intent` po `news_source`. Usporedite rezultat s klasičnom ANOVA-om. Jesu li zaključci konzistentni?
 
-3. Testirajte planiranu usporedbu: razlikuje li se `credibility` između tri razine medijske pismenosti (`media_literacy`)? Koji par se razlikuje prema Tukey HSD testu?
+3. Testirajte planiranu usporedbu gdje trebate odrediti razlikuje li se `credibility` između tri razine medijske pismenosti (`media_literacy`). Koji par se razlikuje prema Tukey HSD testu?
 
 ---
 

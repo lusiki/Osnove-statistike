@@ -75,13 +75,13 @@ Testiranje hipoteza slijedi logiku koja je iznenađujuće slična suđenju u kaz
 
 U statistici, uloge su analogne. Početna pretpostavka je da nema učinka — nema razlike, nema veze, nema efekta. Ovu pretpostavku zovemo nulta hipoteza i označavamo je s H₀. Istraživač pokušava prikupiti dovoljno dokaza da odbaci nultu hipotezu u korist alternativne hipoteze (H₁), koja tvrdi da učinak postoji.
 
-Za naš Instagram primjer, hipoteze izgledaju ovako:
+Za naš Instagram primjer, hipoteze izgledaju kao što su sljedeće — H₀ i H₁.
 
-**H₀**: Nema razlike u angažmanu između carousel i single image formata. Svaka opažena razlika je posljedica slučajnosti.
+**H₀** — Nema razlike u angažmanu između carousel i single image formata. Svaka opažena razlika je posljedica slučajnosti.
 
-**H₁**: Postoji razlika u angažmanu između dva formata. Opažena razlika odražava stvarnu razliku u populaciji.
+**H₁** — Postoji razlika u angažmanu između dva formata. Opažena razlika odražava stvarnu razliku u populaciji.
 
-Matematički:
+U matematičkom jeziku to izražavamo na sljedeći način.
 
 $$H_0: \mu_{carousel} = \mu_{single}$$
 $$H_1: \mu_{carousel} \neq \mu_{single}$$
@@ -132,7 +132,7 @@ Prosjek uzorka je ispod 3 minute. Ali je li dovoljno daleko od 3 da možemo odba
 
 ### Testna statistika
 
-Testna statistika za jednouzorački t-test mjeri koliko je prosjek uzorka udaljen od pretpostavljene vrijednosti, izraženo u jedinicama standardne pogreške:
+Testna statistika za jednouzorački t-test mjeri koliko je prosjek uzorka udaljen od pretpostavljene vrijednosti, izraženo u jedinicama standardne pogreške — formalno, to je:
 
 $$t = \frac{\bar{x} - \mu_0}{SE} = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}$$
 
@@ -236,9 +236,9 @@ Pogledajte 95% interval pouzdanosti iz gornjeg rezultata. Ne sadrži vrijednost 
 
 ## Dvosmjerni i jednosmjerni test {#sec-smjerovi}
 
-U prethodnom primjeru koristili smo dvosmjerni test (two-tailed): testirali smo je li prosjek *različit* od 3, u bilo kojem smjeru. Hipoteze su bile H₀: μ = 3 nasuprot H₁: μ ≠ 3.
+U prethodnom primjeru koristili smo dvosmjerni test (two-tailed), što znači da smo testirali je li prosjek *različit* od 3, u bilo kojem smjeru. Hipoteze su bile H₀: μ = 3 nasuprot H₁: μ ≠ 3.
 
-Ponekad unaprijed znate smjer. Ako Instagram tim očekuje da su carousel objave *bolje* (ne samo različite), može koristiti jednosmjerni test (one-tailed): H₀: μ_carousel ≤ μ_single nasuprot H₁: μ_carousel > μ_single.
+Ponekad unaprijed znate smjer. Ako Instagram tim očekuje da su carousel objave *bolje* (ne samo različite), može koristiti jednosmjerni test (one-tailed) s hipotezama H₀: μ_carousel ≤ μ_single nasuprot H₁: μ_carousel > μ_single.
 
 ```{r}
 #| label: smjerovi-demo
@@ -294,7 +294,7 @@ ig |>
   theme(legend.position = "bottom")
 ```
 
-Distribucije se preklapaju — postoje single image objave s visokim angažmanom i carousel objave s niskim — ali carousel distribucija je pomaknuta udesno. Testna statistika za dvouzorački t-test mjeri razliku prosjeka u jedinicama zajedničke standardne pogreške:
+Distribucije se preklapaju — postoje single image objave s visokim angažmanom i carousel objave s niskim — ali carousel distribucija je pomaknuta udesno. Testna statistika za dvouzorački t-test mjeri razliku prosjeka u jedinicama zajedničke standardne pogreške — ta statistika je:
 
 $$t = \frac{\bar{x}_1 - \bar{x}_2}{SE_{razlika}}$$
 
@@ -515,7 +515,7 @@ P-vrijednost *nije* vjerojatnost da je H₀ istinita. Ne možete reći "postoji 
 
 P-vrijednost *nije* vjerojatnost da ste pogriješili. Mala p-vrijednost znači da su podaci neobični pod H₀. Ne znači da ste sigurno u pravu.
 
-I ono najvažnije: p-vrijednost *nije* mjera veličine učinka. Vrijednost p = 0.001 ne znači da je razlika velika. Velik uzorak može proizvesti sićušnu p-vrijednost za trivijalno malu razliku. Pogledajmo to na primjeru.
+I ono najvažnije — p-vrijednost *nije* mjera veličine učinka. Vrijednost p = 0.001 ne znači da je razlika velika. Velik uzorak može proizvesti sićušnu p-vrijednost za trivijalno malu razliku. Pogledajmo to na primjeru.
 
 ```{r}
 #| label: p-vs-ucinak
@@ -552,7 +552,7 @@ U prvom dijelu naučili smo logiku testiranja hipoteza, formuliranje H₀ i H₁
 
 ## Veličina učinka: Cohenov d {#sec-cohen-d}
 
-P-vrijednost odgovara na pitanje "postoji li učinak?" ali šuti o tome koliko je taj učinak velik. Za to vam treba mjera veličine učinka. Najčešća za razliku dvaju prosjeka je Cohenov d, koji izražava razliku u jedinicama zajedničke standardne devijacije:
+P-vrijednost odgovara na pitanje "postoji li učinak?" ali šuti o tome koliko je taj učinak velik. Za to vam treba mjera veličine učinka. Najčešća za razliku dvaju prosjeka je Cohenov d, koji izražava razliku u jedinicama zajedničke standardne devijacije — formalno:
 
 $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}$$
 
@@ -582,7 +582,7 @@ cat("Cohenov d:", round(d, 3), "\n")
 
 ### Što znači mali, srednji i veliki učinak
 
-Cohen (1988) je predložio smjernice za interpretaciju koje su postale konvencija u društvenim znanostima:
+Cohen (1988) je predložio smjernice za interpretaciju koje su postale konvencija u društvenim znanostima. One izgledaju ovako:
 
 ```{r}
 #| label: cohen-smjernice
@@ -656,13 +656,13 @@ Umjesto "razlika je statistički značajna (p < 0.001)", napišite: "carousel ob
 
 Statistička snaga (power) je vjerojatnost da test odbaci H₀ kad je H₁ istinita — jednostavnije rečeno, vjerojatnost da ćete detektirati pravu razliku ako ona postoji.
 
-Snaga ovisi o četiri faktora. Veličina učinka — veću razliku je lakše detektirati. Veličina uzorka — više podataka daje veću snagu. Razina značajnosti α — veći α daje veću snagu, ali i više lažno pozitivnih. Varijabilnost podataka — manja varijabilnost znači čišći signal.
+Snaga ovisi o četiri faktora. Veličina učinka — veću razliku je lakše detektirati. Veličina uzorka — više podataka daje veću snagu. Razina značajnosti α — veći α daje veću snagu, ali i više lažno pozitivnih. Varijabilnost podataka — manja varijabilnost znači čišći signal. To su faktori koji snagu određuju.
 
 Konvencija kaže da snaga treba biti barem 0.80 (80%). To znači da ako razlika postoji, želite je detektirati barem u 8 od 10 pokušaja.
 
 ### Koliki uzorak trebam?
 
-Najčešća primjena analize snage je planiranje istraživanja *prije* nego prikupite podatke: koliki uzorak trebate da biste detektirali očekivanu veličinu učinka s 80% snagom?
+Najčešća primjena analize snage je planiranje istraživanja *prije* nego prikupite podatke. Ključno pitanje je — koliki uzorak trebate da biste detektirali očekivanu veličinu učinka s 80% snagom?
 
 ```{r}
 #| label: power-izracun
@@ -881,9 +881,9 @@ Svaka vodoravna linija predstavlja jedan članak. Plava točka je ocjena urednik
 ::: {.callout-important}
 ## Koji test za koju situaciju?
 
-**Nezavisni (neupareni) t-test**: dvije različite skupine bez veze. Primjeri: muškarci vs žene, kontrolna vs eksperimentalna grupa, carousel vs single image.
+**Nezavisni (neupareni) t-test** — dvije različite skupina bez veze. Primjeri: muškarci vs žene, kontrolna vs eksperimentalna grupa, carousel vs single image.
 
-**Upareni t-test**: ista jedinica mjerena dva puta. Primjeri: prije i poslije intervencije, isti sadržaj na dva kanala, isti ispitanik u dva uvjeta. Ključno pitanje: možete li smisleno spariti opažanja? Ako da, koristite upareni test — bit će osjetljiviji.
+**Upareni t-test** — ista jedinica mjerena dva puta. Primjeri: prije i poslije intervencije, isti sadržaj na dva kanala, isti ispitanik u dva uvjeta. Ključno pitanje: možete li smisleno spariti opažanja? Ako da, koristite upareni test — bit će osjetljiviji.
 :::
 
 
@@ -948,7 +948,7 @@ tribble(
 
 ## Sve zajedno: izvještaj za urednicu {#sec-analiza}
 
-Spojimo sve u koherentan izvještaj. Slijedimo strukturu koju ćete koristiti u svakoj budućoj analizi, gdje su ključni koraci sljedeći: opisna statistika, vizualizacija, statistički test, veličina učinka, podanalize po podgrupama, zaključak s preporukom.
+Spojimo sve u koherentan izvještaj. Slijedimo strukturu koju ćete koristiti u svakoj budućoj analizi, gdje su ključni koraci sljedeći — opisna statistika, vizualizacija, statistički test, veličina učinka, podanalize po podgrupama, zaključak s preporukom.
 
 ```{r}
 #| label: analiza-opisna

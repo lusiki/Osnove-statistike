@@ -32,7 +32,7 @@ Nakon ovog predavanja moći ćete:
 
 ## Generacijski jaz u medijskim navikama
 
-Zamislite da vodite istraživački tim pri velikoj medijskoj kući. Uprava je upravo objavila strategiju za sljedećih pet godina i ključno pitanje glasi: na koje platforme trebamo usmjeriti resurse? Intuicija kaže da mladi gledaju streaming, a stariji i dalje sjede pred televizorom. Ali intuicija je jedna stvar, a podatci druga. Vaš zadatak je provesti anketu i dati odgovor utemeljen na dokazima.
+Zamislite da vodite istraživački tim pri velikoj medijskoj kući. Uprava je upravo objavila strategiju za sljedećih pet godina i ključno pitanje glasi — na koje platforme trebamo usmjeriti resurse? Intuicija kaže da mladi gledaju streaming, a stariji i dalje sjede pred televizorom. Ali intuicija je jedna stvar, a podatci druga. Vaš zadatak je provesti anketu i dati odgovor utemeljen na dokazima.
 
 Anketa je provedena na 800 ispitanika iz pet hrvatskih regija, iz četiriju dobnih skupina. Svaki ispitanik je naveo koji tip medija najčešće koristi, koju vrstu sadržaja preferira, koliko je zadovoljan ponudom i niz demografskih podataka. Varijable koje vas najviše zanimaju su kategoričke — na primjer dobna skupina, tip medija, regija i obrazovanje. To nisu brojevi koje možete zbrajati ili iz kojih možete računati prosjeke. To su kutije u koje se ljudi razvrstavaju. A za kutije trebate drugačiji statistički alat.
 
@@ -62,7 +62,7 @@ survey |> count(age_group, sort = TRUE)
 survey |> count(media_type, sort = TRUE)
 ```
 
-Ključne kategoričke varijable su `age_group` (četiri kategorije: 18-29, 30-44, 45-59, 60+) i `media_type` (šest kategorija: streaming, TV, web portal, radio, tisak, podcast). Temeljno pitanje za upravu glasi — postoji li veza između dobi i preferiranog medija? I ako postoji, koliko je jaka?
+Ključne kategoričke varijable su `age_group` (četiri kategorije poput 18-29, 30-44, 45-59, 60+) i `media_type` (šest kategorija — streaming, TV, web portal, radio, tisak, podcast). Temeljno pitanje za upravu glasi — postoji li veza između dobi i preferiranog medija? I ako postoji, koliko je jaka?
 
 
 ## Kontingencijska tablica: prvi pogled na vezu {#sec-kontingencijska}
@@ -80,7 +80,7 @@ kont_tablica <- table(survey$age_group, survey$media_type)
 kont_tablica
 ```
 
-Apsolutne frekvencije su korisne, ali teško ih je uspoređivati kad dobne skupine nemaju jednaki broj ispitanika. Proporcije po retku rješavaju taj problem: svaka dobna skupina se normalizira na 100%, pa možete izravno uspoređivati strukture preferencija.
+Apsolutne frekvencije su korisne, ali teško ih je uspoređivati kad dobne skupine nemaju jednaki broj ispitanika. Proporcije po retku rješavaju taj problem — svaka dobna skupina se normalizira na 100%, pa možete izravno uspoređivati strukture preferencija.
 
 ```{r}
 #| label: kont-proporcije
@@ -92,7 +92,7 @@ Apsolutne frekvencije su korisne, ali teško ih je uspoređivati kad dobne skupi
 round(prop.table(kont_tablica, margin = 1) * 100, 1)
 ```
 
-Proporcije govore jasnu priču. Među osobama 18-29, 43% preferira streaming i 27% web portale. Među osobama 60+, 47% preferira TV i 23% radio. Obrazac je očit: mlađi preferiraju digitalne medije, stariji tradicionalne. Ali je li ovaj obrazac statistički značajan, ili bi mogao nastati čistim slučajem u uzorku od 800 ljudi?
+Proporcije govore jasnu priču. Među osobama 18-29, 43% preferira streaming i 27% web portale. Među osobama 60+, 47% preferira TV i 23% radio. Obrazac je očit — mlađi preferiraju digitalne medije, stariji tradicionalne. Ali je li ovaj obrazac statistički značajan, ili bi mogao nastati čistim slučajem u uzorku od 800 ljudi?
 
 ```{r}
 #| label: kont-vizualizacija
@@ -128,7 +128,7 @@ Vizualno, razlika je dramatična. Ali da bismo prešli s "izgleda različito" na
 
 ## Hi-kvadrat test za dobrotu prilagodbe {#sec-gof}
 
-Prije nego se uhvatimo u koštac s vezom dviju varijabli, počnimo s jednostavnijim pitanjem: odgovara li distribucija jedne kategoričke varijable nekoj očekivanoj distribuciji? Ovo se zove test za dobrotu prilagodbe (goodness-of-fit test).
+Prije nego se uhvatimo u koštac s vezom dviju varijabli, počnimo s jednostavnijim pitanjem — odgovara li distribucija jedne kategoričke varijable nekoj očekivanoj distribuciji? Ovo se zove test za dobrotu prilagodbe (goodness-of-fit test).
 
 Evo konkretne situacije. Medijska kuća tvrdi da ima podjednaku publiku iz svih pet regija Hrvatske. Naša anketa pokazuje nešto drugačiju sliku. Želimo testirati odstupa li opažena distribucija regija značajno od uniformne distribucije (20% iz svake regije).
 
@@ -160,7 +160,7 @@ gof_test
 
 ### Što zapravo radi hi-kvadrat statistika?
 
-Hi-kvadrat statistika mjeri koliko se vaši opaženi podaci razlikuju od onoga što biste očekivali da je nulta hipoteza istinita. Formula je sljedeća:
+Hi-kvadrat statistika mjeri koliko se vaši opaženi podaci razlikuju od onoga što biste očekivali da je nulta hipoteza istinita. Formula je:
 
 $$\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$$
 
@@ -198,7 +198,7 @@ tibble(
 
 Svaka kategorija doprinosi ukupnom χ² ovisno o tome koliko njezina opažena frekvencija odstupa od očekivane. Zadnji redak (UKUPNO) je testna statistika — to je ona ista χ² vrijednost koju je `chisq.test()` izračunao automatski.
 
-Da bismo dobili p-vrijednost, uspoređujemo našu χ² statistiku s hi-kvadrat distribucijom. Ta distribucija ima jedan parametar: stupnjeve slobode, koji se za goodness-of-fit test računaju kao broj kategorija minus 1.
+Da bismo dobili p-vrijednost, uspoređujemo našu χ² statistiku s hi-kvadrat distribucijom. Ta distribucija ima jedan parametar — stupnjeve slobode — koji se za goodness-of-fit test računaju kao broj kategorija minus 1.
 
 ```{r}
 #| label: gof-distribucija
@@ -231,7 +231,7 @@ ggplot(chi_data, aes(x = x, y = density)) +
   theme_minimal()
 ```
 
-Crveno područje desno od naše testne statistike je p-vrijednost: vjerojatnost da bismo dobili ovako veliko ili veće odstupanje čistim slučajem, kad bi distribucija regija bila zaista uniformna. Ako je ta p-vrijednost manja od 0.05, zaključujemo da distribucija značajno odstupa od uniformne. Zagreb je nadreprezentiran, ostale regije podreprezentirane.
+Crveno područje desno od naše testne statistike je p-vrijednost — vjerojatnost da bismo dobili ovako veliko ili veće odstupanje čistim slučajem, kad bi distribucija regija bila zaista uniformna. Ako je ta p-vrijednost manja od 0.05, zaključujemo da distribucija značajno odstupa od uniformne. Zagreb je nadreprezentiran, ostale regije podreprezentirane.
 
 ### Testiranje s poznatim populacijskim proporcijama
 
@@ -266,12 +266,12 @@ Kad testiramo protiv stvarnih populacijskih proporcija, rezultat je sasvim druga
 
 ## Hi-kvadrat test nezavisnosti {#sec-nezavisnost}
 
-Sada dolazimo do glavnog pitanja: postoji li veza između dviju kategoričkih varijabli? Konkretno, ovisi li preferirani tip medija o dobnoj skupini?
+Sada dolazimo do glavnog pitanja — postoji li veza između dviju kategoričkih varijabli? Konkretno, ovisi li preferirani tip medija o dobnoj skupini?
 
 $$H_0: \text{Tip medija i dobna skupina su nezavisni (nema veze)}$$
 $$H_1: \text{Tip medija i dobna skupina NISU nezavisni (postoji veza)}$$
 
-Riječ "nezavisni" ovdje ima precizan statistički smisao: poznavanje nečije dobne skupine ne pomaže u predviđanju njihovog preferiranog medija. Ako su doista nezavisni, distribucija medijskog tipa trebala bi biti ista u svim dobnim skupinama — isti postotak mladih i starijih birao bi streaming, isti postotak birao bi TV, i tako dalje.
+Riječ "nezavisni" ovdje ima precizan statistički smisao — poznavanje nečije dobne skupine ne pomaže u predviđanju njihovog preferiranog medija. Ako su doista nezavisni, distribucija medijskog tipa trebala bi biti ista u svim dobnim skupinama — isti postotak mladih i starijih birao bi streaming, isti postotak birao bi TV, i tako dalje.
 
 ```{r}
 #| label: nezavisnost-test
@@ -283,7 +283,7 @@ chi2_test <- chisq.test(kont_tablica)
 chi2_test
 ```
 
-P-vrijednost je iznimno mala (p < 2.2e-16, što je najmanji broj koji R ispisuje). Imamo snažne dokaze da dob i preferirani tip medija nisu nezavisni — veza postoji. Ali samu χ² statistiku treba tumačiti s oprezom: ona govori da veza postoji, ali ne govori *gdje* u tablici se ta veza najviše očituje. Za to trebamo pogledati dublje.
+P-vrijednost je iznimno mala (p < 2.2e-16, što je najmanji broj koji R ispisuje). Imamo snažne dokaze da dob i preferirani tip medija nisu nezavisni — veza postoji. Ali samu χ² statistiku treba tumačiti s oprezom — ona govori da veza postoji, ali ne govori *gdje* u tablici se ta veza najviše očituje. Za to trebamo pogledati dublje.
 
 ### Očekivane frekvencije: što bismo vidjeli da veze nema
 
@@ -320,7 +320,7 @@ Usporedba je poučna. Pod nultom hipotezom, oko 22% svake dobne skupine trebalo 
 
 ### Pretpostavka koju morate provjeriti
 
-Hi-kvadrat test je aproksimacija, i da bi ta aproksimacija bila pouzdana, sve očekivane frekvencije moraju biti dovoljno velike. Konvencija kaže: barem 5 u svakoj ćeliji.
+Hi-kvadrat test je aproksimacija, i da bi ta aproksimacija bila pouzdana, sve očekivane frekvencije moraju biti dovoljno velike. Konvencija glasi — barem 5 u svakoj ćeliji.
 
 ```{r}
 #| label: provjera-pretpostavki
@@ -341,7 +341,7 @@ Sve očekivane frekvencije su iznad 5, što znači da je hi-kvadrat aproksimacij
 
 Ukupna χ² statistika kaže da veza postoji, ali to je kao kad vam liječnik kaže "nešto je abnormalno u krvnoj slici" bez da vam kaže što. Za specifičnu dijagnozu koristimo standardizirane reziduale, koji vam govore koja ćelija u tablici najviše doprinosi ukupnoj vezi.
 
-Standardizirani (Pearsonov) rezidual za svaku ćeliju računa se ovako:
+Standardizirani (Pearsonov) rezidual za svaku ćeliju računa se na sljedeći način:
 
 $$r_{ij} = \frac{O_{ij} - E_{ij}}{\sqrt{E_{ij}}}$$
 
@@ -385,12 +385,12 @@ as.data.frame(chi2_test$residuals) |>
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
-Ovaj graf je zlatni rudnik za vašu upravu. Najjače zelene ćelije (znatno više nego očekivano) su streaming u skupini 18-29 i TV u skupini 60+. Najjače crvene (znatno manje nego očekivano) su TV u skupini 18-29 i streaming u skupini 60+. Reziduali precizno identificiraju ono što ste intuitivno naslutili: generacijski jaz u medijskim navikama je realan, mjerljiv i specifičan.
+Ovaj graf je zlatni rudnik za vašu upravu. Najjače zelene ćelije (znatno više nego očekivano) su streaming u skupini 18-29 i TV u skupini 60+. Najjače crvene (znatno manje nego očekivano) su TV u skupini 18-29 i streaming u skupini 60+. Reziduali precizno identificiraju ono što ste intuitivno naslutili — generacijski jaz u medijskim navikama je realan, mjerljiv i specifičan.
 
 ::: {.callout-tip}
 ## Ne stajte na "značajno"
 
-Kad izvještavate rezultate hi-kvadrat testa, nemojte stati na "χ² je značajan." Koristite reziduale da identificirate *specifične* kombinacije kategorija koje najviše doprinose vezi. Vaša uprava ne želi čuti samo "postoji veza između dobi i medija." Želi znati *kakva* je ta veza: mladi biraju streaming, stariji TV, a srednje generacije su negdje između.
+Kad izvještavate rezultate hi-kvadrat testa, nemojte stati na "χ² je značajan." Koristite reziduale da identificirate *specifične* kombinacije kategorija koje najviše doprinose vezi. Vaša uprava ne želi čuti samo "postoji veza između dobi i medija." Želi znati *kakva* je ta veza — mladi biraju streaming, stariji TV, a srednje generacije su negdje između.
 :::
 
 
@@ -511,9 +511,9 @@ survey |>
 
 ## Hi-kvadrat test u praksi: korak po korak {#sec-koraci}
 
-Sažmimo postupak u korake koje možete primijeniti na bilo koji par kategoričkih varijabli. Prvo formulirate hipoteze (H₀: varijable su nezavisne). Onda napravite kontingencijsku tablicu i vizualizirate podatke — jer graf vam često kaže više od testa. Zatim provjerite pretpostavke (sve očekivane frekvencije ≥ 5). Provedite test i izračunajte p-vrijednost. Izračunajte veličinu učinka (Cramérovo V). Pogledajte reziduale za specifična odstupanja. I konačno, interpretirajte sve to u kontekstu vašeg istraživačkog pitanja.
+Sažmimo postupak u korake koje možete primijeniti na bilo koji par kategoričkih varijabli. Prvo formulirate hipoteze (H₀ — varijable su nezavisne). Onda napravite kontingencijsku tablicu i vizualizirate podatke — jer graf vam često kaže više od testa. Zatim provjerite pretpostavke (sve očekivane frekvencije ≥ 5). Provedite test i izračunajte p-vrijednost. Izračunajte veličinu učinka (Cramérovo V). Pogledajte reziduale za specifična odstupanja. I konačno, interpretirajte sve to u kontekstu vašeg istraživačkog pitanja.
 
-Primijenimo to na drugi par varijabli: postoji li veza između spola i preferencije sadržaja?
+Primijenimo to na drugi par varijabli — postoji li veza između spola i preferencije sadržaja?
 
 ```{r}
 #| label: primjer-spol-sadrzaj
@@ -557,7 +557,7 @@ U prvom dijelu naučili smo hi-kvadrat test za dobrotu prilagodbe i test nezavis
 
 Hi-kvadrat test je aproksimacija, i kao svaka aproksimacija, ima granice. Kad su očekivane frekvencije male (ispod 5 u jednoj ili više ćelija), ta aproksimacija postaje nepouzdana. Fisherov egzaktni test rješava taj problem tako što računa točnu p-vrijednost bez ikakve aproksimacije — odatle i ime "egzaktni."
 
-Zamislite sljedeću situaciju: testirate vezu između tipa poziva na akciju (CTA) i konverzije na malom uzorku od 40 newsletter kampanja. Samo 40 opažanja raspoređenih u 2×2 tablicu znači da neke ćelije mogu imati jako malo frekvencije.
+Zamislite sljedeću situaciju — testirate vezu između tipa poziva na akciju (CTA) i konverzije na malom uzorku od 40 newsletter kampanja. Samo 40 opažanja raspoređenih u 2×2 tablicu znači da neke ćelije mogu imati jako malo frekvencije.
 
 ```{r}
 #| label: fisher-primjer
@@ -619,7 +619,7 @@ Tri pristupa daju nešto različite p-vrijednosti. Hi-kvadrat bez korekcije je n
 
 ### Odds ratio: koliko je jedna grupa u prednosti
 
-Fisherov test za 2×2 tablice automatski računa odds ratio, odnosno omjer šansi. To je prirodna mjera veličine učinka za binarne ishode i odgovara na pitanje: koliko su šanse za konverziju veće uz direktni CTA nego uz indirektni?
+Fisherov test za 2×2 tablice automatski računa odds ratio — omjer šansi. To je prirodna mjera veličine učinka za binarne ishode i odgovara na pitanje koliko su šanse za konverziju veće uz direktni CTA nego uz indirektni.
 
 ```{r}
 #| label: odds-ratio
@@ -648,7 +648,7 @@ U praksi, Fisherov test možete koristiti uvijek — za velike uzorke daje ident
 
 ## Spajanje kategorija: manje je ponekad više {#sec-spajanje}
 
-Ponekad kontingencijska tablica ima kategorije s vrlo malo opažanja. Umjesto da odmah pribjegnete Fisherovom testu, postoji elegantnije rješenje: spojiti (kolapsirati) slične kategorije u šire grupe. To ne samo da rješava problem malih frekvencija, nego često rezultira jasnijom pričom.
+Ponekad kontingencijska tablica ima kategorije s vrlo malo opažanja. Umjesto da odmah pribjegnete Fisherovom testu, postoji elegantnije rješenje — spojiti (kolapsirati) slične kategorije u šire grupe. To ne samo da rješava problem malih frekvencija, nego često rezultira jasnijom pričom.
 
 ```{r}
 #| label: spajanje-kategorija
@@ -720,12 +720,12 @@ survey |>
   theme(legend.position = "bottom")
 ```
 
-Ovaj graf je ono što vaša uprava treba vidjeti. Priča je kristalno jasna: 85% osoba 18-29 preferira digitalne medije, ali samo 26% osoba 60+. Generacijski jaz je masivan, i jedno je od onih rijetkih nalaza u društvenim znanostima koji ne zahtijeva puno objašnjavanja.
+Ovaj graf je ono što vaša uprava treba vidjeti. Priča je kristalno jasna — 85% osoba 18-29 preferira digitalne medije, ali samo 26% osoba 60+. Generacijski jaz je masivan, i jedno je od onih rijetkih nalaza u društvenim znanostima koji ne zahtijeva puno objašnjavanja.
 
 
 ## Stratificirana analiza: je li veza konzistentna u podgrupama? {#sec-stratifikacija}
 
-Ukupni rezultat kaže da veza između medijskog tipa i dobi postoji. Ali je li ta veza konzistentna kad podijelimo podatke po nekoj trećoj varijabli? Možda digitalni mediji dominiraju među mladima u Zagrebu, ali ne i u Slavoniji? Ovo je suština stratificirane analize: provodimo isti test odvojeno za svaku podgrupu treće varijable.
+Ukupni rezultat kaže da veza između medijskog tipa i dobi postoji. Ali je li ta veza konzistentna kad podijelimo podatke po nekoj trećoj varijabli? Možda digitalni mediji dominiraju među mladima u Zagrebu, ali ne i u Slavoniji? Ovo je suština stratificirane analize — provodimo isti test odvojeno za svaku podgrupu treće varijable.
 
 ```{r}
 #| label: stratifikacija
@@ -762,7 +762,7 @@ survey |>
   )
 ```
 
-Stratificirana analiza može otkriti da veza koja postoji ukupno ne postoji u svim podgrupama — ili obrnuto: da veza ne postoji ukupno, ali pojavljuje se u specifičnim podgrupama. A to nas vodi do jednog od najvažnijih koncepata u statistici kategoričkih podataka.
+Stratificirana analiza može otkriti da veza koja postoji ukupno ne postoji u svim podgrupama — ili obrnuto, da veza ne postoji ukupno, ali pojavljuje se u specifičnim podgrupama. A to nas vodi do jednog od najvažnijih koncepata u statistici kategoričkih podataka.
 
 
 ## Simpsonov paradoks: kad ukupni rezultat laže {#sec-simpson}
@@ -809,14 +809,14 @@ simpson |>
   select(portal, uredaj, ctr, prikazi)
 ```
 
-Evo paradoksa. Portal B ima viši CTR na *svakom* uređaju pojedinačno: na mobitelu (6.0% vs 8.0%) i na desktopu (36.0% vs 40.0%). Ali kad agregirate — Portal A može imati viši ukupni CTR. Kako je to moguće?
+Evo paradoksa. Portal B ima viši CTR na *svakom* uređaju pojedinačno — na mobitelu (6.0% vs 8.0%) i na desktopu (36.0% vs 40.0%). Ali kad agregirate — Portal A može imati viši ukupni CTR. Kako je to moguće?
 
 Razlog leži u neravnomjernoj raspodjeli uređaja. Portal A ima mnogo više mobilnog prometa (1000 od 1500 prikaza), a mobilni promet ima nizak CTR. Portal B ima relativno više desktop prometa, koji ima visok CTR. Kad zbrojite sve prikaze i klikove, neravnomjerna mješavina "prevagne" i stvori obmanjujuće ukupne brojke.
 
 ::: {.callout-warning}
 ## Simpsonov paradoks nije rijedak
 
-U komunikološkim istraživanjima Simpsonov paradoks je čest jer se grupe (dobne, regionalne, platformske) razlikuju po veličini i karakteristikama. Kad god uspoređujete kategoričke podatke agregirano, postavite si pitanje: bi li se zaključak promijenio kad biste razdvojili podatke po nekoj relevantnoj trećoj varijabli? Ako niste sigurni, provedite stratificiranu analizu i pogledajte.
+U komunikološkim istraživanjima Simpsonov paradoks je čest jer se grupe (dobne, regionalne, platformske) razlikuju po veličini i karakteristikama. Kad god uspoređujete kategoričke podatke agregirano, postavite si pitanje — bi li se zaključak promijenio kad biste razdvojili podatke po nekoj relevantnoj trećoj varijabli? Ako niste sigurni, provedite stratificiranu analizu i pogledajte.
 :::
 
 
@@ -824,7 +824,7 @@ U komunikološkim istraživanjima Simpsonov paradoks je čest jer se grupe (dobn
 
 Svi testovi koje smo do sada vidjeli podrazumijevaju nezavisna opažanja. Ali što kad imate uparene kategoričke podatke — iste ispitanike mjerene dva puta? Za to postoji McNemarov test, koji je za kategoričke podatke ono što je upareni t-test za numeričke.
 
-Zamislite sljedeću situaciju: 200 studenata je na početku semestra upitano preferiraju li online ili tiskane vijesti. Na kraju semestra postavljeno im je isto pitanje. Zanima vas je li se distribucija preferencija značajno promijenila.
+Zamislite sljedeću situaciju — 200 studenata je na početku semestra upitano preferiraju li online ili tiskane vijesti. Na kraju semestra postavljeno im je isto pitanje. Zanima vas je li se distribucija preferencija značajno promijenila.
 
 ```{r}
 #| label: mcnemar-podaci
@@ -879,7 +879,7 @@ Više ispitanika je prešlo s tiska na online nego obrnuto. McNemarov test govor
 ::: {.callout-important}
 ## Kad koristiti McNemarov test
 
-McNemarov test koristite kad imate iste ispitanike mjerene dva puta na istoj binarnoj varijabli. Primjeri iz komunikologije: preferencija medija prije i poslije kampanje, stav prema brandu prije i poslije izlaganja reklami, izbor komunikacijskog kanala prije i poslije redizajna. Ključno je da su podaci upareni — isti ljudi, dva mjerenja.
+McNemarov test koristite kad imate iste ispitanike mjerene dva puta na istoj binarnoj varijabli. Primjeri iz komunikologije uključuju preferenciju medija prije i poslije kampanje, stav prema brandu prije i poslije izlaganja reklami, izbor komunikacijskog kanala prije i poslije redizajna. Ključno je da su podaci upareni — isti ljudi, dva mjerenja.
 :::
 
 
@@ -1017,7 +1017,7 @@ tibble(
 )
 ```
 
-Analiza otkriva jasan obrazac. Veza između dobi i tipa medija je najjača i najvažnija: generacijski jaz u medijskim navikama je velik i statistički nedvojben. Regionalne razlike u digitalnim vs tradicionalnim medijima su znatno manje. Veza obrazovanja i preferencije sadržaja ovisi o uzorku. Za upravu je ključna poruka: budućnost je u digitalnim platformama, ali televizija i radio još uvijek imaju ogromnu publiku među starijim generacijama.
+Analiza otkriva jasan obrazac. Veza između dobi i tipa medija je najjača i najvažnija — generacijski jaz u medijskim navikama je velik i statistički nedvojben. Regionalne razlike u digitalnim vs tradicionalnim medijima su znatno manje. Veza obrazovanja i preferencije sadržaja ovisi o uzorku. Za upravu je ključna poruka — budućnost je u digitalnim platformama, ali televizija i radio još uvijek imaju ogromnu publiku među starijim generacijama.
 
 
 ## Pet pogrešaka koje ne smijete napraviti {#sec-pogreske}
@@ -1093,7 +1093,7 @@ Nakon BH korekcije, neki marginalno značajni rezultati mogu nestati. To je cije
 
 ## Funkcija koja obavlja sve za vas {#sec-funkcija}
 
-U praksi ćete hi-kvadrat analizu ponavljati za mnogo parova varijabli. Umjesto da svaki put ručno prolazite sve korake, napišimo funkciju koja automatizira cijeli postupak: provjeri pretpostavke, odabere odgovarajući test, izračuna veličinu učinka i ispiše izvještaj.
+U praksi ćete hi-kvadrat analizu ponavljati za mnogo parova varijabli. Umjesto da svaki put ručno prolazite sve korake, napišimo funkciju koja automatizira cijeli postupak — provjeri pretpostavke, odabere odgovarajući test, izračuna veličinu učinka i ispiše izvještaj.
 
 ```{r}
 #| label: chi-funkcija
@@ -1164,7 +1164,7 @@ tribble(
 
 **χ² statistika mjeri udaljenost od očekivanog.** Formula je χ² = Σ(O - E)² / E. Veći χ² znači jači dokaz protiv H₀. Stupnjevi slobode za test nezavisnosti su (r - 1)(c - 1).
 
-**Očekivane frekvencije su ključ za razumijevanje.** Pod H₀, E = (redak total × stupac total) / ukupno. Pretpostavka: sve E ≥ 5. Kad to nije zadovoljeno, koristite Fisherov egzaktni test.
+**Očekivane frekvencije su ključ za razumijevanje.** Pod H₀, E = (redak total × stupac total) / ukupno. Pretpostavka — sve E ≥ 5. Kad to nije zadovoljeno, koristite Fisherov egzaktni test.
 
 **Reziduali govore *gdje* je veza najjača.** Ukupni χ² kaže da veza postoji. Standardizirani reziduali s |r| > 2 identificiraju specifične ćelije. Uvijek ih izvijestite — jer urednica ne želi znati samo "postoji veza", nego *kakva* je.
 

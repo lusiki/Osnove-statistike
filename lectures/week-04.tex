@@ -1,0 +1,2442 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  croatian,
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Tjedan 6: Programiranje u R-u},
+  pdflang={hr},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Tjedan 6: Programiranje u R-u}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Funkcije, uvjeti i ponovljive analize}
+\author{}
+\date{2025-03-29}
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-note-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Ishodi učenja}, opacityback=0, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+Nakon ovog predavanja moći ćete
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Objasniti zašto su vlastite funkcije korisne za izbjegavanje
+  ponavljanja koda i smanjenje grešaka.
+\item
+  Napisati vlastitu R funkciju s argumentima i podrazumijevanim
+  (default) vrijednostima.
+\item
+  Koristiti uvjetne naredbe (\texttt{if}, \texttt{else},
+  \texttt{if\_else()}, \texttt{case\_when()}) za kontrolu toka programa.
+\item
+  Koristiti \texttt{for} petlje za ponavljanje operacija nad skupom
+  elemenata.
+\item
+  Koristiti \texttt{map()} funkcije iz paketa purrr kao modernu
+  alternativu petljama.
+\item
+  Primijeniti principe DRY (Don't Repeat Yourself) na pisanje
+  analitičkih skripti.
+\item
+  Organizirati analitičku skriptu s jasnom strukturom: učitavanje,
+  čišćenje, analiza, vizualizacija, izvoz.
+\item
+  Prepoznati kada je pisanje vlastite funkcije isplativije od kopiranja
+  koda.
+\end{enumerate}
+
+\end{tcolorbox}
+
+\section{Koliko programiranja treba
+komunikolog?}\label{koliko-programiranja-treba-komunikolog}
+
+Ovo pitanje zaslužuje iskren odgovor. Ne trebate postati softverski
+inženjer. Ne trebate znati pisati web aplikacije, baze podataka ili
+algoritme strojnog učenja. Ali trebate znati dovoljno programiranja da
+vaše analize budu \textbf{ponovljive}, \textbf{prilagodljive} i
+\textbf{manje podložne greškama}.
+
+Zamislite sljedeću situaciju. Radite analizu medijskih navika za
+klijenta. Napravili ste čišćenje podataka, deskriptivnu statistiku, osam
+grafova i izvještaj. Klijent je zadovoljan, ali tjedan dana kasnije
+kaže: ``Dobili smo još 200 odgovora na anketu, možete li ponoviti
+analizu s novim podacima?'' Ako ste sve radili ručno u Excelu, to znači
+ponoviti svaki korak od nule. Ako ste napisali R skriptu, to znači
+promijeniti jednu liniju koda (putanju do nove datoteke) i pokrenuti
+skriptu. Pet sekundi umjesto pet sati.
+
+Programiranje u kontekstu analize podataka nije apstraktno akademsko
+znanje. To je praktična vještina koja vas čini bržima, preciznijima i
+profesionalnijima. U ovom tjednu naučit ćemo tri temeljne programerske
+koncepte (funkcije, uvjetne naredbe i iteraciju) i pokazati kako ih
+koristiti u kontekstu koji je relevantan za komunikologe.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Naši podaci: newsletter kampanje}\label{sec-podaci}
+
+Ovaj tjedan koristimo dataset o 50 newsletter kampanja jednog
+informativnog portala. Za svaku kampanju imamo podatke o tipu, stilu
+naslova, vremenu slanja, broju pretplatnika, open rateu (postotak
+otvaranja), click rateu (postotak klikova) i drugim metrikama.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nl }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"../resources/datasets/newsletter\_campaigns.csv"}\NormalTok{)}
+\FunctionTok{glimpse}\NormalTok{(nl)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Rows: 50
+Columns: 13
+$ campaign_id      <chr> "NL-001", "NL-002", "NL-003", "NL-004", "NL-005", "NL~
+$ campaign_type    <chr> "special_report", "weekly_digest", "special_report", ~
+$ subject_style    <chr> "personalizirani", "hitno", "upitni", "informativni",~
+$ day_sent         <chr> "petak", "petak", "utorak", "ponedjeljak", "utorak", ~
+$ send_hour        <dbl> 8, 11, 8, 9, 20, 16, 13, 6, 11, 19, 11, 19, 9, 15, 18~
+$ subscribers      <dbl> 11770, 14266, 10652, 23113, 9847, 9150, 23450, 12798,~
+$ open_rate        <dbl> 0.2410, 0.2696, 0.3023, 0.2134, 0.2887, 0.1921, 0.288~
+$ click_rate       <dbl> 0.0858, 0.0065, 0.0309, 0.0656, 0.0273, 0.0651, 0.015~
+$ unsubscribe_rate <dbl> 0.00447, 0.00283, 0.00519, 0.00000, 0.00082, 0.00391,~
+$ word_count       <dbl> 499, 378, 437, 545, 559, 146, 428, 210, 309, 519, 376~
+$ n_links          <dbl> 2, 9, 4, 1, 3, 1, 10, 3, 8, 4, 9, 3, 8, 7, 5, 7, 1, 5~
+$ has_image        <lgl> TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALS~
+$ revenue          <dbl> 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 4659.53, 0.~
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{count}\NormalTok{(campaign\_type, }\AttributeTok{sort =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 2
+  campaign_type      n
+  <chr>          <int>
+1 special_report    17
+2 weekly_digest     12
+3 sponsored          8
+4 breaking_news      7
+5 event_promo        6
+\end{verbatim}
+
+Ovo je manji dataset od prethodnih tjedana, ali upravo to ga čini
+pogodnim za učenje programiranja. S 50 redova možete vidjeti svaki korak
+i razumjeti što vaš kod radi.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Zašto funkcije? Problem kopiranja
+koda}\label{sec-zasto-funkcije}
+
+Krenimo od konkretnog problema. Recimo da za svaki tip kampanje želite
+izračunati sažetak s prosjekom, medijanom i standardnom devijacijom open
+ratea. Jedan pristup je kopiranje koda.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Sažetak za weekly digest}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==} \StringTok{"weekly\_digest"}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{or\_prosjek =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_medijan =} \FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_sd =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 4
+      n or_prosjek or_medijan or_sd
+  <int>      <dbl>      <dbl> <dbl>
+1    12      0.289       0.29 0.066
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Sažetak za breaking news (kopiran kod s jednom promjenom)}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==} \StringTok{"breaking\_news"}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{or\_prosjek =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_medijan =} \FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_sd =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 4
+      n or_prosjek or_medijan or_sd
+  <int>      <dbl>      <dbl> <dbl>
+1     7      0.198      0.195 0.055
+\end{verbatim}
+
+Ovo radi, ali ima tri problema. Prvo, ako želite promijeniti izračun
+(recimo dodati trimmed mean), morate to napraviti na svakom mjestu gdje
+ste kopirali kod. Drugo, svako kopiranje je prilika za grešku. Možda
+zaboravite promijeniti ime kampanje na jednom mjestu. Treće, kad imate
+pet ili deset tipova kampanja, kod postaje nepregledano dugačak.
+
+Naravno, za ovaj specifični problem znamo elegantno rješenje:
+\texttt{group\_by()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{or\_prosjek =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_medijan =} \FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{or\_sd =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 5
+  campaign_type      n or_prosjek or_medijan or_sd
+  <chr>          <int>      <dbl>      <dbl> <dbl>
+1 breaking_news      7      0.198      0.195 0.055
+2 event_promo        6      0.25       0.23  0.086
+3 special_report    17      0.259      0.255 0.067
+4 sponsored          8      0.248      0.246 0.043
+5 weekly_digest     12      0.289      0.29  0.066
+\end{verbatim}
+
+Ali \texttt{group\_by()} ne rješava svaki problem. Kad trebate ponoviti
+složeniju analizu (koja uključuje čišćenje, više izračuna, graf i
+tablicu) za različite podskupove podataka, vlastite funkcije postaju
+nezamjenjive.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Pisanje vlastite funkcije}\label{sec-funkcije}
+
+Funkcija u R-u je objekt koji prima ulazne podatke (argumente), izvršava
+niz operacija i vraća rezultat. Već koristite funkcije svaki dan:
+\texttt{mean()}, \texttt{filter()}, \texttt{ggplot()} su sve funkcije
+koje je netko napisao. Sad ćete naučiti pisati vlastite.
+
+\subsection{Anatomija funkcije}\label{anatomija-funkcije}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija koja pretvara postotke u razlomke}
+\NormalTok{postotak\_u\_razlomak }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(postotak) \{}
+\NormalTok{  postotak }\SpecialCharTok{/} \DecValTok{100}
+\NormalTok{\}}
+
+\FunctionTok{postotak\_u\_razlomak}\NormalTok{(}\DecValTok{25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.25
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{postotak\_u\_razlomak}\NormalTok{(}\FloatTok{73.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.735
+\end{verbatim}
+
+Raščlanimo sintaksu. \texttt{postotak\_u\_razlomak} je ime funkcije (kao
+ime bilo kojeg objekta, dodjeljujemo ga s \texttt{\textless{}-}).
+Ključna riječ \texttt{function()} govori R-u da kreiramo funkciju.
+Unutar zagrada su argumenti (ulazni podatci). Unutar vitičastih zagrada
+\texttt{\{\}} je tijelo funkcije (operacije koje se izvršavaju). Zadnji
+izraz u tijelu je povratna vrijednost (ono što funkcija vraća).
+
+\subsection{Funkcija s više
+argumenata}\label{funkcija-s-viux161e-argumenata}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija za izračun engagement ratea}
+\NormalTok{engagement\_rate }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(clicks, opens) \{}
+\NormalTok{  rate }\OtherTok{\textless{}{-}}\NormalTok{ clicks }\SpecialCharTok{/}\NormalTok{ opens}
+  \FunctionTok{round}\NormalTok{(rate, }\DecValTok{4}\NormalTok{)}
+\NormalTok{\}}
+
+\FunctionTok{engagement\_rate}\NormalTok{(}\AttributeTok{clicks =} \DecValTok{150}\NormalTok{, }\AttributeTok{opens =} \DecValTok{1200}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.125
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{engagement\_rate}\NormalTok{(}\AttributeTok{clicks =} \DecValTok{80}\NormalTok{, }\AttributeTok{opens =} \DecValTok{500}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.16
+\end{verbatim}
+
+Funkcija prima dva argumenta i vraća zaokruženi omjer. Kad pozivate
+funkciju, argumente možete navesti po imenu (\texttt{clicks\ =\ 150})
+ili po poziciji. Po imenu je sigurnije jer nije bitno kojim redoslijedom
+ih navedete.
+
+\subsection{Default vrijednosti
+argumenata}\label{default-vrijednosti-argumenata}
+
+Ponekad želite da argument ima podrazumijevanu (default) vrijednost koju
+korisnik može promijeniti ako želi.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija za sažetak numeričke varijable}
+\NormalTok{sazetak\_varijable }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x, }\AttributeTok{decimale =} \DecValTok{2}\NormalTok{) \{}
+  \FunctionTok{tibble}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{length}\NormalTok{(x),}
+    \AttributeTok{n\_NA =} \FunctionTok{sum}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(x)),}
+    \AttributeTok{prosjek =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+    \AttributeTok{medijan =} \FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+    \AttributeTok{sd =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+    \AttributeTok{min =} \FunctionTok{round}\NormalTok{(}\FunctionTok{min}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+    \AttributeTok{max =} \FunctionTok{round}\NormalTok{(}\FunctionTok{max}\NormalTok{(x, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale)}
+\NormalTok{  )}
+\NormalTok{\}}
+
+\CommentTok{\# Korištenje s default decimala (2)}
+\FunctionTok{sazetak\_varijable}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{open\_rate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 7
+      n  n_NA prosjek medijan    sd   min   max
+  <int> <int>   <dbl>   <dbl> <dbl> <dbl> <dbl>
+1    50     0    0.25    0.25  0.07  0.11  0.41
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Korištenje s 4 decimale}
+\FunctionTok{sazetak\_varijable}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{open\_rate, }\AttributeTok{decimale =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 7
+      n  n_NA prosjek medijan     sd   min   max
+  <int> <int>   <dbl>   <dbl>  <dbl> <dbl> <dbl>
+1    50     0   0.255   0.252 0.0676 0.115 0.408
+\end{verbatim}
+
+Argument \texttt{decimale\ =\ 2} ima default vrijednost 2. Ako ga ne
+navedete pri pozivu, koristi se 2. Ako ga eksplicitno navedete, koristi
+se vaša vrijednost. Ovo čini funkciju fleksibilnom bez opterećivanja
+korisnika nepotrebnim odlukama.
+
+\subsection{Funkcija koja radi s
+tibbleom}\label{funkcija-koja-radi-s-tibbleom}
+
+Funkcije koje primaju cijeli tibble i koriste dplyr glagole unutar sebe
+su izuzetno korisne u praksi.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija za sažetak kampanje po tipu}
+\NormalTok{sazetak\_kampanje }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, tip) \{}
+\NormalTok{  data }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ tip,}
+      \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+      \AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+      \AttributeTok{prosjek\_ctr =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(click\_rate), }\DecValTok{4}\NormalTok{),}
+      \AttributeTok{ukupni\_doseg =} \FunctionTok{sum}\NormalTok{(subscribers),}
+      \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{    )}
+\NormalTok{\}}
+
+\FunctionTok{sazetak\_kampanje}\NormalTok{(nl, }\StringTok{"weekly\_digest"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 5
+  tip               n prosjek_or prosjek_ctr ukupni_doseg
+  <chr>         <int>      <dbl>       <dbl>        <dbl>
+1 weekly_digest    12      0.289       0.029       217303
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sazetak\_kampanje}\NormalTok{(nl, }\StringTok{"breaking\_news"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 5
+  tip               n prosjek_or prosjek_ctr ukupni_doseg
+  <chr>         <int>      <dbl>       <dbl>        <dbl>
+1 breaking_news     7      0.198      0.0382       120123
+\end{verbatim}
+
+Sad umjesto kopiranja pet blokova koda, pozivamo jednu funkciju s
+različitim argumentom. Ako želite promijeniti izračun (dodati novu
+metriku), mijenjate na jednom mjestu i promjena se automatski
+primjenjuje svugdje.
+
+\subsection{Funkcija koja vraća
+graf}\label{funkcija-koja-vraux107a-graf}
+
+Funkcije mogu vraćati bilo koji R objekt, uključujući ggplot grafove.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{graf\_distribucije }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, varijabla, naslov) \{}
+\NormalTok{  data }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ .data[[varijabla]])) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{bins =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =}\NormalTok{ naslov, }\AttributeTok{x =}\NormalTok{ varijabla, }\AttributeTok{y =} \StringTok{"Broj kampanja"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{\}}
+
+\FunctionTok{graf\_distribucije}\NormalTok{(nl, }\StringTok{"open\_rate"}\NormalTok{, }\StringTok{"Distribucija open ratea"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/funkcija-graf-1.pdf}}
+
+Konstrukcija \texttt{.data{[}{[}varijabla{]}{]}} omogućuje
+prosljeđivanje imena stupca kao teksta. Ovo je tehnički detalj tidyverse
+programiranja koji je koristan kad pišete funkcije koje rade s
+različitim stupcima.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{graf\_distribucije}\NormalTok{(nl, }\StringTok{"click\_rate"}\NormalTok{, }\StringTok{"Distribucija click ratea"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/funkcija-graf-2-1.pdf}}
+
+Ista funkcija, druga varijabla, novi graf. Ovo je suština DRY principa:
+napišete logiku jednom i koristite je koliko god puta trebate.
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-tip-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Praktični savjet}, opacityback=0, colbacktitle=quarto-callout-tip-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+Pravilo tri: ako ste kopirali isti blok koda tri puta ili više, vrijeme
+je da ga pretvorite u funkciju. Dva kopiranja su još prihvatljiva
+(ponekad je brže kopirati nego pisati funkciju), ali tri signaliziraju
+obrazac koji će se ponavljati i dalje. Funkcija vam štedi vrijeme
+dugoročno i smanjuje rizik od grešaka pri kopiranju.
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Uvjetne naredbe: if i else}\label{sec-uvjeti}
+
+Uvjetne naredbe omogućuju R-u da donese odluku: ako je uvjet ispunjen,
+napravi jedno, inače napravi drugo. Već smo koristili
+\texttt{if\_else()} i \texttt{case\_when()} unutar \texttt{mutate()} za
+rekodiranje varijabli. Sad učimo klasične \texttt{if}/\texttt{else}
+naredbe koje rade izvan tibble konteksta.
+
+\subsection{Osnovna sintaksa}\label{osnovna-sintaksa}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prosjek\_or }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{open\_rate)}
+
+\ControlFlowTok{if}\NormalTok{ (prosjek\_or }\SpecialCharTok{\textgreater{}} \FloatTok{0.25}\NormalTok{) \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Prosječni open rate je iznad 25\%, što je odličan rezultat.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\} }\ControlFlowTok{else}\NormalTok{ \{}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Prosječni open rate je ispod 25\%, ima prostora za poboljšanje.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Prosječni open rate je iznad 25%, što je odličan rezultat.
+\end{verbatim}
+
+R evaluira uvjet u zagradi. Ako je TRUE, izvršava kod u prvom bloku. Ako
+je FALSE, izvršava kod u else bloku. Funkcija \texttt{cat()} ispisuje
+tekst u konzolu (slično \texttt{print()}, ali bez dodatnih oznaka).
+
+\subsection{if, else if, else}\label{if-else-if-else}
+
+Za više od dva ishoda, koristite \texttt{else\ if}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ocijeni\_kampanju }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(open\_rate) \{}
+  \ControlFlowTok{if}\NormalTok{ (open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.30}\NormalTok{) \{}
+    \StringTok{"izvrsna"}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.20}\NormalTok{) \{}
+    \StringTok{"dobra"}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.10}\NormalTok{) \{}
+    \StringTok{"prosječna"}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+    \StringTok{"loša"}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\FunctionTok{ocijeni\_kampanju}\NormalTok{(}\FloatTok{0.35}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "izvrsna"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ocijeni\_kampanju}\NormalTok{(}\FloatTok{0.22}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "dobra"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ocijeni\_kampanju}\NormalTok{(}\FloatTok{0.08}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "loša"
+\end{verbatim}
+
+Uvjeti se provjeravaju redom, od vrha prema dnu. Čim je jedan uvjet
+TRUE, pripadajuća vrijednost se vraća i R ne provjerava preostale
+uvjete. Zato uvjete postavljamo od najstrožeg prema najblažem.
+
+\subsection{Razlika između if/else i
+if\_else()/case\_when()}\label{razlika-izmeux111u-ifelse-i-if_elsecase_when}
+
+Ovo je česta točka zbunjenosti. Postoje dva različita sustava uvjetnog
+izvršavanja u R-u i svaki ima svoje mjesto.
+
+Klasični \texttt{if}/\texttt{else} radi s jednom vrijednošću. Koristi se
+u funkcijama, skriptama i kontroli toka programa. Nije vektoriziran, što
+znači da ne može obrađivati cijeli stupac odjednom.
+
+\texttt{if\_else()} i \texttt{case\_when()} su vektorizirane funkcije.
+Rade s cijelim vektorom (stupcem) odjednom i koriste se unutar
+\texttt{mutate()} za rekodiranje varijabli u tibbleu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# if\_else() unutar mutate: radi na cijelom stupcu}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{ocjena =} \FunctionTok{if\_else}\NormalTok{(open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.25}\NormalTok{, }\StringTok{"iznad prosjeka"}\NormalTok{, }\StringTok{"ispod prosjeka"}\NormalTok{)}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{count}\NormalTok{(ocjena)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 2 x 2
+  ocjena             n
+  <chr>          <int>
+1 ispod prosjeka    25
+2 iznad prosjeka    25
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Klasični if/else: radi s jednom vrijednošću}
+\CommentTok{\# (koristili smo ga u funkciji ocijeni\_kampanju)}
+\end{Highlighting}
+\end{Shaded}
+
+Pravilo je jednostavno. Unutar \texttt{mutate()} koristite
+\texttt{if\_else()} ili \texttt{case\_when()}. Izvan \texttt{mutate()},
+u funkcijama i skriptama, koristite klasični \texttt{if}/\texttt{else}.
+
+\subsection{Uvjeti u funkcijama: validacija
+ulaza}\label{uvjeti-u-funkcijama-validacija-ulaza}
+
+Praktična primjena \texttt{if}/\texttt{else} u funkcijama je provjera
+jesu li ulazni podaci ispravni.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{izracunaj\_ctr }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(clicks, impressions) \{}
+  \ControlFlowTok{if}\NormalTok{ (impressions }\SpecialCharTok{\textless{}=} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{warning}\NormalTok{(}\StringTok{"Broj impresija mora biti pozitivan. Vraćam NA."}\NormalTok{)}
+    \FunctionTok{return}\NormalTok{(}\ConstantTok{NA\_real\_}\NormalTok{)}
+\NormalTok{  \}}
+  
+  \ControlFlowTok{if}\NormalTok{ (clicks }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{warning}\NormalTok{(}\StringTok{"Broj klikova ne može biti negativan. Vraćam NA."}\NormalTok{)}
+    \FunctionTok{return}\NormalTok{(}\ConstantTok{NA\_real\_}\NormalTok{)}
+\NormalTok{  \}}
+  
+  \FunctionTok{round}\NormalTok{(clicks }\SpecialCharTok{/}\NormalTok{ impressions, }\DecValTok{4}\NormalTok{)}
+\NormalTok{\}}
+
+\FunctionTok{izracunaj\_ctr}\NormalTok{(}\DecValTok{150}\NormalTok{, }\DecValTok{5000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.03
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{izracunaj\_ctr}\NormalTok{(}\DecValTok{150}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{izracunaj\_ctr}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{10}\NormalTok{, }\DecValTok{5000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] NA
+\end{verbatim}
+
+Funkcija \texttt{warning()} ispisuje upozorenje ali ne zaustavlja
+izvršavanje. Funkcija \texttt{return()} eksplicitno vraća vrijednost i
+izlazi iz funkcije. Bez \texttt{return()}, funkcija bi nastavila
+izvršavanje i pokušala podijeliti s nulom.
+
+Validacija ulaza je ono što razdvaja robusne funkcije od krhkih. Kad
+pišete funkciju za sebe, možda znate da nikad nećete unijeti negativan
+broj. Ali kad tu funkciju koristi netko drugi (ili vi za šest mjeseci,
+kad ste zaboravili detalje), validacija sprečava tihe greške.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{For petlje: ponavljanje operacija}\label{sec-for}
+
+Petlja je naredba koja ponavlja blok koda za svaki element u skupu.
+\texttt{for} petlja u R-u ima jednostavnu sintaksu.
+
+\subsection{Osnovna for petlja}\label{osnovna-for-petlja}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tipovi }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type)}
+
+\ControlFlowTok{for}\NormalTok{ (tip }\ControlFlowTok{in}\NormalTok{ tipovi) \{}
+\NormalTok{  n }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}} \FunctionTok{nrow}\NormalTok{()}
+  \FunctionTok{cat}\NormalTok{(tip, }\StringTok{":"}\NormalTok{, n, }\StringTok{"kampanja}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+special_report : 17 kampanja
+weekly_digest : 12 kampanja
+breaking_news : 7 kampanja
+sponsored : 8 kampanja
+event_promo : 6 kampanja
+\end{verbatim}
+
+R prolazi kroz svaki element vektora \texttt{tipovi}, dodjeljuje ga
+varijabli \texttt{tip}, i izvršava kod u tijelu petlje. Kad se tijelo
+izvrši za zadnji element, petlja završava.
+
+\subsection{For petlja za generiranje
+rezultata}\label{for-petlja-za-generiranje-rezultata}
+
+Čest obrazac je korištenje petlje za prikupljanje rezultata u listu ili
+tibble.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Inicijalizirajte praznu listu za rezultate}
+\NormalTok{rezultati }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{ (tip }\ControlFlowTok{in}\NormalTok{ tipovi) \{}
+\NormalTok{  saz }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ tip,}
+      \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+      \AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+      \AttributeTok{prosjek\_ctr =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(click\_rate), }\DecValTok{4}\NormalTok{)}
+\NormalTok{    )}
+  
+\NormalTok{  rezultati[[tip]] }\OtherTok{\textless{}{-}}\NormalTok{ saz}
+\NormalTok{\}}
+
+\CommentTok{\# Spojite sve rezultate u jedan tibble}
+\FunctionTok{bind\_rows}\NormalTok{(rezultati)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 4
+  tip                n prosjek_or prosjek_ctr
+  <chr>          <int>      <dbl>       <dbl>
+1 special_report    17      0.259      0.0519
+2 weekly_digest     12      0.289      0.029 
+3 breaking_news      7      0.198      0.0382
+4 sponsored          8      0.248      0.0223
+5 event_promo        6      0.25       0.0294
+\end{verbatim}
+
+Kreiramo praznu listu \texttt{rezultati}, u svakoj iteraciji računamo
+sažetak i pohranjujemo ga u listu pod imenom tipa kampanje, a na kraju
+sve spajamo u jedan tibble s \texttt{bind\_rows()}.
+
+\subsection{For petlja za generiranje
+grafova}\label{for-petlja-za-generiranje-grafova}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generiranje grafa za svaki tip kampanje}
+\ControlFlowTok{for}\NormalTok{ (tip }\ControlFlowTok{in} \FunctionTok{c}\NormalTok{(}\StringTok{"weekly\_digest"}\NormalTok{, }\StringTok{"breaking\_news"}\NormalTok{)) \{}
+\NormalTok{  p }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ open\_rate)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{bins =} \DecValTok{8}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}
+      \AttributeTok{title =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Open rate:"}\NormalTok{, tip),}
+      \AttributeTok{x =} \StringTok{"Open rate"}\NormalTok{,}
+      \AttributeTok{y =} \StringTok{"Broj"}
+\NormalTok{    ) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+  
+  \FunctionTok{print}\NormalTok{(p)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/for-grafovi-1.pdf}}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/for-grafovi-2.pdf}}
+
+Unutar for petlje, ggplot grafove morate eksplicitno ispisati s
+\texttt{print()}. Izvan petlje, R automatski ispisuje zadnji objekt, ali
+unutar petlje to ne radi. Ovo je čest izvor frustracije za početnike.
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-important-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Važna napomena}, opacityback=0, colbacktitle=quarto-callout-important-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+For petlje u R-u nisu pogrešne ni zastarjele, ali za većinu zadataka u
+tidyverse ekosustavu postoje elegantnije alternative.
+\texttt{group\_by()\ \textbar{}\textgreater{}\ summarise()} zamjenjuje
+petlje za grupirane sažetke. \texttt{across()} zamjenjuje petlje za
+primjenu iste operacije na više stupaca. \texttt{map()} iz paketa purrr
+zamjenjuje petlje za primjenu funkcije na svaki element liste ili
+vektora. Petlje koristite kad alternative ne postoje ili kad je petlja
+jasnija (što se ponekad događa).
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{map(): moderna alternativa petljama}\label{sec-map}
+
+Paket purrr (dio tidyverse) pruža obitelj \texttt{map()} funkcija koje
+primjenjuju funkciju na svaki element vektora ili liste. Rezultat ovisi
+o varijanti map-a koju koristite.
+
+\subsection{Osnovni map()}\label{osnovni-map}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tipovi }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type)}
+
+\CommentTok{\# map() vraća listu}
+\NormalTok{rezultati }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(tipovi, }\ControlFlowTok{function}\NormalTok{(tip) \{}
+\NormalTok{  nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ tip,}
+      \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+      \AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{    )}
+\NormalTok{\})}
+
+\FunctionTok{bind\_rows}\NormalTok{(rezultati)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 3
+  tip                n prosjek_or
+  <chr>          <int>      <dbl>
+1 special_report    17      0.259
+2 weekly_digest     12      0.289
+3 breaking_news      7      0.198
+4 sponsored          8      0.248
+5 event_promo        6      0.25 
+\end{verbatim}
+
+\texttt{map()} prima vektor (ili listu) i funkciju, primjenjuje funkciju
+na svaki element i vraća listu rezultata. Ovo je funkcionalni ekvivalent
+for petlje ali u kompaktnijem obliku.
+
+\subsection{Skraćena lambda
+sintaksa}\label{skraux107ena-lambda-sintaksa}
+
+Umjesto \texttt{function(tip)\ \{\ ...\ \}} možete koristiti skraćenu
+lambda sintaksu s tildom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Skraćena lambda sintaksa: \textbackslash{}(x) umjesto function(x)}
+\NormalTok{rezultati }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(tipovi, \textbackslash{}(tip) \{}
+\NormalTok{  nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{tip =}\NormalTok{ tip, }\AttributeTok{n =} \FunctionTok{n}\NormalTok{(), }\AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{))}
+\NormalTok{\})}
+
+\FunctionTok{bind\_rows}\NormalTok{(rezultati)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 3
+  tip                n prosjek_or
+  <chr>          <int>      <dbl>
+1 special_report    17      0.259
+2 weekly_digest     12      0.289
+3 breaking_news      7      0.198
+4 sponsored          8      0.248
+5 event_promo        6      0.25 
+\end{verbatim}
+
+Notacija \texttt{\textbackslash{}(tip)} je R-ova nova (od verzije 4.1)
+skraćenica za \texttt{function(tip)}. Obje verzije rade identično, ali
+\texttt{\textbackslash{}(x)} je kraća za pisanje.
+
+\subsection{Varijante map-a}\label{varijante-map-a}
+
+\texttt{map()} uvijek vraća listu. Kad znate kakav tip rezultata
+očekujete, koristite specifičniju varijantu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# map\_dbl() vraća numerički vektor}
+\NormalTok{prosjeci }\OtherTok{\textless{}{-}} \FunctionTok{map\_dbl}\NormalTok{(tipovi, \textbackslash{}(tip) \{}
+\NormalTok{  nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{pull}\NormalTok{(open\_rate) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mean}\NormalTok{()}
+\NormalTok{\})}
+
+\FunctionTok{tibble}\NormalTok{(}\AttributeTok{tip =}\NormalTok{ tipovi, }\AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(prosjeci, }\DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 2
+  tip            prosjek_or
+  <chr>               <dbl>
+1 special_report      0.259
+2 weekly_digest       0.289
+3 breaking_news       0.198
+4 sponsored           0.248
+5 event_promo         0.25 
+\end{verbatim}
+
+\texttt{map\_dbl()} vraća numerički (double) vektor umjesto liste.
+\texttt{map\_chr()} vraća tekstualni vektor. \texttt{map\_lgl()} vraća
+logički. \texttt{map\_df()} vraća tibble (spaja sve rezultate).
+Koristite specifičnu varijantu kad god možete jer je rezultat
+predvidljiviji i jednostavniji za daljnji rad.
+
+\subsection{map() unutar tibble radnog
+toka}\label{map-unutar-tibble-radnog-toka}
+
+Najelegantnija primjena \texttt{map()} je unutar tibble radnog toka,
+kombinirano s \texttt{nest()} i \texttt{unnest()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{nest}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{map\_dbl}\NormalTok{(data, nrow),}
+    \AttributeTok{prosjek\_or =} \FunctionTok{map\_dbl}\NormalTok{(data, \textbackslash{}(df) }\FunctionTok{mean}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{open\_rate)),}
+    \AttributeTok{prosjek\_ctr =} \FunctionTok{map\_dbl}\NormalTok{(data, \textbackslash{}(df) }\FunctionTok{mean}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{click\_rate))}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{data) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{c}\NormalTok{(prosjek\_or, prosjek\_ctr), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{4}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 4
+# Groups:   campaign_type [5]
+  campaign_type      n prosjek_or prosjek_ctr
+  <chr>          <dbl>      <dbl>       <dbl>
+1 special_report    17      0.259      0.0519
+2 weekly_digest     12      0.289      0.029 
+3 breaking_news      7      0.198      0.0382
+4 sponsored          8      0.248      0.0223
+5 event_promo        6      0.250      0.0294
+\end{verbatim}
+
+Funkcija \texttt{nest()} pakira podatke svake grupe u zasebni tibble
+unutar liste-stupca \texttt{data}. Zatim \texttt{map\_dbl()} primjenjuje
+funkciju na svaki od tih ugniježđenih tibbleova. Rezultat je jedan redak
+po grupi s izračunatim metrikama.
+
+Ovo je napredni obrazac koji ćete cijeniti kad budete radili složenije
+analize (na primjer, fitanje zasebnog regresijskog modela za svaku grupu
+u tjednu 14).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{DRY princip i organizacija skripte}\label{sec-dry}
+
+DRY (Don't Repeat Yourself) je programerski princip koji kaže da svaka
+informacija u kodu treba postojati na jednom mjestu. Kad se ponavljate,
+stvarate više točaka koje trebate ažurirati kad nešto promijenite, a to
+je recept za greške.
+
+\subsection{Primjer: parametri na jednom
+mjestu}\label{primjer-parametri-na-jednom-mjestu}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PARAMETRI (mijenjajte ovdje, promjena se propagira svugdje)}
+\NormalTok{min\_kampanja\_za\_analizu }\OtherTok{\textless{}{-}} \DecValTok{5}
+\NormalTok{decimale }\OtherTok{\textless{}{-}} \DecValTok{3}
+\NormalTok{boja\_grafova }\OtherTok{\textless{}{-}} \StringTok{"steelblue"}
+\NormalTok{kategorije\_interesa }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"weekly\_digest"}\NormalTok{, }\StringTok{"breaking\_news"}\NormalTok{, }\StringTok{"special\_report"}\NormalTok{)}
+
+\CommentTok{\# ANALIZA (koristi parametre odozgo)}
+\NormalTok{nl\_filtered }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{\%in\%}\NormalTok{ kategorije\_interesa)}
+
+\NormalTok{nl\_filtered }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{prosjek\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), decimale),}
+    \AttributeTok{prosjek\_ctr =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(click\_rate), decimale),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(n }\SpecialCharTok{\textgreater{}=}\NormalTok{ min\_kampanja\_za\_analizu)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 3 x 4
+  campaign_type      n prosjek_or prosjek_ctr
+  <chr>          <int>      <dbl>       <dbl>
+1 breaking_news      7      0.198       0.038
+2 special_report    17      0.259       0.052
+3 weekly_digest     12      0.289       0.029
+\end{verbatim}
+
+Svi ključni parametri su definirani na jednom mjestu na vrhu. Kad
+klijent kaže ``pokaži mi analizu samo za weekly digest i special
+report'', mijenjate jednu liniju i cijela analiza se ažurira. Ovo je
+fundamentalno drugačije od traženja i zamjenjivanja vrijednosti
+razbacanih po cijelom kodu.
+
+\subsection{Struktura analitičke
+skripte}\label{struktura-analitiux10dke-skripte}
+
+Dobro organizirana skripta ima jasne sekcije. Svaka sekcija radi jednu
+stvar i jasno je označena.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ============================================}
+\CommentTok{\# Analiza newsletter kampanja}
+\CommentTok{\# Autor: Ime Prezime}
+\CommentTok{\# Datum: 2025{-}03{-}29}
+\CommentTok{\# Opis: Sažetak performansi email kampanja}
+\CommentTok{\# ============================================}
+
+\CommentTok{\# 1. PAKETI {-}{-}{-}{-}}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\CommentTok{\# 2. PARAMETRI {-}{-}{-}{-}}
+\NormalTok{input\_file }\OtherTok{\textless{}{-}} \StringTok{"../resources/datasets/newsletter\_campaigns.csv"}
+\NormalTok{output\_dir }\OtherTok{\textless{}{-}} \StringTok{"../outputs/"}
+\NormalTok{min\_n }\OtherTok{\textless{}{-}} \DecValTok{5}
+
+\CommentTok{\# 3. UČITAVANJE {-}{-}{-}{-}}
+\NormalTok{raw }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(input\_file)}
+
+\CommentTok{\# 4. ČIŠĆENJE {-}{-}{-}{-}}
+\NormalTok{clean }\OtherTok{\textless{}{-}}\NormalTok{ raw }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(open\_rate)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{campaign\_type =} \FunctionTok{factor}\NormalTok{(campaign\_type),}
+    \AttributeTok{ocjena =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{      open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.30} \SpecialCharTok{\textasciitilde{}} \StringTok{"izvrsna"}\NormalTok{,}
+\NormalTok{      open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.20} \SpecialCharTok{\textasciitilde{}} \StringTok{"dobra"}\NormalTok{,}
+\NormalTok{      open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.10} \SpecialCharTok{\textasciitilde{}} \StringTok{"prosjecna"}\NormalTok{,}
+      \AttributeTok{.default =} \StringTok{"losa"}
+\NormalTok{    )}
+\NormalTok{  )}
+
+\CommentTok{\# 5. ANALIZA {-}{-}{-}{-}}
+\NormalTok{sazetak }\OtherTok{\textless{}{-}}\NormalTok{ clean }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{M\_or =} \FunctionTok{mean}\NormalTok{(open\_rate),}
+    \AttributeTok{SD\_or =} \FunctionTok{sd}\NormalTok{(open\_rate),}
+    \AttributeTok{M\_ctr =} \FunctionTok{mean}\NormalTok{(click\_rate),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}
+
+\CommentTok{\# 6. VIZUALIZACIJA {-}{-}{-}{-}}
+\NormalTok{graf }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(clean, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ campaign\_type, }\AttributeTok{y =}\NormalTok{ open\_rate)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Open rate po tipu kampanje"}\NormalTok{)}
+
+\CommentTok{\# 7. IZVOZ {-}{-}{-}{-}}
+\FunctionTok{write\_csv}\NormalTok{(sazetak, }\FunctionTok{paste0}\NormalTok{(output\_dir, }\StringTok{"sazetak\_kampanja.csv"}\NormalTok{))}
+\FunctionTok{ggsave}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(output\_dir, }\StringTok{"boxplot\_open\_rate.png"}\NormalTok{), graf, }\AttributeTok{width =} \DecValTok{8}\NormalTok{, }\AttributeTok{height =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Komentari s četiri crtice (\texttt{\#\ 1.\ PAKETI\ -\/-\/-\/-}) stvaraju
+navigacijske oznake u Positronu (ili RStudiju) koje omogućuju brzo
+skakanje između sekcija. Ovo je konvencija, ne sintaktičko pravilo, ali
+je široko prihvaćena u R zajednici.
+
+\begin{quote}
+Vaša skripta je vaš laboratorijski dnevnik. Svaki korak je dokumentiran,
+svaka odluka komentirana, svaki rezultat ponovljiv. Netko (uključujući
+vas za šest mjeseci) mora moći pokrenuti skriptu od početka do kraja i
+dobiti identične rezultate.
+\end{quote}
+
+\subsection{Pomoćne funkcije na vrhu
+skripte}\label{pomoux107ne-funkcije-na-vrhu-skripte}
+
+Kad imate funkcije koje koristite na više mjesta u analizi, definirajte
+ih odmah nakon učitavanja paketa. Ovo ih čini vidljivima kroz cijelu
+skriptu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Pomoćne funkcije za newsletter analizu}
+\NormalTok{sazetak\_metrike }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, metrika, }\AttributeTok{decimale =} \DecValTok{3}\NormalTok{) \{}
+\NormalTok{  data }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(.data[[metrika]], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+      \AttributeTok{Med =} \FunctionTok{round}\NormalTok{(}\FunctionTok{median}\NormalTok{(.data[[metrika]], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+      \AttributeTok{SD =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(.data[[metrika]], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+      \AttributeTok{Min =} \FunctionTok{round}\NormalTok{(}\FunctionTok{min}\NormalTok{(.data[[metrika]], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale),}
+      \AttributeTok{Max =} \FunctionTok{round}\NormalTok{(}\FunctionTok{max}\NormalTok{(.data[[metrika]], }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), decimale)}
+\NormalTok{    )}
+\NormalTok{\}}
+
+\NormalTok{ocjena\_kampanje }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(open\_rate) \{}
+  \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{    open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.30} \SpecialCharTok{\textasciitilde{}} \StringTok{"izvrsna"}\NormalTok{,}
+\NormalTok{    open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.20} \SpecialCharTok{\textasciitilde{}} \StringTok{"dobra"}\NormalTok{,}
+\NormalTok{    open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.10} \SpecialCharTok{\textasciitilde{}} \StringTok{"prosjecna"}\NormalTok{,}
+    \AttributeTok{.default =} \StringTok{"losa"}
+\NormalTok{  )}
+\NormalTok{\}}
+
+\CommentTok{\# Korištenje pomoćnih funkcija}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{sazetak\_metrike}\NormalTok{(}\StringTok{"open\_rate"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 6
+  campaign_type      M   Med    SD   Min   Max
+  <chr>          <dbl> <dbl> <dbl> <dbl> <dbl>
+1 breaking_news  0.198 0.195 0.055 0.115 0.281
+2 event_promo    0.25  0.23  0.086 0.161 0.408
+3 special_report 0.259 0.255 0.067 0.155 0.393
+4 sponsored      0.248 0.246 0.043 0.191 0.309
+5 weekly_digest  0.289 0.29  0.066 0.178 0.388
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ocjena =} \FunctionTok{ocjena\_kampanje}\NormalTok{(open\_rate)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{count}\NormalTok{(ocjena, }\AttributeTok{sort =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 3 x 2
+  ocjena        n
+  <chr>     <int>
+1 dobra        25
+2 prosjecna    14
+3 izvrsna      11
+\end{verbatim}
+
+Definirajući \texttt{ocjena\_kampanje()} kao funkciju, logiku
+rekodiranja pišete jednom. Ako se kriteriji promijene (recimo, prag za
+``izvrsno'' padne na 0.28), mijenjate na jednom mjestu.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Praktični primjer: automatizirana analiza po
+kampanjama}\label{sec-prakticni-primjer}
+
+Spojimo sve naučene koncepte u jednom praktičnom primjeru. Cilj je
+napisati kod koji za svaki tip kampanje generira sažetak tablica i graf,
+koristeći funkcije, map i DRY principe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija za kompletnu analizu jednog tipa kampanje}
+\NormalTok{analiziraj\_tip }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, tip) \{}
+\NormalTok{  podaci }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip)}
+  
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(podaci) }\SpecialCharTok{\textless{}} \DecValTok{3}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)  }\CommentTok{\# Preskoči tipove s premalo podataka}
+\NormalTok{  \}}
+  
+\NormalTok{  saz }\OtherTok{\textless{}{-}}\NormalTok{ podaci }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ tip,}
+      \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+      \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+      \AttributeTok{or\_SD =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+      \AttributeTok{ctr\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(click\_rate), }\DecValTok{4}\NormalTok{),}
+      \AttributeTok{prosj\_pretplatnika =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(subscribers), }\DecValTok{0}\NormalTok{),}
+      \AttributeTok{prosj\_rijeci =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(word\_count), }\DecValTok{0}\NormalTok{)}
+\NormalTok{    )}
+  
+\NormalTok{  saz}
+\NormalTok{\}}
+
+\CommentTok{\# Primjena na sve tipove}
+\NormalTok{svi\_tipovi }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type)}
+
+\NormalTok{rezultati }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(svi\_tipovi, \textbackslash{}(tip) }\FunctionTok{analiziraj\_tip}\NormalTok{(nl, tip)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{bind\_rows}\NormalTok{()}
+
+\NormalTok{rezultati }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(or\_M))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 7
+  tip                n  or_M or_SD  ctr_M prosj_pretplatnika prosj_rijeci
+  <chr>          <int> <dbl> <dbl>  <dbl>              <dbl>        <dbl>
+1 weekly_digest     12 0.289 0.066 0.029               18109          380
+2 special_report    17 0.259 0.067 0.0519              17581          486
+3 event_promo        6 0.25  0.086 0.0294              12938          210
+4 sponsored          8 0.248 0.043 0.0223              13609          204
+5 breaking_news      7 0.198 0.055 0.0382              17160          140
+\end{verbatim}
+
+Ovaj pristup ima nekoliko prednosti. Logika analize je enkapsulirana u
+jednu funkciju. Validacija (\texttt{if\ (nrow(podaci)\ \textless{}\ 3)})
+osigurava da ne radimo besmislene izračune na premalo podataka.
+\texttt{map()} elegantno primjenjuje funkciju na sve tipove. Rezultat je
+čist tibble sortiran po open rateu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Vizualizacija rezultata}
+\NormalTok{rezultati }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{tip =} \FunctionTok{fct\_reorder}\NormalTok{(tip, or\_M)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tip, }\AttributeTok{y =}\NormalTok{ or\_M)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_errorbar}\NormalTok{(}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{ymin =}\NormalTok{ or\_M }\SpecialCharTok{{-}}\NormalTok{ or\_SD, }\AttributeTok{ymax =}\NormalTok{ or\_M }\SpecialCharTok{+}\NormalTok{ or\_SD),}
+    \AttributeTok{width =} \FloatTok{0.2}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Prosječni open rate po tipu newsletter kampanje"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Stupac = prosjek, error bar = +/{-} 1 SD"}\NormalTok{,}
+    \AttributeTok{x =} \ConstantTok{NULL}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Open rate"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/prakticni-primjer-graf-1.pdf}}
+
+Error barovi (crte pogreške) prikazuju jednu standardnu devijaciju iznad
+i ispod prosjeka, dajući vizualni uvid u varijabilnost unutar svake
+kategorije. Breaking news kampanje imaju viši prosječni open rate ali i
+veću varijabilnost, dok su sponsored kampanje konzistentno niže.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-note-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Podsjetnik}, opacityback=0, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+U prvom dijelu naučili smo pisati vlastite funkcije, koristiti uvjetne
+naredbe, for petlje i map() iz paketa purrr. U ovom dijelu primjenjujemo
+te vještine na realne radne tokove: rad s više datoteka, debugging,
+Quarto izvještaji i kompletna automatizirana analiza.
+
+\end{tcolorbox}
+
+\section{Rad s više datoteka}\label{sec-vise-datoteka}
+
+U praksi, podaci rijetko dolaze u jednoj datoteci. Možda imate zasebne
+CSV datoteke za svaki mjesec, za svaku kampanju ili za svaki izvor
+podataka. Umjesto ručnog učitavanja svake datoteke, možete
+automatizirati taj proces koristeći koncepte koje smo upravo naučili.
+
+\subsection{Pronalaženje datoteka}\label{pronalaux17eenje-datoteka}
+
+Funkcija \texttt{list.files()} pronalazi datoteke u direktoriju po
+zadanom uzorku.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Popis svih CSV datoteka u datasets direktoriju}
+\NormalTok{csv\_datoteke }\OtherTok{\textless{}{-}} \FunctionTok{list.files}\NormalTok{(}
+  \AttributeTok{path =} \StringTok{"../resources/datasets/"}\NormalTok{,}
+  \AttributeTok{pattern =} \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{.csv$"}\NormalTok{,}
+  \AttributeTok{full.names =} \ConstantTok{TRUE}
+\NormalTok{)}
+
+\NormalTok{csv\_datoteke}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] "../resources/datasets/ab_test_headlines.csv"   
+ [2] "../resources/datasets/article_engagement.csv"  
+ [3] "../resources/datasets/instagram_ab_test.csv"   
+ [4] "../resources/datasets/media_habits_raw.csv"    
+ [5] "../resources/datasets/media_population.csv"    
+ [6] "../resources/datasets/media_trust.csv"         
+ [7] "../resources/datasets/newsletter_campaign.csv" 
+ [8] "../resources/datasets/newsletter_campaigns.csv"
+ [9] "../resources/datasets/social_media_survey.csv" 
+[10] "../resources/datasets/social_posts.csv"        
+[11] "../resources/datasets/tiktok_usage.csv"        
+\end{verbatim}
+
+Argument \texttt{pattern\ =\ "\textbackslash{}\textbackslash{}.csv\$"}
+koristi regularni izraz za pronalaženje datoteka koje završavaju s .csv.
+\texttt{full.names\ =\ TRUE} vraća kompletne putanje (ne samo imena
+datoteka), što je bitno jer ih trebamo za učitavanje.
+
+\subsection{Učitavanje više datoteka
+odjednom}\label{uux10ditavanje-viux161e-datoteka-odjednom}
+
+Kombinirajmo \texttt{list.files()}, \texttt{map()} i
+\texttt{bind\_rows()} za učitavanje i spajanje svih CSV datoteka u
+jednom koraku.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Učitaj sve CSV datoteke i spoji ih}
+\NormalTok{svi\_podaci }\OtherTok{\textless{}{-}}\NormalTok{ csv\_datoteke }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{map}\NormalTok{(\textbackslash{}(f) }\FunctionTok{read\_csv}\NormalTok{(f, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{bind\_rows}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Ovo je moćan obrazac. \texttt{map()} primjenjuje \texttt{read\_csv()} na
+svaku putanju, vraćajući listu tibbleova. \texttt{bind\_rows()} ih
+vertikalno spaja u jedan veliki tibble. Ako datoteke imaju iste stupce,
+rezultat je jednostavna konkatenacija. Ako se stupci razlikuju,
+\texttt{bind\_rows()} popunjava nedostajuće s NA.
+
+\subsection{Dodavanje informacije o
+izvoru}\label{dodavanje-informacije-o-izvoru}
+
+Često želite znati iz koje datoteke dolazi koji redak. Funkcija
+\texttt{set\_names()} pomaže.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Učitaj sve datoteke i dodaj stupac s imenom datoteke}
+\NormalTok{svi\_podaci }\OtherTok{\textless{}{-}}\NormalTok{ csv\_datoteke }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{set\_names}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{map}\NormalTok{(\textbackslash{}(f) }\FunctionTok{read\_csv}\NormalTok{(f, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{bind\_rows}\NormalTok{(}\AttributeTok{.id =} \StringTok{"izvor"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Argument \texttt{.id\ =\ "izvor"} u \texttt{bind\_rows()} kreira novi
+stupac \texttt{izvor} koji sadrži ime elementa liste (u ovom slučaju
+putanju datoteke). Ovo je korisno za praćenje porijekla podataka.
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-tip-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Praktični savjet}, opacityback=0, colbacktitle=quarto-callout-tip-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+Obrazac
+\texttt{list.files()\ \textbar{}\textgreater{}\ map(read\_csv)\ \textbar{}\textgreater{}\ bind\_rows()}
+je jedan od najkorisnijih obrazaca u cijelom R radnom toku. Naučite ga
+napamet. Koristit ćete ga svaki put kad dobijete podatke razdijeljene u
+više datoteka (mjesečni izvještaji, odvojene ankete, logovi po danima).
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Debugging: pronalaženje i ispravljanje
+grešaka}\label{sec-debugging}
+
+Greške su neizbježan dio programiranja. Pitanje nije hoćete li naletjeti
+na grešku, nego koliko ćete brzo identificirati i ispraviti problem. R
+daje poruke o greškama koje su ponekad jasne, a ponekad kriptične. Evo
+strategija za sustavno traženje problema.
+
+\subsection{Čitanje poruka o
+greškama}\label{ux10ditanje-poruka-o-greux161kama}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Tipična greška: objekt ne postoji}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(kampanja\_tip }\SpecialCharTok{==} \StringTok{"weekly\_digest"}\NormalTok{)}
+\CommentTok{\# Error: object \textquotesingle{}kampanja\_tip\textquotesingle{} not found}
+
+\CommentTok{\# Čitamo: R ne može naći objekt \textquotesingle{}kampanja\_tip\textquotesingle{}}
+\CommentTok{\# Rješenje: provjerimo imena stupaca}
+\FunctionTok{names}\NormalTok{(nl)}
+\CommentTok{\# Ah, stupac se zove \textquotesingle{}campaign\_type\textquotesingle{}, ne \textquotesingle{}kampanja\_tip\textquotesingle{}}
+\end{Highlighting}
+\end{Shaded}
+
+Poruka ``object not found'' gotovo uvijek znači jednu od tri stvari:
+pogrešno ime (tipfeler), objekt još nije kreiran (izvršili ste kod izvan
+redoslijeda) ili je objekt u drugom okruženju (na primjer, kreiran
+unutar funkcije ali ne i izvan nje).
+
+\subsection{Strategija: izoliraj
+problem}\label{strategija-izoliraj-problem}
+
+Kad imate dugački pipeline koji ne radi, razbijte ga na dijelove i
+pokrenite svaki zasebno.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Umjesto pokretanja cijelog pipelinea odjednom:}
+\CommentTok{\# nl |\textgreater{} filter(...) |\textgreater{} mutate(...) |\textgreater{} group\_by(...) |\textgreater{} summarise(...)}
+
+\CommentTok{\# Pokrenite korak po korak:}
+\NormalTok{korak1 }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==} \StringTok{"weekly\_digest"}\NormalTok{)}
+\NormalTok{korak1  }\CommentTok{\# Provjerite: izgleda li ovo kako očekujete?}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 12 x 13
+   campaign_id campaign_type subject_style   day_sent    send_hour subscribers
+   <chr>       <chr>         <chr>           <chr>           <dbl>       <dbl>
+ 1 NL-002      weekly_digest hitno           petak              11       14266
+ 2 NL-007      weekly_digest upitni          srijeda            13       23450
+ 3 NL-009      weekly_digest personalizirani subota             11       12444
+ 4 NL-011      weekly_digest personalizirani utorak             11       23941
+ 5 NL-016      weekly_digest informativni    cetvrtak           15       12188
+ 6 NL-022      weekly_digest hitno           utorak             18       12768
+ 7 NL-026      weekly_digest brojke          utorak              7       12035
+ 8 NL-032      weekly_digest personalizirani utorak             18       18310
+ 9 NL-034      weekly_digest brojke          cetvrtak           20       24014
+10 NL-035      weekly_digest hitno           ponedjeljak         7       19975
+11 NL-037      weekly_digest personalizirani nedjelja           18       20070
+12 NL-038      weekly_digest informativni    nedjelja           14       23842
+# i 7 more variables: open_rate <dbl>, click_rate <dbl>,
+#   unsubscribe_rate <dbl>, word_count <dbl>, n_links <dbl>, has_image <lgl>,
+#   revenue <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{korak2 }\OtherTok{\textless{}{-}}\NormalTok{ korak1 }\SpecialCharTok{|\textgreater{}} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{or\_pct =}\NormalTok{ open\_rate }\SpecialCharTok{*} \DecValTok{100}\NormalTok{)}
+\NormalTok{korak2 }\SpecialCharTok{|\textgreater{}} \FunctionTok{select}\NormalTok{(campaign\_id, open\_rate, or\_pct) }\SpecialCharTok{|\textgreater{}} \FunctionTok{head}\NormalTok{(}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 3 x 3
+  campaign_id open_rate or_pct
+  <chr>           <dbl>  <dbl>
+1 NL-002          0.270   27.0
+2 NL-007          0.288   28.8
+3 NL-009          0.283   28.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# OK, ovo radi. Idemo dalje...}
+
+\NormalTok{korak3 }\OtherTok{\textless{}{-}}\NormalTok{ korak2 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{prosjek =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(or\_pct), }\DecValTok{1}\NormalTok{)}
+\NormalTok{  )}
+\NormalTok{korak3}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 2
+      n prosjek
+  <int>   <dbl>
+1    12    28.9
+\end{verbatim}
+
+Pohranjivanjem svakog koraka u zasebni objekt, možete točno
+identificirati na kojem koraku nastaje problem. Kad pronađete i
+ispravite grešku, spojite korake natrag u pipeline.
+
+\subsection{print() i glimpse() kao
+dijagnostika}\label{print-i-glimpse-kao-dijagnostika}
+
+Unutar funkcija i petlji, dodajte privremene \texttt{print()} naredbe da
+vidite što se događa.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Debugging s print naredbama}
+\NormalTok{analiziraj\_debug }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, tip) \{}
+\NormalTok{  podaci }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip)}
+  \FunctionTok{cat}\NormalTok{(}\StringTok{"Tip:"}\NormalTok{, tip, }\StringTok{"| Redova:"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(podaci), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)  }\CommentTok{\# Debug ispis}
+  
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(podaci) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) \{}
+    \FunctionTok{cat}\NormalTok{(}\StringTok{"UPOZORENJE: nema podataka za tip"}\NormalTok{, tip, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    \FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{  \}}
+  
+\NormalTok{  podaci }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{summarise}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ tip,}
+      \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+      \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{    )}
+\NormalTok{\}}
+
+\CommentTok{\# Testirajte s poznatim i nepoznatim tipom}
+\FunctionTok{analiziraj\_debug}\NormalTok{(nl, }\StringTok{"weekly\_digest"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Tip: weekly_digest | Redova: 12 
+\end{verbatim}
+
+\begin{verbatim}
+# A tibble: 1 x 3
+  tip               n  or_M
+  <chr>         <int> <dbl>
+1 weekly_digest    12 0.289
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{analiziraj\_debug}\NormalTok{(nl, }\StringTok{"nepostojeci\_tip"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Tip: nepostojeci_tip | Redova: 0 
+UPOZORENJE: nema podataka za tip nepostojeci_tip 
+\end{verbatim}
+
+\begin{verbatim}
+NULL
+\end{verbatim}
+
+Kad ste riješili problem, uklonite debug ispise. Ostavljanje privremenih
+\texttt{cat()} i \texttt{print()} naredbi u gotovom kodu je loša praksa
+jer zatrpava konzolu nepotrebnim ispisom.
+
+\subsection{Česte greške i
+rješenja}\label{ux10deste-greux161ke-i-rjeux161enja}
+
+Pogledajmo najčešće greške koje ćete susresti i kako ih riješiti.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 1. "could not find function" {-}\textgreater{} paket nije učitan}
+\FunctionTok{summarise}\NormalTok{(nl, }\AttributeTok{n =} \FunctionTok{n}\NormalTok{())}
+\CommentTok{\# Rješenje: library(tidyverse) na početku}
+
+\CommentTok{\# 2. "unexpected symbol" {-}\textgreater{} nedostaje zarez, operator ili zagrada}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{x =}\NormalTok{ open\_rate }\AttributeTok{y =}\NormalTok{ click\_rate)  }\CommentTok{\# Nedostaje zarez}
+\CommentTok{\# Rješenje: mutate(x = open\_rate, y = click\_rate)}
+
+\CommentTok{\# 3. "+ ggplot" umjesto "|\textgreater{} ggplot"}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(open\_rate }\SpecialCharTok{\textgreater{}} \FloatTok{0.2}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Krivo: + umjesto |\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ open\_rate))}
+\CommentTok{\# Rješenje: koristiti |\textgreater{} do ggplot(), pa + za slojeve}
+
+\CommentTok{\# 4. "object of type \textquotesingle{}closure\textquotesingle{} is not subsettable"}
+\NormalTok{mean[}\DecValTok{1}\NormalTok{]  }\CommentTok{\# mean je funkcija, ne vektor}
+\CommentTok{\# Rješenje: provjerite jeste li slučajno prepisali ime varijable imenom funkcije}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{quote}
+Svaki iskusni programer bio je početnik koji je satima tražio zarez koji
+nedostaje. Debugging nije znak neznanja, nego sastavni dio posla.
+Razlika između početnika i iskusnog korisnika nije u tome što iskusni ne
+griješe, nego u tome da imaju sustavan pristup traženju grešaka.
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Quarto: integracija koda, teksta i rezultata}\label{sec-quarto}
+
+Do sada ste pisali R kod u skriptama (.R datoteke) koje proizvode
+tablice i grafove u konzoli. Quarto dokumenti (.qmd datoteke) omogućuju
+nešto moćnije: integraciju teksta, koda i rezultata u jedan dokument
+koji se renderira u HTML, PDF ili Word.
+
+Zapravo, svako predavanje na ovom kolegiju je Quarto dokument. Tekst
+koji čitate, kod koji vidite i grafovi koji se prikazuju nastaju iz
+jedne .qmd datoteke.
+
+\subsection{Struktura Quarto
+dokumenta}\label{struktura-quarto-dokumenta}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Quarto dokument ima tri dijela:}
+
+\CommentTok{\# 1. YAML zaglavlje (između {-}{-}{-} oznaka)}
+\CommentTok{\# {-}{-}{-}}
+\CommentTok{\# title: "Analiza newsletter kampanja"}
+\CommentTok{\# author: "Ime Prezime"}
+\CommentTok{\# date: today}
+\CommentTok{\# format: html}
+\CommentTok{\# {-}{-}{-}}
+
+\CommentTok{\# 2. Tekst u Markdown formatu}
+\CommentTok{\# \#\# Uvod}
+\CommentTok{\# Ova analiza ispituje performanse naših newsletter kampanja...}
+
+\CommentTok{\# 3. R code chunkovi (između \textasciigrave{}\textasciigrave{}\textasciigrave{} oznaka)}
+\CommentTok{\# \textasciigrave{}\textasciigrave{}\textasciigrave{}\{r\}}
+\CommentTok{\# library(tidyverse)}
+\CommentTok{\# nl \textless{}{-} read\_csv("newsletter\_campaigns.csv")}
+\CommentTok{\# \textasciigrave{}\textasciigrave{}\textasciigrave{}}
+\end{Highlighting}
+\end{Shaded}
+
+Kad pokrenete \texttt{quarto\ render}, Quarto izvršava R kod, hvata
+rezultate (tablice, grafove, ispis) i umeće ih u dokument zajedno s
+tekstom. Rezultat je profesionalan izvještaj u kojem su analiza i
+prezentacija neodvojivi.
+
+\subsection{Chunk opcije za kontrolu
+ispisa}\label{chunk-opcije-za-kontrolu-ispisa}
+
+Opcije unutar code chunkova kontroliraju što se prikazuje u dokumentu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# echo: true   {-}\textgreater{} prikaži kod u dokumentu}
+\CommentTok{\# echo: false  {-}\textgreater{} sakrij kod, prikaži samo rezultat}
+\CommentTok{\# eval: true   {-}\textgreater{} izvrši kod}
+\CommentTok{\# eval: false  {-}\textgreater{} ne izvršavaj (samo prikaži kod)}
+\CommentTok{\# message: false {-}\textgreater{} sakrij poruke paketa}
+\CommentTok{\# warning: false {-}\textgreater{} sakrij upozorenja}
+\CommentTok{\# fig{-}width: 8  {-}\textgreater{} širina grafa u inčima}
+\CommentTok{\# fig{-}height: 5 {-}\textgreater{} visina grafa u inčima}
+
+\CommentTok{\# Za izvještaj klijentu: echo: false (ne želi vidjeti kod)}
+\CommentTok{\# Za kolegicu analitičarku: echo: true (želi vidjeti kako ste to napravili)}
+\end{Highlighting}
+\end{Shaded}
+
+Ova fleksibilnost je ključna. Isti Quarto dokument možete renderirati s
+\texttt{echo:\ true} za interni tim (koji želi vidjeti kod) i s
+\texttt{echo:\ false} za klijenta (koji želi samo rezultate). Mijenjate
+jednu opciju u YAML zaglavlju i dobivate potpuno drugačiji dokument.
+
+\subsection{Inline R kod}\label{inline-r-kod}
+
+Osim code chunkova, R vrijednosti možete umetnuti direktno u tekst.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n\_kampanja }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(nl)}
+\NormalTok{prosjek\_or }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{open\_rate) }\SpecialCharTok{*} \DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{najbolji\_tip }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{or =} \FunctionTok{mean}\NormalTok{(open\_rate), }\AttributeTok{.groups =} \StringTok{"drop"}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{slice\_max}\NormalTok{(or) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{pull}\NormalTok{(campaign\_type)}
+\end{Highlighting}
+\end{Shaded}
+
+U Quarto dokumentu biste napisali tekst poput: ``Analizirali smo 50
+kampanja. Prosječni open rate je 25.5\%. Najbolji rezultat ima tip
+weekly\_digest.''
+
+Kad se dokument renderira, R vrijednosti se automatski umeću u tekst.
+Ako se podaci promijene, tekst se automatski ažurira. Nikad više ne
+morate ručno ažurirati brojke u izvještaju.
+
+\subsection{Quarto vs R skripta: kad koristiti
+što}\label{quarto-vs-r-skripta-kad-koristiti-ux161to}
+
+R skripta (.R) je pravi izbor kad je cilj izračun, transformacija ili
+generiranje outputa (tablice, grafovi, datoteke). Skripta je brza za
+izvršavanje i laka za debugging.
+
+Quarto dokument (.qmd) je pravi izbor kad je cilj komunikacija
+rezultata. Izvještaj za klijenta, akademski rad, interna prezentacija,
+kolegijalni materijal. Quarto integrira narativ i rezultate u jedinstven
+dokument.
+
+U praksi, mnogi analitičari koriste oboje: skripta za teški posao
+(čišćenje, modeliranje), Quarto za prezentaciju rezultata. Skripta
+generira čiste podatke i grafove, Quarto ih ugrađuje u priču.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Funkcionali za složenije radne tokove}\label{sec-funkcionali}
+
+Vratimo se purrr paketu i pogledajmo naprednije obrasce koji su korisni
+u praksi.
+
+\subsection{walk(): map() bez povratne
+vrijednosti}\label{walk-map-bez-povratne-vrijednosti}
+
+Ponekad želite izvršiti nešto za svaki element (na primjer, spremiti
+graf) ali ne trebate povratnu vrijednost. \texttt{walk()} je varijanta
+\texttt{map()} koja izvršava funkciju ali tiho odbacuje rezultat.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Spremi zaseban graf za svaki tip kampanje}
+\NormalTok{tipovi }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type)}
+
+\FunctionTok{walk}\NormalTok{(tipovi, \textbackslash{}(tip) \{}
+\NormalTok{  p }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ open\_rate)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{fill =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{bins =} \DecValTok{8}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Open rate:"}\NormalTok{, tip)) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+  
+  \FunctionTok{ggsave}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"graf\_"}\NormalTok{, tip, }\StringTok{".png"}\NormalTok{), p, }\AttributeTok{width =} \DecValTok{7}\NormalTok{, }\AttributeTok{height =} \DecValTok{4}\NormalTok{)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{walk()} je idiomatski R način za petlje koje proizvode popratne
+efekte (side effects) poput spremanja datoteka, ispisa na konzolu ili
+slanja emailova. Za razliku od \texttt{map()}, ne zatrpava konzolu
+listom NULL vrijednosti.
+
+\subsection{map2(): paralelna iteracija preko dva
+vektora}\label{map2-paralelna-iteracija-preko-dva-vektora}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Dva vektora: metrike i njihovi naslovi}
+\NormalTok{metrike }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"open\_rate"}\NormalTok{, }\StringTok{"click\_rate"}\NormalTok{)}
+\NormalTok{naslovi }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Open rate kampanja"}\NormalTok{, }\StringTok{"Click rate kampanja"}\NormalTok{)}
+
+\CommentTok{\# map2 iterira paralelno: prvi element s prvim, drugi s drugim}
+\NormalTok{rezultati }\OtherTok{\textless{}{-}} \FunctionTok{map2}\NormalTok{(metrike, naslovi, \textbackslash{}(metrika, naslov) \{}
+\NormalTok{  nl }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{sazetak\_metrike}\NormalTok{(metrika) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{metrika =}\NormalTok{ naslov)}
+\NormalTok{\})}
+
+\FunctionTok{bind\_rows}\NormalTok{(rezultati)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 2 x 6
+      M   Med    SD   Min   Max metrika            
+  <dbl> <dbl> <dbl> <dbl> <dbl> <chr>              
+1 0.255 0.252 0.068 0.115 0.408 Open rate kampanja 
+2 0.037 0.037 0.019 0.005 0.086 Click rate kampanja
+\end{verbatim}
+
+\texttt{map2()} prima dva vektora i iterira paralelno. Na prvoj
+iteraciji koristi \texttt{metrike{[}1{]}} i \texttt{naslovi{[}1{]}}, na
+drugoj \texttt{metrike{[}2{]}} i \texttt{naslovi{[}2{]}}, i tako dalje.
+Ovo je korisno kad imate parove ulaznih podataka.
+
+\subsection{imap(): iteracija s
+indeksom}\label{imap-iteracija-s-indeksom}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# imap daje i element i njegovo ime/indeks}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_split}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{set\_names}\NormalTok{(}\FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type) }\SpecialCharTok{|\textgreater{}} \FunctionTok{sort}\NormalTok{()) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{imap}\NormalTok{(\textbackslash{}(podaci, ime) \{}
+    \FunctionTok{tibble}\NormalTok{(}
+      \AttributeTok{tip =}\NormalTok{ ime,}
+      \AttributeTok{n =} \FunctionTok{nrow}\NormalTok{(podaci),}
+      \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(podaci}\SpecialCharTok{$}\NormalTok{open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{    )}
+\NormalTok{  \}) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{bind\_rows}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 3
+  tip                n  or_M
+  <chr>          <int> <dbl>
+1 breaking_news      7 0.198
+2 event_promo        6 0.25 
+3 special_report    17 0.259
+4 sponsored          8 0.248
+5 weekly_digest     12 0.289
+\end{verbatim}
+
+\texttt{imap()} je varijanta \texttt{map()} koja automatski proslijeđuje
+i element i njegovo ime (ili indeks). Korisna je kad trebate znati koji
+element trenutno obrađujete, na primjer za imenovanje rezultata ili za
+dijagnostiku.
+
+\subsection{possibly(): zaštita od
+grešaka}\label{possibly-zaux161tita-od-greux161aka}
+
+Kad primjenjujete funkciju na mnogo elemenata, jedna greška može srušiti
+cijeli pipeline. \texttt{possibly()} omotava funkciju u zaštitni sloj
+koji hvata greške i vraća default vrijednost umjesto da prekida
+izvršavanje.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Funkcija koja ponekad pada}
+\NormalTok{opasna\_funkcija }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(tip) \{}
+\NormalTok{  podaci }\OtherTok{\textless{}{-}}\NormalTok{ nl }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(podaci) }\SpecialCharTok{\textless{}} \DecValTok{3}\NormalTok{) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Premalo podataka!"}\NormalTok{)}
+  \FunctionTok{mean}\NormalTok{(podaci}\SpecialCharTok{$}\NormalTok{open\_rate)}
+\NormalTok{\}}
+
+\CommentTok{\# Bez zaštite: jedna greška ruši sve}
+\CommentTok{\# map\_dbl(c("weekly\_digest", "nepostojeci"), opasna\_funkcija)  \# Error!}
+
+\CommentTok{\# S zaštitom: greška vraća NA, ostali rezultati ostaju}
+\NormalTok{sigurna\_funkcija }\OtherTok{\textless{}{-}} \FunctionTok{possibly}\NormalTok{(opasna\_funkcija, }\AttributeTok{otherwise =} \ConstantTok{NA\_real\_}\NormalTok{)}
+
+\FunctionTok{map\_dbl}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"weekly\_digest"}\NormalTok{, }\StringTok{"nepostojeci"}\NormalTok{, }\StringTok{"breaking\_news"}\NormalTok{), sigurna\_funkcija)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.2886833        NA 0.1978286
+\end{verbatim}
+
+\texttt{possibly(f,\ otherwise\ =\ NA)} kreira novu funkciju koja radi
+isto kao \texttt{f}, ali umjesto da baci grešku, vraća
+\texttt{otherwise} vrijednost. Ovo je neprocjenjivo kad učitavate 50
+datoteka i jedna je korumpirana, ili kad analizirate 20 grupa i jedna
+ima nedovoljno podataka.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Kompletna analiza: automatizirani izvještaj o
+kampanjama}\label{sec-kompletna}
+
+Spojimo sve iz ovog predavanja u jednu koherentnu analizu. Cilj je
+napisati kod koji bi mogao biti tijelo Quarto izvještaja o performansama
+newsletter kampanja.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(patchwork)}
+
+\CommentTok{\# PARAMETRI}
+\NormalTok{min\_kampanja }\OtherTok{\textless{}{-}} \DecValTok{3}
+\NormalTok{decimale }\OtherTok{\textless{}{-}} \DecValTok{3}
+\NormalTok{fokus\_metrike }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"open\_rate"}\NormalTok{, }\StringTok{"click\_rate"}\NormalTok{, }\StringTok{"unsubscribe\_rate"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# POMOĆNE FUNKCIJE}
+\NormalTok{sazetak\_tipa }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, tip, }\AttributeTok{dec =} \DecValTok{3}\NormalTok{) \{}
+\NormalTok{  d }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(campaign\_type }\SpecialCharTok{==}\NormalTok{ tip)}
+  
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{nrow}\NormalTok{(d) }\SpecialCharTok{\textless{}}\NormalTok{ min\_kampanja) }\FunctionTok{return}\NormalTok{(}\ConstantTok{NULL}\NormalTok{)}
+  
+  \FunctionTok{tibble}\NormalTok{(}
+    \AttributeTok{tip =}\NormalTok{ tip,}
+    \AttributeTok{n =} \FunctionTok{nrow}\NormalTok{(d),}
+    \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{open\_rate), dec),}
+    \AttributeTok{or\_SD =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{open\_rate), dec),}
+    \AttributeTok{ctr\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{click\_rate), dec }\SpecialCharTok{+} \DecValTok{1}\NormalTok{),}
+    \AttributeTok{unsub\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{unsubscribe\_rate), dec }\SpecialCharTok{+} \DecValTok{2}\NormalTok{),}
+    \AttributeTok{prosj\_rijeci =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{word\_count), }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{udio\_sa\_slikom =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(d}\SpecialCharTok{$}\NormalTok{has\_image), }\DecValTok{2}\NormalTok{)}
+\NormalTok{  )}
+\NormalTok{\}}
+
+\NormalTok{graf\_usporedba }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, metrika, naslov, }\AttributeTok{boja =} \StringTok{"steelblue"}\NormalTok{) \{}
+\NormalTok{  data }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{fct\_reorder}\NormalTok{(campaign\_type, .data[[metrika]]),}
+               \AttributeTok{y =}\NormalTok{ .data[[metrika]])) }\SpecialCharTok{+}
+    \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ boja, }\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =}\NormalTok{ naslov, }\AttributeTok{x =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{y =}\NormalTok{ metrika) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ANALIZA}
+\NormalTok{tipovi }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(nl}\SpecialCharTok{$}\NormalTok{campaign\_type)}
+
+\CommentTok{\# Sažetak za sve tipove (s automatskim preskakanjem malih grupa)}
+\NormalTok{tablica\_sazetka }\OtherTok{\textless{}{-}} \FunctionTok{map}\NormalTok{(tipovi, \textbackslash{}(t) }\FunctionTok{sazetak\_tipa}\NormalTok{(nl, t, decimale)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{bind\_rows}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(or\_M))}
+
+\NormalTok{tablica\_sazetka}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 5 x 8
+  tip                n  or_M or_SD  ctr_M unsub_M prosj_rijeci udio_sa_slikom
+  <chr>          <int> <dbl> <dbl>  <dbl>   <dbl>        <dbl>          <dbl>
+1 weekly_digest     12 0.289 0.066 0.029  0.00331          380           0.67
+2 special_report    17 0.259 0.067 0.0519 0.00279          486           0.76
+3 event_promo        6 0.25  0.086 0.0294 0.00207          210           1   
+4 sponsored          8 0.248 0.043 0.0223 0.00645          204           0.75
+5 breaking_news      7 0.198 0.055 0.0382 0.00405          140           0.71
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Analiza po stilu naslova (unutar svake kampanje)}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(campaign\_type, subject\_style) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(n }\SpecialCharTok{\textgreater{}=} \DecValTok{2}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{pivot\_wider}\NormalTok{(}
+    \AttributeTok{names\_from =}\NormalTok{ subject\_style,}
+    \AttributeTok{values\_from =}\NormalTok{ or\_M}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 12 x 7
+   campaign_type      n informativni personalizirani upitni brojke  hitno
+   <chr>          <int>        <dbl>           <dbl>  <dbl>  <dbl>  <dbl>
+ 1 breaking_news      5        0.182          NA     NA     NA     NA    
+ 2 event_promo        2       NA               0.285 NA     NA     NA    
+ 3 event_promo        3       NA              NA      0.245 NA     NA    
+ 4 special_report     2       NA               0.242 NA      0.237 NA    
+ 5 special_report     4       NA              NA     NA     NA      0.329
+ 6 special_report     6        0.2            NA     NA     NA     NA    
+ 7 special_report     3       NA              NA      0.31  NA     NA    
+ 8 sponsored          3       NA              NA     NA      0.252 NA    
+ 9 sponsored          2       NA              NA     NA     NA      0.224
+10 weekly_digest      2        0.21           NA     NA      0.254 NA    
+11 weekly_digest      3       NA              NA     NA     NA      0.312
+12 weekly_digest      4       NA               0.328 NA     NA     NA    
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# VIZUALIZACIJA}
+\NormalTok{g1 }\OtherTok{\textless{}{-}} \FunctionTok{graf\_usporedba}\NormalTok{(nl, }\StringTok{"open\_rate"}\NormalTok{, }\StringTok{"Open rate po tipu"}\NormalTok{)}
+\NormalTok{g2 }\OtherTok{\textless{}{-}} \FunctionTok{graf\_usporedba}\NormalTok{(nl, }\StringTok{"click\_rate"}\NormalTok{, }\StringTok{"Click rate po tipu"}\NormalTok{, }\AttributeTok{boja =} \StringTok{"\#2a9d8f"}\NormalTok{)}
+
+\NormalTok{g1 }\SpecialCharTok{+}\NormalTok{ g2 }\SpecialCharTok{+}
+  \FunctionTok{plot\_annotation}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Performanse newsletter kampanja"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Usporedba open rate i click rate po tipu kampanje"}\NormalTok{,}
+    \AttributeTok{caption =} \FunctionTok{paste}\NormalTok{(}\StringTok{"N ="}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(nl), }\StringTok{"kampanja"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/kompletna-vizualizacija-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Odnos open rate i click rate}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ open\_rate, }\AttributeTok{y =}\NormalTok{ click\_rate, }\AttributeTok{color =}\NormalTok{ campaign\_type, }\AttributeTok{size =}\NormalTok{ subscribers)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_size\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{label\_comma}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Kampanje s višim open rateom tendiraju imati viši click rate"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Veličina točke proporcionalna broju pretplatnika"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Open rate"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Click rate"}\NormalTok{,}
+    \AttributeTok{color =} \StringTok{"Tip kampanje"}\NormalTok{,}
+    \AttributeTok{size =} \StringTok{"Pretplatnici"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{week-06_files/figure-pdf/kompletna-scatter-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Kada slati newsletter?}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{dio\_dana =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{      send\_hour }\SpecialCharTok{\textless{}} \DecValTok{10} \SpecialCharTok{\textasciitilde{}} \StringTok{"jutro (6{-}9)"}\NormalTok{,}
+\NormalTok{      send\_hour }\SpecialCharTok{\textless{}} \DecValTok{14} \SpecialCharTok{\textasciitilde{}} \StringTok{"prijepodne (10{-}13)"}\NormalTok{,}
+\NormalTok{      send\_hour }\SpecialCharTok{\textless{}} \DecValTok{18} \SpecialCharTok{\textasciitilde{}} \StringTok{"poslijepodne (14{-}17)"}\NormalTok{,}
+      \AttributeTok{.default =} \StringTok{"navečer (18+)"}
+\NormalTok{    )}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(dio\_dana) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{or\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{ctr\_M =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(click\_rate), }\DecValTok{4}\NormalTok{),}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(or\_M))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 4 x 4
+  dio_dana                 n  or_M  ctr_M
+  <chr>                <int> <dbl>  <dbl>
+1 navečer (18+)            9 0.277 0.0388
+2 poslijepodne (14-17)    15 0.26  0.04  
+3 prijepodne (10-13)      10 0.245 0.0307
+4 jutro (6-9)             16 0.243 0.0373
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# KLJUČNI NALAZ: koji faktori predviđaju open rate?}
+\NormalTok{nl }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{kor\_rijeci\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{cor}\NormalTok{(word\_count, open\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{kor\_linkovi\_ctr =} \FunctionTok{round}\NormalTok{(}\FunctionTok{cor}\NormalTok{(n\_links, click\_rate), }\DecValTok{3}\NormalTok{),}
+    \AttributeTok{kor\_pretplatnici\_or =} \FunctionTok{round}\NormalTok{(}\FunctionTok{cor}\NormalTok{(subscribers, open\_rate), }\DecValTok{3}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 1 x 3
+  kor_rijeci_or kor_linkovi_ctr kor_pretplatnici_or
+          <dbl>           <dbl>               <dbl>
+1         0.127          -0.239              -0.075
+\end{verbatim}
+
+Analiza otkriva nekoliko nalaza. Breaking news i kampanje s hitnim
+stilom naslova imaju najviši open rate, ali uz veću varijabilnost. Click
+rate ne prati savršeno open rate, što sugerira da su čimbenici koji
+navode ljude da otvore email (naslov, hitnost) različiti od onih koji ih
+navode da kliknu na sadržaj (relevantnost, format). Korelacija između
+broja riječi i open ratea govori o preferiranom formatu, dok veličina
+baze pretplatnika sama po sebi ne predviđa bolji angažman.
+
+Cijela ova analiza, od učitavanja podataka do gotovih grafova i nalaza,
+koristi principe koje smo naučili ovaj tjedan. Parametri su na jednom
+mjestu. Pomoćne funkcije enkapsuliraju ponovljivu logiku. map()
+automatizira iteraciju. Vizualizacija prati principe iz prošlog tjedna.
+I sve je napisano tako da se može pokrenuti ponovno s novim podacima bez
+ikakvih promjena u kodu (osim, eventualno, putanje do datoteke).
+
+\begin{quote}
+Kad pišete analizu, zamislite da ju netko pokreće prvi put, bez ikakvog
+konteksta. Može li taj netko razumjeti što kod radi, zašto, i kako
+interpretirati rezultate? Ako da, napisali ste dobru analizu.
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-important-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Ključni zaključci}, opacityback=0, colbacktitle=quarto-callout-important-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Funkcije su alat za izbjegavanje ponavljanja koda. Pravilo tri: ako
+  ste kopirali isti kod tri puta, pretvorite ga u funkciju. Default
+  vrijednosti argumenata čine funkcije fleksibilnima.
+\item
+  Klasični \texttt{if}/\texttt{else} radi s jednom vrijednošću (za
+  skripte i funkcije). \texttt{if\_else()} i \texttt{case\_when()} su
+  vektorizirani (za \texttt{mutate()}). Ne miješajte ih.
+\item
+  Validacija ulaza u funkcijama sprečava tihe greške. Koristite
+  \texttt{warning()} za upozorenja i \texttt{return()} za rano
+  izlaženje.
+\item
+  \texttt{for} petlje ponavljaju kod za svaki element. Unutar petlje,
+  grafove morate ispisati s \texttt{print()}. Za većinu zadataka postoje
+  elegantnije alternative.
+\item
+  \texttt{map()} iz paketa purrr je moderna alternativa petljama.
+  \texttt{map\_dbl()}, \texttt{map\_chr()} i \texttt{map\_lgl()} vraćaju
+  specifične tipove. \texttt{walk()} je za popratne efekte (spremanje
+  datoteka).
+\item
+  \texttt{map2()} iterira paralelno preko dva vektora. \texttt{imap()}
+  daje i element i njegovo ime. \texttt{possibly()} štiti od grešaka
+  unutar iteracije.
+\item
+  Obrazac
+  \texttt{list.files()\ \textbar{}\textgreater{}\ map(read\_csv)\ \textbar{}\textgreater{}\ bind\_rows()}
+  učitava i spaja više datoteka u jednom koraku.
+\item
+  Debugging zahtijeva sustavan pristup: čitanje poruka, izolacija
+  problema (korak po korak), privremeni \texttt{cat()}/\texttt{print()}
+  ispisi.
+\item
+  DRY princip: parametri na jednom mjestu, logika u funkcijama,
+  struktura skripte u jasnim sekcijama.
+\item
+  Quarto dokumenti integriraju tekst, kod i rezultate. Koristite ih za
+  izvještaje, radove i prezentacije. R skripte su za teški izračun,
+  Quarto za komunikaciju.
+\item
+  Chunk opcije (\texttt{echo}, \texttt{eval}, \texttt{message},
+  \texttt{warning}, \texttt{fig-width}) kontroliraju što se prikazuje u
+  renderiranom dokumentu. \texttt{echo:\ false} sakriva kod za klijente.
+\item
+  Cilj ponovljive analize: netko može pokrenuti vaš kod od početka do
+  kraja s novim podacima i dobiti ažurirane rezultate bez ručnih
+  promjena.
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colframe=quarto-callout-warning-color-frame, left=2mm, bottomrule=.15mm, toprule=.15mm, leftrule=.75mm, bottomtitle=1mm, colback=white, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Priprema za sljedeći tjedan}, opacityback=0, colbacktitle=quarto-callout-warning-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6, breakable, rightrule=.15mm]
+
+Sljedeći tjedan ulazimo u \textbf{uvod u vjerojatnost}: što je
+vjerojatnost, kako ju računamo, binomna i normalna distribucija. Ovo je
+konceptualni temelj za sve statističke testove koje ćemo raditi u drugom
+dijelu kolegija.
+
+Za pripremu:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Napišite vlastitu funkciju koja prima tibble i ime kategoričke
+  varijable te vraća tibble s brojem i udjelom (\%) svake kategorije.
+  Testirajte je na datasetu \texttt{newsletter\_campaigns.csv}.
+\item
+  Koristeći \texttt{map()}, generirajte sažetak open ratea za svaki dan
+  u tjednu (stupac \texttt{day\_sent}). Spojite rezultate u jedan
+  tibble.
+\item
+  Napišite kratki Quarto dokument (.qmd) koji učitava podatke, prikazuje
+  jedan graf i jednu tablicu, s popratnim tekstom. Renderirajte ga u
+  HTML.
+\item
+  Pročitajte poglavlje 9 iz Navarro (Learning Statistics with R) o
+  vjerojatnosti. Fokusirajte se na intuiciju, ne na formule.
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Dodatno čitanje}\label{dodatno-ux10ditanje}
+
+\textbf{Obavezno}
+
+Wickham, H. \& Grolemund, G. (2023). \emph{R for Data Science} (2nd
+edition), Chapters 26, 27 i 29. Besplatno dostupno na
+\href{https://r4ds.hadley.nz}{r4ds.hadley.nz}. Poglavlje 26 pokriva
+funkcije, poglavlje 27 iteraciju s purrr, poglavlje 29 Quarto dokumente.
+
+Navarro, D. (2018). \emph{Learning Statistics with R}, Chapter 8.
+Besplatno dostupno na
+\href{https://learningstatisticswithr.com/lsr-0.6.pdf}{learningstatisticswithr.com}.
+Osnove programiranja u R-u.
+
+\textbf{Preporučeno}
+
+Wickham, H. (2019). \emph{Advanced R} (2nd edition), Chapters 6 i 9.
+Besplatno dostupno na \href{https://adv-r.hadley.nz}{adv-r.hadley.nz}.
+Poglavlje 6 detaljno pokriva funkcije, poglavlje 9 funkcionalno
+programiranje (map i prijatelji).
+
+Quarto dokumentacija. Besplatno dostupno na
+\href{https://quarto.org}{quarto.org}. Kompletna dokumentacija za Quarto
+sustav sa tutorijalima za HTML, PDF i Word dokumente.
+
+Bryan, J. \& Hester, J. \emph{What They Forgot to Teach You About R}.
+Besplatno dostupno na \href{https://rstats.wtf}{rstats.wtf}. Praktični
+savjeti o organizaciji projekata, debugging-u i radnim tokovima koji se
+ne uče u udžbenicima statistike.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Pojmovnik}\label{pojmovnik}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Pojam
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Objašnjenje
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Funkcija & Objekt koji prima argumente, izvršava operacije i vraća
+rezultat. Definira se s \texttt{function()}. \\
+Argument & Ulazni podatak funkcije. Navodi se unutar zagrada pri
+definiciji i pozivu. \\
+Default vrijednost & Podrazumijevana vrijednost argumenta. Definira se s
+\texttt{=} u listi argumenata. \\
+Povratna vrijednost & Rezultat funkcije. Zadnji izraz u tijelu, ili
+eksplicitno s \texttt{return()}. \\
+\texttt{return()} & Eksplicitno vraća vrijednost i izlazi iz funkcije.
+Korisno za ranu validaciju. \\
+\texttt{if}/\texttt{else} & Uvjetna naredba za kontrolu toka. Radi s
+jednom vrijednošću (nije vektorizirana). \\
+\texttt{if\_else()} & Vektorizirana uvjetna funkcija za
+\texttt{mutate()}. Radi na cijelom stupcu. \\
+\texttt{case\_when()} & Vektorizirana funkcija za složeno rekodiranje s
+više uvjeta. \\
+\texttt{for} petlja & Ponavlja blok koda za svaki element u skupu.
+Sintaksa: \texttt{for\ (x\ in\ skup)\ \{\ ...\ \}}. \\
+\texttt{map()} & purrr funkcija koja primjenjuje funkciju na svaki
+element i vraća listu. \\
+\texttt{map\_dbl()} & Varijanta \texttt{map()} koja vraća numerički
+vektor. \\
+\texttt{map\_chr()} & Varijanta \texttt{map()} koja vraća tekstualni
+vektor. \\
+\texttt{map\_lgl()} & Varijanta \texttt{map()} koja vraća logički
+vektor. \\
+\texttt{map2()} & purrr funkcija za paralelnu iteraciju preko dva
+vektora. \\
+\texttt{imap()} & purrr funkcija koja proslijeđuje i element i njegovo
+ime/indeks. \\
+\texttt{walk()} & Varijanta \texttt{map()} za popratne efekte (spremanje
+datoteka). Ne vraća rezultat. \\
+\texttt{possibly()} & purrr funkcija koja omotava funkciju u zaštitni
+sloj. Greška vraća default vrijednost umjesto prekida. \\
+purrr & Paket iz tidyverse za funkcijsko programiranje. \\
+\texttt{nest()} & tidyr funkcija koja pakira podatke grupe u ugniježđeni
+tibble. \\
+\texttt{bind\_rows()} & Vertikalno spaja listu tibbleova u jedan. \\
+\texttt{list.files()} & Base R funkcija za pronalaženje datoteka u
+direktoriju po uzorku. \\
+\texttt{set\_names()} & Dodjeljuje imena elementima vektora ili
+liste. \\
+DRY & Don't Repeat Yourself. Princip da informacija postoji na jednom
+mjestu u kodu. \\
+Lambda funkcija & Anonimna funkcija. Piše se kao
+\texttt{\textbackslash{}(x)\ x\ +\ 1} ili
+\texttt{function(x)\ x\ +\ 1}. \\
+\texttt{.data{[}{[}var{]}{]}} & Pristup stupcu po imenu pohranjenom u
+varijabli. Za tidyverse funkcije. \\
+\texttt{cat()} & Ispis teksta u konzolu. Bez navodnih oznaka i
+indeksa. \\
+\texttt{warning()} & Ispis upozorenja. Ne zaustavlja program. \\
+\texttt{stop()} & Ispis greške i zaustavljanje programa. Za kritične
+probleme. \\
+Validacija ulaza & Provjera ispravnosti argumenata prije izvršavanja.
+Sprečava tihe greške. \\
+Skripta (.R) & R datoteka s nizom naredbi. Za izračune i
+transformacije. \\
+Quarto dokument (.qmd) & Datoteka koja integrira tekst, kod i rezultate.
+Za izvještaje i komunikaciju. \\
+Chunk opcije & Postavke R code chunka u Quarto dokumentu (echo, eval,
+message, warning, fig-width). \\
+Inline R kod & R izraz umetnut u tekst Quarto dokumenta. Automatski se
+evaluira pri renderiranju. \\
+Debugging & Proces pronalaženja i ispravljanja grešaka u kodu. \\
+Side effect & Popratni efekt funkcije (ispis, spremanje datoteke) koji
+nije povratna vrijednost. \\
+Ponovljiva analiza & Analiza napisana tako da se može pokrenuti od
+početka do kraja s novim podacima bez ručnih promjena. \\
+\end{longtable}
+
+
+
+
+\end{document}

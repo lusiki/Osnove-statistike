@@ -46,7 +46,7 @@ Odgovor ima nekoliko slojeva i vrijedi ih proći redom jer razumijevanje prednos
 
 **Zapošljivost.** Ovo je pragmatičan argument ali važan. Analitičke vještine u R-u (ili Pythonu, koji je sličan po filozofiji) sve su traženije na tržištu rada, ne samo u akademiji nego i u medijskoj industriji, marketingu, oglaševanju i PR-u. Znanje Excela se podrazumijeva. Znanje R-a vas izdvaja.
 
-Navarro u svojoj knjizi otvoreno priznaje da je učenje R-a teže od učenja softvera s grafičkim sučeljem. Početna krivulja učenja je strmija. Ali isto tako kaže da se ta investicija višestruko isplati jer jednom kad savladate osnove, možete raditi stvari koje su u drugim alatima nemoguće ili zahtijevaju enorman ručni rad. Mi ćemo slijediti njezin pristup: ići polako, objašnjavati svaki korak i ne pretpostavljati nikakvo prethodno iskustvo s programiranjem.
+Navarro u svojoj knjizi otvoreno priznaje da je učenje R-a teže od učenja softvera s grafičkim sučeljem. Početna krivulja učenja je strmija. Ali isto tako kaže da se ta investicija višestruko isplati jer jednom kad savladate osnove, možete raditi stvari koje su u drugim alatima nemoguće ili zahtijevaju enorman ručni rad. Mi ćemo slijediti njezin pristup i ići polako, objašnjavajući svaki korak bez pretpostavke o prethodnom iskustvu s programiranjem.
 
 ::: {.callout-tip}
 ## Praktični savjet
@@ -67,7 +67,7 @@ Prije nego što počnemo pisati kod, trebamo dva programa.
 ::: {.callout-important}
 ## Važna napomena
 
-Ako ste već koristili RStudio, Positron će vam biti intuitivan jer dijeli istu filozofiju, samo s modernijim sučeljem. Ako niste koristili niti jedan IDE, ne brinite. Mi ćemo koristiti samo osnovne funkcionalnosti: pisanje koda u skripti (gornji lijevi panel), izvršavanje koda u konzoli (donji panel) i pregled rezultata. Sve ostalo ćete naučiti usput, kad bude potrebno.
+Ako ste već koristili RStudio, Positron će vam biti intuitivan jer dijeli istu filozofiju, samo s modernijim sučeljem. Ako niste koristili niti jedan IDE, ne brinite. Mi ćemo koristiti samo osnovne funkcionalnosti poput pisanja koda u skripti (gornji lijevi panel), izvršavanja koda u konzoli (donji panel) i pregleda rezultata. Sve ostalo ćete naučiti usput, kad bude potrebno.
 :::
 
 ### Kako izgleda Positron
@@ -419,7 +419,7 @@ paste0("n = ", n_ispitanika)
 
 ### Logički tip (logical)
 
-Logičke vrijednosti su samo dvije: `TRUE` i `FALSE`. Nastaju kad R evaluira uvjete.
+Logičke vrijednosti su samo dvije. Kako se pojavljuju: `TRUE` i `FALSE` nastaju kad R evaluira uvjete.
 
 ```{r}
 #| label: logicki-tip
@@ -580,7 +580,7 @@ Operator `$` je brz i praktičan za pristup jednom stupcu. U tidyverse pristupu 
 
 Sada dolazimo do jednog od najvažnijih koncepata u tidyverse pristupu: **pipe operatora** `|>`. Pipe je jednostavan ali transformativan koncept koji čini R kod dramatično čitljivijim.
 
-Zamislite da želite napraviti sljedeće: uzeti naš tibble `anketa`, filtrirati samo ispitanike mlađe od 30 godina i izračunati prosjek njihovog dnevnog korištenja. Bez pipea, ovo možete napisati na dva načina, i oba su neelegantna.
+Zamislite da želite napraviti sljedeće: trebate uzeti naš tibble `anketa`, filtrirati samo ispitanike mlađe od 30 godina i izračunati prosjek njihovog dnevnog korištenja. Bez pipea, ovo možete napisati na dva načina, i oba su neelegantna.
 
 ```{r}
 #| label: bez-pipea
@@ -597,7 +597,7 @@ prosjek_mladi <- mean(mladi$dnevno_min)
 prosjek_mladi
 ```
 
-Prvi pristup je kompaktan ali nečitljiv jer morate čitati iznutra prema van: najprije vidite `mean()`, pa se morate probiti do `filter()` unutra da shvatite na što se mean primjenjuje. Drugi pristup je čitljiviji ali stvara objekt `mladi` koji nam zapravo ne treba i zatrpava radni prostor.
+Prvi pristup je kompaktan ali nečitljiv. Trebate čitati iznutra prema van, pa najprije vidite `mean()` pa se trebate probiti do `filter()` unutra da shvatite na što se mean primjenjuje. Drugi pristup je čitljiviji ali stvara objekt `mladi` koji nam zapravo ne treba i zatrpava radni prostor.
 
 Pipe operator rješava oba problema. Čita se kao "uzmi ovo i onda napravi ono".
 
@@ -629,7 +629,7 @@ anketa |>
   arrange(desc(dnevno_min))
 ```
 
-Uzmi anketu, zadrži samo ispitanike mlađe od 40, odaberi tri stupca i sortiraj po dnevnom korištenju od najvećeg prema najmanjem. Svaki korak je jasan i čitljiv. Zamislite da ovo morate napisati bez pipea: `arrange(select(filter(anketa, dob < 40), id, platforma, dnevno_min), desc(dnevno_min))`. Isti rezultat, ali mozak se muči dok ga parsira.
+Uzmi anketu, zadrži samo ispitanike mlađe od 40, odaberi tri stupca i sortiraj po dnevnom korištenju od najvećeg prema najmanjem. Svaki korak je jasan i čitljiv. Bez pipea, trebate napisati: `arrange(select(filter(anketa, dob < 40), id, platforma, dnevno_min), desc(dnevno_min))`. Isti rezultat, ali mozak se muči dok ga parsira.
 
 ::: {.callout-tip}
 ## Praktični savjet
@@ -645,19 +645,19 @@ Tipkovnička kratica za pipe operator `|>` u Positronu je Ctrl+Shift+M (ili Cmd+
 
 R sam po sebi dolazi s osnovnim funkcijama (base R), ali prava snaga leži u **paketima** koje je zajednica korisnika razvila za specifične zadatke. Paket je kolekcija funkcija, podataka i dokumentacije koju netko drugi napisao i koju vi možete koristiti u svom radu.
 
-Na ovom kolegiju, jedan paket (zapravo kolekcija paketa) dominira nad svima ostalima: **tidyverse**.
+Na ovom kolegiju dominira jedan paket, zapravo kolekcija paketa, koji se zove **tidyverse**.
 
 ### Što je tidyverse?
 
 Tidyverse nije jedan paket nego skup od osam paketa koji dijele zajedničku filozofiju dizajna i besprijekorno surađuju. Kad učitate tidyverse naredbom `library(tidyverse)`, zapravo učitavate sljedeće pakete.
 
-**ggplot2** za vizualizaciju podataka. **dplyr** za manipulaciju podacima (filter, select, mutate, summarise, group_by). **tidyr** za preoblikovanje podataka (pivot_longer, pivot_wider). **readr** za učitavanje podataka (read_csv). **tibble** za moderne tablice podataka. **stringr** za rad s tekstom. **forcats** za rad s faktorima. **purrr** za funkcionalno programiranje.
+**ggplot2** za vizualizaciju podataka, **dplyr** za manipulaciju podacima (filter, select, mutate, summarise, group_by), **tidyr** za preoblikovanje podataka (pivot_longer, pivot_wider), **readr** za učitavanje podataka (read_csv), **tibble** za moderne tablice podataka, **stringr** za rad s tekstom, **forcats** za rad s faktorima, te **purrr** za funkcionalno programiranje.
 
 Od ovih osam, na ovom kolegiju ćemo najintenzivnije koristiti dplyr, ggplot2, tidyr i readr. S ostalima ćemo se susresti po potrebi.
 
 ### Instalacija i učitavanje paketa
 
-Paketi se instaliraju jednom, a učitavaju svaki put kad pokrenete R sesiju. Analogija: instalacija je poput kupnje knjige (radite to jednom), a učitavanje je poput otvaranja knjige (radite svaki put kad ju trebate).
+Paketi se instaliraju jednom, a učitavaju svaki put kad pokrenete R sesiju. Razmislite na analógiju gdje je instalacija poput kupnje knjige (radite to jednom), dok je učitavanje poput otvaranja knjige (radite svaki put kad ju trebate).
 
 ```r
 # Instalacija (samo jednom, u konzoli)
@@ -704,7 +704,7 @@ Kad učitate novi dataset, prva stvar koju uvijek radite jest pogledati što se 
 #| message: false
 #| warning: false
 
-# Struktura podataka: stupci, tipovi, prvih nekoliko vrijednosti
+# Struktura podataka sa stupcima, tipovima i prvim vrijednostima
 glimpse(social)
 ```
 
@@ -773,7 +773,7 @@ summary(social$daily_minutes)
 summary(social$age)
 ```
 
-Funkcija `summary()` daje brzi pregled distribucije: minimum, prvi kvartil, medijan, prosjek, treći kvartil i maksimum. Detaljno ćemo objasniti sve ove mjere u tjednu o deskriptivnoj statistici. Za sada je dovoljno vidjeti da prosječni ispitanik provodi otprilike 90 minuta dnevno na društvenim mrežama i da su dobi raspoređene od 18 do 71 godinu.
+Funkcija `summary()` daje brzi pregled distribucije, uključujući minimum, prvi kvartil, medijan, prosjek, treći kvartil i maksimum. Detaljno ćemo objasniti sve ove mjere u tjednu o deskriptivnoj statistici. Za sada je dovoljno vidjeti da prosječni ispitanik provodi otprilike 90 minuta dnevno na društvenim mrežama i da su dobi raspoređene od 18 do 71 godinu.
 
 Pogledajmo distribuciju kategoričkih varijabli.
 
@@ -788,7 +788,7 @@ social |>
   count(primary_platform, sort = TRUE)
 ```
 
-Funkcija `count()` je iz paketa dplyr i radi nešto vrlo jednostavno ali korisno: prebrojava koliko redova pripada svakoj kategoriji. Argument `sort = TRUE` sortira rezultat po frekvenciji od najveće prema najmanjoj. Vidimo da su Instagram, Facebook i TikTok najzastupljenije platforme u našem uzorku.
+Funkcija `count()` je iz paketa dplyr i radi nešto vrlo jednostavno ali korisno. Evo što radi — prebrojava koliko redova pripada svakoj kategoriji. Argument `sort = TRUE` sortira rezultat po frekvenciji od najveće prema najmanjoj. Vidimo da su Instagram, Facebook i TikTok najzastupljenije platforme u našem uzorku.
 
 ```{r}
 #| label: distribucija-vijesti
@@ -862,7 +862,7 @@ social |>
   count(primary_platform)
 ```
 
-**NE operator (`!`)** preokretne logičku vrijednost: TRUE postaje FALSE i obrnuto.
+**NE operator (`!`)** preokretne logičku vrijednost. Evo kako to radi: TRUE postaje FALSE i obrnuto.
 
 ```{r}
 #| label: operator-ne
@@ -982,7 +982,7 @@ sum(is.na(ocjene))
 ocjene == NA
 ```
 
-Usporedba `ocjene == NA` vraća niz NA vrijednosti, ne TRUE/FALSE. To je zato što je NA nepoznata vrijednost, a usporedba nečega nepoznatog s nepoznatim daje nepoznat rezultat. Ovo je logično kad se zamisli: ako ne znate koliko je Ana visoka i ne znate koliko je Marko visok, ne možete reći jesu li jednako visoki. Odgovor je "ne znam", dakle NA.
+Usporedba `ocjene == NA` vraća niz NA vrijednosti, ne TRUE/FALSE. To je zato što je NA nepoznata vrijednost, a usporedba nečega nepoznatog s nepoznatim daje nepoznat rezultat. Ovo je logično kad se zamisli — ako ne znate koliko je Ana visoka i ne znate koliko je Marko visok, ne možete reći jesu li jednako visoki. Odgovor je "ne znam", dakle NA.
 
 ### NA u tibbleovima
 
@@ -1004,7 +1004,7 @@ Naš simulirani dataset nema nedostajućih vrijednosti, ali u stvarnim podacima 
 ::: {.callout-important}
 ## Važna napomena
 
-Nikada nemojte pretpostaviti da vaši podaci nemaju NA. Čak i kad su podaci "čisti", funkcije poput `read_csv()` ponekad stvore NA na neočekivanim mjestima (prazna ćelija, razmak umjesto broja, tekst u numeričkom stupcu). Pravilo je jednostavno: uvijek provjerite, nikad ne pretpostavljajte.
+Nikada nemojte pretpostaviti da vaši podaci nemaju NA. Čak i kad su podaci "čisti", funkcije poput `read_csv()` ponekad stvore NA na neočekivanim mjestima (prazna ćelija, razmak umjesto broja, tekst u numeričkom stupcu). Pravilo je jednostavno — uvijek provjerite, nikad ne pretpostavljajte.
 :::
 
 ---
@@ -1155,7 +1155,7 @@ social |>
   count(primary_platform, sort = TRUE)
 ```
 
-Primijetite nekoliko stvari o ovoj skripti. Na vrhu je zaglavlje u komentarima koje objašnjava što skripta radi, za koji kolegij je, tko ju je napisao i kad. Sekcije su označene komentarima s četiri crtice na kraju (`# Naslov ----`), što Positron prepoznaje i prikazuje kao navigacijske točke u bočnom panelu. Svaka sekcija ima jasan opis. Kod teče logički: najprije paketi, pa podaci, pa pregled, pa analiza.
+Primijetite nekoliko stvari o ovoj skripti. Na vrhu je zaglavlje u komentarima koje objašnjava što skripta radi, za koji kolegij je, tko ju je napisao i kad. Sekcije su označene komentarima s četiri crtice na kraju (`# Naslov ----`), što Positron prepoznaje i prikazuje kao navigacijske točke u bočnom panelu. Svaka sekcija ima jasan opis. Kod teče logički — najprije paketi, pa podaci, pa pregled, pa analiza.
 
 ### Radni direktorij i putanje do datoteka
 
@@ -1265,7 +1265,7 @@ prosjek_minuta <- mean(social$daily_minutes)
 prosjek   # krivi naziv, nedostaje "_minuta"
 ```
 
-Ova greška znači da R ne može pronaći objekt s tim imenom. Najčešći uzroci su pogrešno ime (tipfeler), zaboravljeno pokretanje koda koji kreira objekt, ili pokretanje koda izvan redoslijeda (pokušavate koristiti objekt prije nego ste ga kreirali). Rješenje: provjerite ime, provjerite jeste li pokrenuli sve prethodne retke koda.
+Ova greška znači da R ne može pronaći objekt s tim imenom. Najčešći uzroci su pogrešno ime (tipfeler), zaboravljeno pokretanje koda koji kreira objekt, ili pokretanje koda izvan redoslijeda (pokušavate koristiti objekt prije nego ste ga kreirali). Što trebate učiniti: provjerite ime i provjerite jeste li pokrenuli sve prethodne retke koda.
 
 ### Greška: neočekivani simbol
 
@@ -1371,7 +1371,7 @@ social |>
   arrange(age_group, gender)
 ```
 
-Mladi koriste više platformi od starijih ispitanika, što je logično. Razlika između spolova je relativno mala u usporedbi s razlikom između dobnih skupina. Ovo je opet ilustracija važnog principa: kad gledate ukupne prosjeke, gubite informaciju o tome koja varijabla zapravo objašnjava razlike.
+Mladi koriste više platformi od starijih ispitanika, što je logično. Razlika između spolova je relativno mala u usporedbi s razlikom između dobnih skupina. Ovo je opet ilustracija važnog principa. Kad gledate ukupne prosjeke, gubite informaciju o tome koja varijabla zapravo objašnjava razlike.
 
 > Svaka analiza podataka počinje s pitanjem. Dobar analitičar ne otvara dataset i "vidi što će pronaći". Dobar analitičar ima pitanje, prevede ga u kod i interpretira rezultat u kontekstu tog pitanja.
 
@@ -1382,7 +1382,7 @@ Mladi koriste više platformi od starijih ispitanika, što je logično. Razlika 
 
 1. R je programski jezik za statističko računanje koji nudi ponovljivost, fleksibilnost i profesionalnu vizualizaciju. Početna krivulja učenja je strmija od softvera s grafičkim sučeljem, ali dugoročna isplativost je znatno veća.
 
-2. Positron je moderno razvojno okruženje (IDE) koje čini rad s R-om ugodnijim. Radni tok je: pisanje koda u editoru, izvršavanje u konzoli, pregled rezultata.
+2. Positron je moderno razvojno okruženje (IDE) koje čini rad s R-om ugodnijim. Radni tok uključuje pisanje koda u editoru, izvršavanje u konzoli i pregled rezultata.
 
 3. Objekti pohranjuju vrijednosti za kasniju upotrebu. Koristite opisna imena u snake_case konvenciji i ne reciklirajte objekte za različite svrhe.
 
@@ -1402,7 +1402,7 @@ Mladi koriste više platformi od starijih ispitanika, što je logično. Razlika 
 
 11. Greške su normalan dio programiranja. Čitajte poruke o greškama, provjerite imena objekata i zagrade, i koristite internet kao resurs za rješavanje problema.
 
-12. Čista R skripta ima jasnu strukturu: zaglavlje, učitavanje paketa, učitavanje podataka, pregled podataka, analiza. Koristite komentare i relativne putanje.
+12. Čista R skripta ima jasnu strukturu s zaglavljem, učitavanjem paketa, učitavanjem podataka, pregledom podataka i analizom. Koristite komentare i relativne putanje.
 :::
 
 ---
@@ -1410,12 +1410,12 @@ Mladi koriste više platformi od starijih ispitanika, što je logično. Razlika 
 ::: {.callout-warning}
 ## Priprema za sljedeći tjedan
 
-Sljedeći tjedan nastavljamo s radom s podacima u tidyverse. Naučit ćemo temeljne funkcije za manipulaciju podacima: `filter()` za odabir redova po uvjetu, `select()` za odabir stupaca, `mutate()` za kreiranje novih varijabli, `arrange()` za sortiranje i `pivot_longer()` / `pivot_wider()` za preoblikovanje podataka. Ove funkcije, u kombinaciji s `group_by()` i `summarise()` koje smo već upoznali, čine okosnicu svake analize podataka u R-u.
+Sljedeći tjedan nastavljamo s radom s podacima u tidyverse. Naučit ćemo temeljne funkcije za manipulaciju podacima — `filter()` za odabir redova po uvjetu, `select()` za odabir stupaca, `mutate()` za kreiranje novih varijabli, `arrange()` za sortiranje, te `pivot_longer()` i `pivot_wider()` za preoblikovanje podataka. Ove funkcije, u kombinaciji s `group_by()` i `summarise()` koje smo već upoznali, čine okosnicu svake analize podataka u R-u.
 
 Za pripremu napravite sljedeće:
 
 1. Provjerite da vam R i Positron rade ispravno. Otvorite Positron, stvorite novu R datoteku i pokrenite `library(tidyverse)`. Ako ne dobijete grešku, spremni ste.
-2. Ponovite sve primjere iz ovog predavanja. Nemojte samo čitati kod, nego ga upišite i pokrenite. Eksperimentirajte: promijenite brojeve, dodajte nove vektore, isprobajte što se dogodi kad nešto napravite krivo.
+2. Ponovite sve primjere iz ovog predavanja. Nemojte samo čitati kod, nego ga upišite i pokrenite. Trebate eksperimentirati primjenom promjena brojeva, dodavanja novih vektora i testiranja što se dogodi kad nešto napravite krivo.
 3. Učitajte dataset `social_media_survey.csv` i pokušajte odgovoriti na sljedeća pitanja koristeći `filter()`, `count()` i `group_by() |> summarise()`:
    - Koja je najčešća platforma među ispitanicima starijim od 45 godina?
    - Koliki je prosječni broj dnevnih minuta za korisnike Instagrama u usporedbi s korisnicima Facebooka?
