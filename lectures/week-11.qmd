@@ -1,8 +1,8 @@
 ---
-title: "Tjedan 11: Kategorički podaci i hi-kvadrat testovi"
-subtitle: "Kada su varijable kategorije, ne brojevi"
-date: 2025-05-03
-categories: [hi-kvadrat, kategorički podaci, test nezavisnosti, goodness-of-fit, Fisherov test]
+title: "Tjedan 11: Usporedba prosjeka t-testovima"
+subtitle: "Kad pretpostavke drže i kad ne drže"
+date: 2025-05-10
+categories: [t-test, provjera pretpostavki, normalnost, Wilcoxon test, Cohenov d]
 draft: false
 ---
 
@@ -18,31 +18,26 @@ library(tidyverse)
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete
+Nakon ovog predavanja moći ćete:
 
-1. Prepoznati situacije u kojima su hi-kvadrat testovi prikladni (kategoričke varijable).
-2. Provesti i interpretirati hi-kvadrat test za dobrotu prilagodbe (goodness-of-fit).
-3. Provesti i interpretirati hi-kvadrat test nezavisnosti za kontingencijsku tablicu.
-4. Izračunati očekivane frekvencije i objasniti njihovo značenje.
-5. Interpretirati standardizirane reziduale za otkrivanje specifičnih odstupanja.
-6. Primijeniti Fisherov egzaktni test kad su očekivane frekvencije male.
-7. Izračunati Cramérovo V kao mjeru veličine učinka za kategoričke podatke.
-8. Kritički ocijeniti rezultate istraživanja koja koriste kategoričke varijable.
+1. Odabrati odgovarajući t-test (jednouzorački, nezavisni, upareni) za zadano istraživačko pitanje.
+2. Provjeriti pretpostavke t-testa (normalnost, homogenost varijance) i znati što učiniti kad su narušene.
+3. Primijeniti Shapiro-Wilkov test i QQ plot za provjeru normalnosti.
+4. Provesti Wilcoxonov test kao neparametrijsku alternativu kad normalnost nije zadovoljena.
+5. Izračunati i interpretirati Cohenov d za sve tri vrste t-testa.
+6. Pravilno izvijestiti rezultate t-testa u APA formatu.
+7. Provesti kompletnu analizu usporedbe dvaju uvjeta na stvarnim podacima.
 :::
 
-## Motivacija: pitanja na koja t-test ne može odgovoriti
+## Redizajn koji je podijelio redakciju
 
-Prošla dva tjedna bavili smo se pitanjima poput "je li prosjek angažmana veći za carousel nego za single image." To su pitanja o prosjjecima numeričkih varijabli. Ali mnoga istraživačka pitanja u komunikologiji uključuju **kategoričke varijable** (varijable čije su vrijednosti kategorije, ne brojevi).
+Zamislite da radite kao istraživačica u uredništvu jednog web portala. Portal objavljuje članke o politici, zdravlju, tehnologiji, sportu i kulturi — uglavnom tekstualne, s ponekom fotografijom za vizualni odmor. Uredništvo razmišlja o velikom redizajnu. Žele dodati infografike, podatkovne vizualizacije, ilustracije i interaktivne elemente. Ideja zvuči privlačno, ali glavni urednik nije uvjeren. "Vizuali koštaju," kaže. "Trebam dokaze da stvarno poboljšavaju čitateljsko iskustvo."
 
-Postoji li veza između dobne skupine i preferiranog tipa medija? Preferiraju li mladi streaming a stariji TV ili je distribucija ista u svim dobnim skupinama? Odgovara li distribucija obrazovanja u našem uzorku populacijskim podacima? Ovisi li zadovoljstvo medijem o regiji?
+I tako dobijete zadatak: osmisliti eksperiment koji će odgovoriti na pitanje utječu li vizualni elementi na četiri ključna ishoda — vrijeme čitanja, razumijevanje sadržaja, namjeru dijeljenja i percipiranu vjerodostojnost. Odabrali ste 120 članaka i svaki prezentirali ispitanicima u dva uvjeta: jednom s vizualima, jednom bez. Budući da je svaki članak testiran u oba uvjeta, radi se o within-subjects dizajnu — a statistički alat koji vam treba za takvu usporedbu zove se upareni t-test.
 
-Za ovakva pitanja trebamo **hi-kvadrat testove** (χ² testove). Oni testiraju postoji li statistički značajna veza između dviju kategoričkih varijabli ili odstupa li opažena distribucija od očekivane.
+Na predavanju o testiranju hipoteza naučili smo logiku koja stoji iza t-testa: postavljamo nultu hipotezu, izračunavamo testnu statistiku, gledamo p-vrijednost i donosimo odluku. Ovo predavanje se bavi onom drugom polovicom posla — onom koja se u udžbenicima često prebrzo preskoči. Kako zapravo provjeriti jesu li pretpostavke testa zadovoljene? Što učiniti kad nisu? Kako odabrati pravi test za pravi dizajn? I kako napisati rezultate tako da ih kolege i recenzenti mogu razumjeti?
 
----
-
-## Naši podaci {#sec-podaci}
-
-Koristimo podatke ankete o medijskim navikama provedene na 800 ispitanika iz različitih dobnih skupina i regija.
+Krenimo od podataka.
 
 ```{r}
 #| label: ucitavanje
@@ -50,8 +45,8 @@ Koristimo podatke ankete o medijskim navikama provedene na 800 ispitanika iz raz
 #| message: false
 #| warning: false
 
-survey <- read_csv("../resources/datasets/media_survey_chi2.csv")
-glimpse(survey)
+articles <- read_csv("../resources/datasets/article_visuals.csv")
+glimpse(articles)
 ```
 
 ```{r}
@@ -60,1191 +55,1283 @@ glimpse(survey)
 #| message: false
 #| warning: false
 
-# Distribucija ključnih varijabli
-survey |> count(age_group, sort = TRUE)
-survey |> count(media_type, sort = TRUE)
+articles |>
+  summarise(
+    n = n(),
+    M_time_no = round(mean(reading_time_no_visual), 2),
+    M_time_with = round(mean(reading_time_with_visual), 2),
+    M_comp_no = round(mean(comprehension_no_visual), 2),
+    M_comp_with = round(mean(comprehension_with_visual), 2),
+    M_share_no = round(mean(sharing_no_visual), 2),
+    M_share_with = round(mean(sharing_with_visual), 2)
+  )
 ```
 
-Ključne kategoričke varijable su `age_group` (4 kategorije) i `media_type` (6 kategorija). Temeljno pitanje je: postoji li veza između dobi i preferiranog medija?
+Na prvi pogled, brojke govore u prilog vizualima: članci s vizualnim elementima imaju duže vrijeme čitanja, bolje razumijevanje i višu namjeru dijeljenja. Ali "na prvi pogled" nije dovoljno za istraživačicu koja zna što radi. Prije nego što izvučemo ikakve zaključke, moramo provjeriti jesu li pretpostavke statističkog testa koje namjeravamo koristiti uopće zadovoljene.
 
----
 
-## Kontingencijska tablica {#sec-kontingencijska}
+## Tri vrste t-testa {#sec-podsjetnik}
 
-Prvo što napravimo s dvjema kategoričkim varijablama je **kontingencijska tablica** (contingency table, cross-tabulation). Ona prikazuje frekvencije za svaku kombinaciju kategorija.
+Prije nego uđemo u analizu, vrijedi se podsjetiti da t-test nije jedan jedini postupak nego obitelj od tri testa, a svaki odgovara na drugačije pitanje.
 
 ```{r}
-#| label: kontingencijska-tablica
+#| label: tri-testa
 #| echo: true
 #| message: false
 #| warning: false
 
-# Kontingencijska tablica: dob × tip medija
-kont_tablica <- table(survey$age_group, survey$media_type)
-kont_tablica
+tribble(
+  ~test, ~pitanje, ~R_kod,
+  "Jednouzorački", "Razlikuje li se prosjek od poznate vrijednosti?", "t.test(x, mu = vrijednost)",
+  "Nezavisni (dvouzorački)", "Razlikuju li se prosjeci dviju nezavisnih grupa?", "t.test(x, y)",
+  "Upareni", "Razlikuje li se prosjek u dva uvjeta za iste jedinice?", "t.test(x, y, paired = TRUE)"
+)
 ```
 
+Jednouzorački t-test koristi se kad imate jednu skupinu i želite provjeriti razlikuje li se njezin prosjek od neke poznate ili pretpostavljene vrijednosti — na primjer, je li prosječna ocjena razumijevanja vaših članaka različita od nacionalnog prosjeka od 6.0 bodova. Nezavisni t-test uspoređuje dvije odvojene grupe koje nemaju nikakvu vezu jedna s drugom — recimo, čitatelje koji su vidjeli vizuale i čitatelje koji nisu, ali to su različiti ljudi. Upareni t-test koristi se kad iste jedinice mjerite dva puta, u dva različita uvjeta — a to je upravo naš slučaj, jer su isti članci prezentirani i s vizualima i bez njih.
+
+Za naše podatke, dakle, koristimo upareni t-test. Ali prije nego ga pokrenemo, moramo se uvjeriti da su pretpostavke tog testa razumno zadovoljene.
+
+
+## Pretpostavke koje morate provjeriti {#sec-pretpostavke}
+
+Svaki statistički test dolazi s pretpostavkama — uvjetima koji moraju biti barem približno zadovoljeni da bismo rezultatima mogli vjerovati. T-test nije iznimka.
+
+Sve tri varijante t-testa dijele tri temeljne pretpostavke. Kao prvo, podaci moraju biti barem na intervalnoj skali, što znači da razlike između vrijednosti imaju smisla (razlika između 3 i 5 je ista kao razlika između 7 i 9). Kao drugo, opažanja moraju biti nezavisna jedno od drugoga. U uparenom testu to znači da su parovi nezavisni, iako mjerenja unutar para naravno nisu. Kao treće, distribucija mora biti približno normalna — ili uzorak dovoljno velik da centralni granični teorem kompenzira.
+
+Nezavisni t-test ima jednu dodatnu pretpostavku: varijance dviju grupa trebale bi biti približno jednake. To je pretpostavka klasičnog Studentovog t-testa. Dobra vijest je da postoji Welchova korekcija koja tu pretpostavku ne zahtijeva, i upravo je ona default u R-u. O tome ćemo više za koji odlomak.
+
+Od svih ovih pretpostavki, ona koju ćete najčešće morati aktivno provjeravati je normalnost. A kod uparenog t-testa, pazite na važan detalj: ne provjeravate normalnost pojedinačnih mjerenja, nego normalnost *razlika* između dvaju uvjeta. Zvuči kao sitnica, ali ta sitnica može potpuno promijeniti zaključak.
+
+
+## Provjera normalnosti {#sec-normalnost}
+
+### Vizualna provjera: histogram i QQ plot
+
+Najprirodniji prvi korak je pogledati podatke. Izračunajmo razlike između dvaju uvjeta za sva četiri ishoda.
+
 ```{r}
-#| label: kont-proporcije
+#| label: normalnost-razlike
 #| echo: true
 #| message: false
 #| warning: false
 
-# Proporcije po retku (svaka dobna skupina = 100%)
-round(prop.table(kont_tablica, margin = 1) * 100, 1)
+# Za upareni test: provjera normalnosti RAZLIKA
+articles <- articles |>
+  mutate(diff_time = reading_time_with_visual - reading_time_no_visual,
+         diff_comp = comprehension_with_visual - comprehension_no_visual,
+         diff_share = sharing_with_visual - sharing_no_visual,
+         diff_cred = credibility_with_visual - credibility_no_visual)
 ```
 
-Proporcije po retku govore jasnu priču. Među osobama 18-29, 43% preferira streaming i 27% web portale. Među osobama 60+, 47% preferira TV i 23% radio. Obrazac je očit: mlađi preferiraju digitalne medije, stariji tradicionalne.
-
-Ali je li ovaj obrazac statistički značajan ili bi mogao nastati slučajno?
+Počnimo s histogramom razlika u vremenu čitanja. Ako je distribucija približno normalna, histogram bi trebao imati zvonoliki oblik, s većinom vrijednosti okupljenim oko sredine i simetričnim repovima.
 
 ```{r}
-#| label: kont-vizualizacija
+#| label: histogram-razlike
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 9
 #| fig-height: 5
 
-survey |>
-  count(age_group, media_type) |>
-  group_by(age_group) |>
-  mutate(udio = n / sum(n)) |>
-  ungroup() |>
-  mutate(media_type = fct_reorder(media_type, udio, .fun = sum)) |>
-  ggplot(aes(x = age_group, y = udio, fill = media_type)) +
-  geom_col(position = "fill", alpha = 0.85) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  scale_fill_brewer(palette = "Set2") +
+articles |>
+  ggplot(aes(x = diff_time)) +
+  geom_histogram(aes(y = after_stat(density)), fill = "steelblue", color = "white", bins = 25) +
+  stat_function(fun = dnorm,
+                args = list(mean = mean(articles$diff_time), sd = sd(articles$diff_time)),
+                color = "firebrick", linewidth = 1) +
   labs(
-    title = "Preferirani tip medija po dobnim skupinama",
-    subtitle = "Jasna promjena od digitalnih (mladi) prema tradicionalnim medijima (stariji)",
-    x = "Dobna skupina",
-    y = "Udio unutar dobne skupine",
-    fill = "Tip medija"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
----
-
-## Hi-kvadrat test za dobrotu prilagodbe (goodness-of-fit) {#sec-gof}
-
-Prije nego prijeđemo na vezu dviju varijabli, krenimo s jednostavnijim pitanjem: odgovara li distribucija jedne kategoričke varijable nekoj očekivanoj distribuciji?
-
-Situacija: medijska kuća tvrdi da ima podjednaku publiku iz svih pet regija. Naša anketa pokazuje drugačiju sliku. Želimo testirati odstupa li opažena distribucija od uniformne.
-
-$$H_0: \text{Distribucija regija u uzorku odgovara uniformnoj distribuciji (20\% svaka)}$$
-$$H_1: \text{Distribucija regija nije uniformna}$$
-
-```{r}
-#| label: gof-opazene
-#| echo: true
-#| message: false
-#| warning: false
-
-# Opažene frekvencije
-opazene <- survey |> count(region) |> arrange(desc(n))
-opazene
-```
-
-```{r}
-#| label: gof-test
-#| echo: true
-#| message: false
-#| warning: false
-
-# Hi-kvadrat test za dobrotu prilagodbe
-# H₀: sve regije imaju jednaki udio (20% svaka)
-gof_test <- chisq.test(opazene$n)
-gof_test
-```
-
-### Kako funkcionira hi-kvadrat statistika?
-
-Hi-kvadrat statistika mjeri ukupno odstupanje opaženih frekvencija od očekivanih:
-
-$$\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$$
-
-gdje je $O_i$ opažena frekvencija, a $E_i$ očekivana frekvencija za kategoriju $i$. Što je veća razlika između opaženih i očekivanih, veća je χ².
-
-```{r}
-#| label: gof-rucno
-#| echo: true
-#| message: false
-#| warning: false
-
-n_total <- nrow(survey)
-n_kategorija <- 5
-
-# Pod H₀ (uniformna distribucija), svaka regija ima n/5 ispitanika
-ocekivane <- rep(n_total / n_kategorija, n_kategorija)
-
-tibble(
-  regija = opazene$region,
-  O = opazene$n,
-  E = ocekivane,
-  razlika = O - E,
-  doprinos_chi2 = round((O - E)^2 / E, 2)
-) |>
-  bind_rows(tibble(
-    regija = "UKUPNO",
-    O = sum(opazene$n),
-    E = sum(ocekivane),
-    razlika = 0,
-    doprinos_chi2 = round(sum((opazene$n - ocekivane)^2 / ocekivane), 2)
-  ))
-```
-
-Svaka kategorija doprinosi ukupnom χ² ovisno o tome koliko njezina opažena frekvencija odstupa od očekivane. Zadnji redak (UKUPNO) je testna statistika χ².
-
-```{r}
-#| label: gof-distribucija
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-# Vizualizacija: hi-kvadrat distribucija
-df_gof <- n_kategorija - 1  # stupnjevi slobode = broj kategorija - 1
-
-x_vals <- seq(0, 20, length.out = 300)
-
-chi_data <- tibble(x = x_vals, density = dchisq(x_vals, df = df_gof))
-
-ggplot(chi_data, aes(x = x, y = density)) +
-  geom_line(linewidth = 1) +
-  geom_area(data = chi_data |> filter(x >= gof_test$statistic), fill = "firebrick", alpha = 0.4) +
-  geom_vline(xintercept = gof_test$statistic, color = "firebrick", linetype = "dashed") +
-  annotate("text", x = gof_test$statistic + 0.5, y = 0.05,
-           label = paste0("χ² = ", round(gof_test$statistic, 2)), 
-           color = "firebrick", hjust = 0) +
-  labs(
-    title = "Hi-kvadrat distribucija (df = 4)",
-    subtitle = paste0("P-vrijednost = crveno područje = ", round(gof_test$p.value, 4)),
-    x = "χ² vrijednost",
-    y = "Gustoća"
+    title = "Distribucija razlika u vremenu citanja (s vizualima minus bez)",
+    subtitle = "Crvena krivulja = normalna distribucija s istim M i SD",
+    x = "Razlika u minutama",
+    y = "Gustoca"
   ) +
   theme_minimal()
 ```
 
-P-vrijednost je manja od 0.05, što znači da distribucija regija u uzorku statistički značajno odstupa od uniformne. Zagreb je nadreprezentiran, a ostale regije su podreprezentirane.
-
-### Testiranje s poznatim proporcijama
-
-Češći slučaj je testiranje protiv poznatih populacijskih proporcija, ne uniformne distribucije.
+Histogram je koristan, ali još informativniji dijagnostički alat je QQ plot (quantile-quantile plot). Ideja QQ plota je jednostavna: on uspoređuje kvantile vaših podataka s kvantilima savršene normalne distribucije. Ako su vaši podaci normalno distribuirani, točke će ležati uz dijagonalnu liniju. Što više odstupaju, to je distribucija manje normalna.
 
 ```{r}
-#| label: gof-poznate-proporcije
-#| echo: true
-#| message: false
-#| warning: false
-
-# Populacijski udjeli regija (fiktivni, ali bazirani na stvarnim omjerima)
-pop_udjeli <- c(
-  "Dalmacija" = 0.20, 
-  "Primorje" = 0.14, 
-  "Sjeverozapad" = 0.18, 
-  "Slavonija" = 0.18, 
-  "Zagreb" = 0.30
-)
-
-# Opaženi poredak mora odgovarati poretku proporcija
-opazene_sortirane <- survey |> 
-  count(region) |> 
-  arrange(region)
-
-gof_pop <- chisq.test(opazene_sortirane$n, p = pop_udjeli)
-gof_pop
-```
-
-Kad testiramo protiv stvarnih populacijskih proporcija (gdje Zagreb čini 30% populacije), rezultat je drugačiji. P-vrijednost je veća, što znači da naš uzorak zapravo dobro odražava populacijsku distribuciju regija. Ovo je važna razlika: isti podaci mogu biti "odstupajući" od jedne distribucije a "konzistentni" s drugom.
-
----
-
-## Hi-kvadrat test nezavisnosti {#sec-nezavisnost}
-
-Sada prelazimo na glavno pitanje: postoji li **veza** (asocijacija) između dviju kategoričkih varijabli? Konkretno: ovisi li preferirani tip medija o dobnoj skupini?
-
-$$H_0: \text{Tip medija i dobna skupina su nezavisni (nema veze)}$$
-$$H_1: \text{Tip medija i dobna skupina NISU nezavisni (postoji veza)}$$
-
-"Nezavisni" znači da poznavanje nečije dobne skupine ne pomaže u predviđanju njihovog preferiranog medija. Ako su nezavisni, distribucija medijskog tipa trebala bi biti ista u svim dobnim skupinama.
-
-```{r}
-#| label: nezavisnost-test
-#| echo: true
-#| message: false
-#| warning: false
-
-chi2_test <- chisq.test(kont_tablica)
-chi2_test
-```
-
-P-vrijednost je iznimno mala (p < 2.2e-16). Imamo izuzetno snažne dokaze da postoji veza između dobi i preferiranog tipa medija. Ali χ² statistika sama ne govori koji parovi kategorija su odgovorni za vezu.
-
-### Očekivane frekvencije
-
-Očekivane frekvencije su ono što bismo očekivali da vidimo KAD NE BI BILO veze između varijabli. Računaju se kao:
-
-$$E_{ij} = \frac{\text{ukupno u retku i} \times \text{ukupno u stupcu j}}{\text{ukupno}}$$
-
-```{r}
-#| label: ocekivane
-#| echo: true
-#| message: false
-#| warning: false
-
-# Očekivane frekvencije
-round(chi2_test$expected, 1)
-```
-
-```{r}
-#| label: opazene-vs-ocekivane
-#| echo: true
-#| message: false
-#| warning: false
-
-# Usporedba: opažene vs očekivane
-cat("OPAŽENE frekvencije:\n")
-kont_tablica
-cat("\nOČEKIVANE frekvencije (pod H₀: nema veze):\n")
-round(chi2_test$expected, 1)
-```
-
-Pod H₀ (nema veze), sve dobne skupine bi imale istu distribuciju medijskih tipova. Na primjer, ako 22% cijelog uzorka preferira streaming, onda bi i u skupini 18-29 i u skupini 60+ oko 22% preferiralo streaming. Ali u stvarnosti, 43% mladih preferira streaming, a samo 4% starijih. Ovo veliko odstupanje od očekivanih je ono što test detektira.
-
-### Provjera pretpostavki
-
-Hi-kvadrat test ima važnu pretpostavku: sve očekivane frekvencije trebaju biti dovoljno velike (konvencija: barem 5).
-
-```{r}
-#| label: provjera-pretpostavki
-#| echo: true
-#| message: false
-#| warning: false
-
-# Provjera: ima li očekivanih frekvencija < 5?
-min_expected <- min(chi2_test$expected)
-cat("Najmanja očekivana frekvencija:", round(min_expected, 1), "\n")
-cat("Sve ≥ 5:", min_expected >= 5, "\n")
-```
-
-Sve očekivane frekvencije su iznad 5, što znači da je hi-kvadrat test valjan. Kad ovo nije slučaj (male frekvencije), trebamo koristiti Fisherov egzaktni test.
-
----
-
-## Standardizirani reziduali: gdje je veza najjača? {#sec-reziduali}
-
-Ukupna χ² statistika govori da veza postoji, ali ne govori gdje. Za to koristimo **standardizirane reziduale** (Pearsonove reziduale):
-
-$$r_{ij} = \frac{O_{ij} - E_{ij}}{\sqrt{E_{ij}}}$$
-
-Rezidual veći od +2 znači da ta ćelija ima značajno VIŠE opažanja nego što očekujemo pod H₀. Rezidual manji od -2 znači značajno MANJE.
-
-```{r}
-#| label: reziduali
-#| echo: true
-#| message: false
-#| warning: false
-
-round(chi2_test$residuals, 2)
-```
-
-```{r}
-#| label: reziduali-vizualizacija
+#| label: qq-plot-razlike
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 9
-#| fig-height: 6
+#| fig-height: 8
 
-# Vizualizacija standardiziranih reziduala
-as.data.frame(chi2_test$residuals) |>
-  as_tibble() |>
-  rename(age_group = Var1, media_type = Var2, residual = Freq) |>
-  ggplot(aes(x = media_type, y = age_group, fill = residual)) +
-  geom_tile(color = "white", linewidth = 1) +
-  geom_text(aes(label = round(residual, 1)), size = 4, fontface = "bold") +
-  scale_fill_gradient2(low = "#e76f51", mid = "white", high = "#2a9d8f", midpoint = 0) +
+# QQ plotovi za sve cetiri razlike
+articles |>
+  select(starts_with("diff_")) |>
+  pivot_longer(everything(), names_to = "varijabla", values_to = "razlika") |>
+  mutate(varijabla = case_when(
+    varijabla == "diff_time" ~ "Vrijeme citanja",
+    varijabla == "diff_comp" ~ "Razumijevanje",
+    varijabla == "diff_share" ~ "Namjera dijeljenja",
+    varijabla == "diff_cred" ~ "Vjerodostojnost"
+  )) |>
+  ggplot(aes(sample = razlika)) +
+  stat_qq(color = "steelblue", alpha = 0.6) +
+  stat_qq_line(color = "firebrick") +
+  facet_wrap(~varijabla, scales = "free") +
   labs(
-    title = "Standardizirani reziduali: dob × tip medija",
-    subtitle = "Zeleno = više nego očekivano. Crveno = manje nego očekivano. Značajno ako |r| > 2.",
-    x = "Tip medija",
-    y = "Dobna skupina",
-    fill = "Rezidual"
+    title = "QQ plotovi za razlike (upareni uvjeti)",
+    subtitle = "Tocke blizu linije = normalna distribucija. Odstupanja na repovima su cesta.",
+    x = "Teoretski kvantili",
+    y = "Opazeni kvantili"
   ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  theme_minimal()
 ```
 
-Ovaj graf je zlatni rudnik informacija. Najjače zelene ćelije (puno više nego očekivano) su streaming u skupini 18-29 (+6.2) i TV u skupini 60+ (+6.6). Najjače crvene ćelije (puno manje nego očekivano) su TV u skupini 18-29 (-4.3) i streaming u skupini 60+ (-5.1). Reziduali jasno potvrđuju generacijski jaz u medijskim navikama.
+Pogledajte četiri panela. Razlike u vremenu čitanja i razumijevanju lijepo prate dijagonalu — distribucija je razumno normalna. Razlike u namjeri dijeljenja i vjerodostojnosti pokazuju stepeničast uzorak, što je očekivano: te varijable su mjerene Likert skalom (cjelobrojne vrijednosti od 1 do 5 ili 1 do 7), pa ne mogu biti savršeno glatke. Blaga odstupanja na repovima su prihvatljiva, osobito kad je uzorak veći od 30.
 
-::: {.callout-tip}
-## Praktični savjet
+### Shapiro-Wilkov test
 
-Kad izvještavate rezultate hi-kvadrat testa, ne stajte samo na "χ² je značajan." Koristite reziduale da identificirate specifične kombinacije kategorija koje najviše doprinose vezi. Urednica ne želi znati samo da "postoji veza između dobi i medija." Želi znati KOJA je ta veza: mladi biraju streaming, stariji TV.
-:::
-
----
-
-## Mjera veličine učinka: Cramérovo V {#sec-cramer}
-
-Kao i kod t-testa, sama statistička značajnost ne govori koliko je veza jaka. **Cramérovo V** je mjera veličine učinka za hi-kvadrat test nezavisnosti:
-
-$$V = \sqrt{\frac{\chi^2}{n \times (k - 1)}}$$
-
-gdje je $n$ ukupan broj opažanja, a $k$ manji od broja redova ili stupaca kontingencijske tablice. V varira od 0 (potpuna nezavisnost) do 1 (savršena asocijacija).
+Vizualna procjena je korisna, ali ponekad želite i formalni test. Shapiro-Wilkov test je najčešće korišteni test normalnosti. Njegova nulta hipoteza kaže da su podaci normalno distribuirani, pa ako je p < 0.05, zaključujemo da normalnost nije zadovoljena.
 
 ```{r}
-#| label: cramer-v
+#| label: shapiro
 #| echo: true
 #| message: false
 #| warning: false
 
-chi2_val <- chi2_test$statistic
-n_obs <- sum(kont_tablica)
-k <- min(nrow(kont_tablica), ncol(kont_tablica))
-
-cramer_v <- sqrt(chi2_val / (n_obs * (k - 1)))
-
-cat("χ² =", round(chi2_val, 2), "\n")
-cat("n =", n_obs, "\n")
-cat("k =", k, "(minimum redova/stupaca)\n")
-cat("Cramérovo V =", round(cramer_v, 3), "\n")
+tibble(
+  varijabla = c("Vrijeme citanja", "Razumijevanje", "Namjera dijeljenja", "Vjerodostojnost"),
+  W = c(
+    shapiro.test(articles$diff_time)$statistic,
+    shapiro.test(articles$diff_comp)$statistic,
+    shapiro.test(articles$diff_share)$statistic,
+    shapiro.test(articles$diff_cred)$statistic
+  ),
+  p = c(
+    shapiro.test(articles$diff_time)$p.value,
+    shapiro.test(articles$diff_comp)$p.value,
+    shapiro.test(articles$diff_share)$p.value,
+    shapiro.test(articles$diff_cred)$p.value
+  )
+) |>
+  mutate(
+    W = round(W, 4),
+    p = round(p, 4),
+    normalno = if_else(p >= 0.05, "Da", "Ne")
+  )
 ```
 
-### Interpretacija Cramérovog V
+Razlike u vremenu čitanja prolaze test normalnosti (p > 0.05), što znači da nemamo dovoljno dokaza da odbacimo pretpostavku o normalnoj distribuciji. Razlike u Likert varijablama možda ne prolaze jer su diskretne. Za te varijable ćemo razmotriti neparametrijske alternative.
 
-Cohen (1988) je predložio smjernice ovisne o stupnjevima slobode. Za tablicu s k = 4 (naš slučaj):
+::: {.callout-important}
+## Paradoks Shapiro-Wilkovog testa
+
+Shapiro-Wilkov test ima isti paradoks kao i svaki statistički test: njegova osjetljivost ovisi o veličini uzorka. S velikim uzorkom (recimo n = 500) detektirat će i sasvim trivijalna odstupanja od normalnosti koja nemaju nikakav praktični značaj. S malim uzorkom (n = 15) propustit će i prilično grube deformacije distribucije.
+
+Zato je vizualna procjena putem QQ plota jednako važna kao formalni test. Praktično pravilo glasi ovako: ako QQ plot izgleda razumno i uzorak ima više od 30 opažanja, t-test je dovoljno robustan čak i za umjerena odstupanja od normalnosti — zahvaljujući centralnom graničnom teoremu koji osigurava da će distribucija prosjeka biti približno normalna bez obzira na oblik izvorne distribucije.
+:::
+
+
+## Provjera homogenosti varijance {#sec-varijance}
+
+Kad koristite nezavisni t-test (usporedba dviju odvojenih grupa), klasična Studentova verzija pretpostavlja da obje grupe imaju približno jednake varijance. Pogledajmo što se dogodi kad ta pretpostavka nije zadovoljena — na simuliranim podacima gdje jednoj grupi namjerno zadamo mnogo veću varijabilnost.
 
 ```{r}
-#| label: cramer-smjernice
+#| label: levene-simulacija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Demonstracija na simuliranim podacima (nezavisne grupe)
+set.seed(42)
+grupa_a <- rnorm(50, mean = 5, sd = 1.0)
+grupa_b <- rnorm(50, mean = 6, sd = 2.5)  # razlicita varijanca!
+
+cat("SD grupa A:", round(sd(grupa_a), 2), "\n")
+cat("SD grupa B:", round(sd(grupa_b), 2), "\n")
+cat("Omjer varijanci:", round(var(grupa_b) / var(grupa_a), 2), "\n")
+```
+
+Grupa B ima dva i pol puta veću standardnu devijaciju od grupe A. Usporedimo što se dogodi kad pokrenemo Studentov t-test (koji pretpostavlja jednake varijance) nasuprot Welchovom t-testu (koji tu pretpostavku ne zahtijeva).
+
+```{r}
+#| label: welch-vs-student-demo
+#| echo: true
+#| message: false
+#| warning: false
+
+# Studentov t-test (pretpostavlja jednake varijance)
+student_rez <- t.test(grupa_a, grupa_b, var.equal = TRUE)
+
+# Welchov t-test (ne pretpostavlja jednake varijance, DEFAULT)
+welch_rez <- t.test(grupa_a, grupa_b, var.equal = FALSE)
+
+tibble(
+  test = c("Student (var.equal = TRUE)", "Welch (var.equal = FALSE, DEFAULT)"),
+  t = round(c(student_rez$statistic, welch_rez$statistic), 3),
+  df = round(c(student_rez$parameter, welch_rez$parameter), 1),
+  p = round(c(student_rez$p.value, welch_rez$p.value), 4)
+)
+```
+
+Primijetite jednu zanimljivu stvar: Welchov test ima neokrugle stupnjeve slobode. To je zato što ih prilagođava za razliku u varijancama. Kad su varijance jednake, oba testa daju praktički identične rezultate. Kad su varijance različite, Welchov test je točniji — a Studentov test može dati lažno pozitivne ili lažno negativne rezultate.
+
+::: {.callout-tip}
+## Zaboravite na Studentov t-test
+
+Evo savjeta koji će vam pojednostaviti život: koristite Welchov t-test uvijek. Ne morate uopće provjeravati homogenost varijance jer Welchov test radi jednako dobro kad su varijance jednake i bolje kad su različite. On je default u R-u (`var.equal = FALSE`) iz dobrog razloga.
+
+Studentov t-test s `var.equal = TRUE` koristite samo ako imate specifičan razlog — na primjer, kad trebate reproducirati rezultate iz objavljenog rada koji je koristio Studentov test.
+:::
+
+
+## Upareni t-test: utječu li vizuali na vrijeme čitanja? {#sec-upareni}
+
+Pretpostavke smo provjerili, razlike izgledaju razumno normalno, uzorak je dovoljno velik. Vrijeme je da pokrenemo test i odgovorimo na pitanje koje je pokrenulo cijelu analizu.
+
+```{r}
+#| label: paired-time
+#| echo: true
+#| message: false
+#| warning: false
+
+# Upareni t-test: vrijeme citanja s vizualima vs bez
+time_test <- t.test(
+  articles$reading_time_with_visual,
+  articles$reading_time_no_visual,
+  paired = TRUE
+)
+time_test
+```
+
+Pogledajmo rezultat i raspakujmo svaki dio. Argument `paired = TRUE` kaže R-u da ne tretira ova dva vektora kao nezavisne grupe, nego kao parove — svaki članak ima dva mjerenja. Interno, R zapravo računa razlike i provodi jednouzorački t-test na tim razlikama, testirajući je li njihov prosjek različit od nule.
+
+```{r}
+#| label: paired-time-interpretacija
+#| echo: true
+#| message: false
+#| warning: false
+
+# Cohenov d za upareni test: d = M_razlika / SD_razlika
+d_time <- mean(articles$diff_time) / sd(articles$diff_time)
+
+cat("=== Upareni t-test: Vrijeme citanja ===\n")
+cat("Bez vizuala: M =", round(mean(articles$reading_time_no_visual), 2), "min\n")
+cat("S vizualima: M =", round(mean(articles$reading_time_with_visual), 2), "min\n")
+cat("Razlika: M =", round(mean(articles$diff_time), 2), "min\n")
+cat("t(", time_test$parameter, ") = ", round(time_test$statistic, 2), "\n", sep = "")
+cat("p < 0.001\n")
+cat("95% CI za razliku: [", round(time_test$conf.int[1], 2), ",",
+    round(time_test$conf.int[2], 2), "] min\n")
+cat("Cohenov d:", round(d_time, 2), "\n")
+cat("Interpretacija: Veliki ucinak. Vizuali povecavaju vrijeme citanja za ~35 sekundi.\n")
+```
+
+Cohenov d zaslužuje malo objašnjenja. On je mjera veličine učinka, koja nam govori koliko je razlika velika u praktičnom smislu, neovisno o veličini uzorka. Za upareni test računa se kao prosjek razlika podijeljen sa standardnom devijacijom razlika. Konvencija kaže da je d od 0.2 mali učinak, 0.5 srednji, a 0.8 veliki. Naš d je iznad 0.8, što znači da vizuali imaju velik i praktično značajan utjecaj na vrijeme čitanja.
+
+### Vizualizacija uparenih podataka
+
+Brojke su uvjerljive, ali dobar graf može reći više od tablice. Pogledajmo distribuciju razlika.
+
+```{r}
+#| label: paired-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Prikaz razlika
+articles |>
+  ggplot(aes(x = diff_time)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 20) +
+  geom_vline(xintercept = 0, color = "grey50", linetype = "dashed", linewidth = 0.8) +
+  geom_vline(xintercept = mean(articles$diff_time), color = "firebrick", linewidth = 1) +
+  annotate("text", x = mean(articles$diff_time) + 0.05, y = 15,
+           label = paste0("M = +", round(mean(articles$diff_time), 2), " min"),
+           color = "firebrick", hjust = 0, fontface = "bold") +
+  labs(
+    title = "Razlike u vremenu citanja (s vizualima minus bez vizuala)",
+    subtitle = "Vecina razlika je pozitivna: vizuali povecavaju vrijeme citanja",
+    x = "Razlika (minute)",
+    y = "Broj clanaka"
+  ) +
+  theme_minimal()
+```
+
+Isprekidana siva linija označava nulu — "nema razlike." Crvena linija označava prosječnu razliku. Većina stupaca leži desno od nule, što znači da su članci s vizualima dosljedno imali duže vrijeme čitanja. Poneki članak ima negativnu razliku (čitatelji su ga čitali kraće s vizualima), ali to je iznimka, ne pravilo.
+
+Još je jedan tip grafa posebno koristan za uparene podatke: slope chart. On prikazuje svaku jedinicu kao liniju koja povezuje dva uvjeta, pa možete doslovno vidjeti kako se svaki članak ponaša.
+
+```{r}
+#| label: paired-slope
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 6
+
+# Slope chart za prvih 40 clanaka (za preglednost)
+articles |>
+  slice(1:40) |>
+  select(article_id, reading_time_no_visual, reading_time_with_visual) |>
+  pivot_longer(-article_id, names_to = "uvjet", values_to = "vrijeme") |>
+  mutate(uvjet = if_else(str_detect(uvjet, "no"), "Bez vizuala", "S vizualima")) |>
+  ggplot(aes(x = uvjet, y = vrijeme, group = article_id)) +
+  geom_line(alpha = 0.3, color = "grey50") +
+  geom_point(aes(color = uvjet), size = 2, alpha = 0.6) +
+  stat_summary(aes(group = 1), fun = mean, geom = "line", linewidth = 2, color = "firebrick") +
+  stat_summary(aes(group = 1), fun = mean, geom = "point", size = 4, color = "firebrick") +
+  scale_color_manual(values = c("Bez vizuala" = "steelblue", "S vizualima" = "#2a9d8f")) +
+  labs(
+    title = "Vrijeme citanja po uvjetu (prvih 40 clanaka)",
+    subtitle = "Sive linije = pojedinacni clanci. Crvena linija = prosjek.",
+    x = NULL,
+    y = "Vrijeme citanja (min)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+Svaka siva linija predstavlja jedan članak. Većina linija ide prema gore — duže čitanje s vizualima. Crvena linija, prosjek, potvrđuje ukupni trend. Ovakav graf je posebno koristan kad želite pokazati da efekt nije artefakt nekoliko ekstremnih slučajeva, nego dosljedno pravilo.
+
+
+## Sva četiri ishoda odjednom {#sec-svi-ishodi}
+
+Do sada smo se fokusirali na vrijeme čitanja, ali uredništvo želi znati o sva četiri ishoda. Umjesto da isti postupak ručno ponavljamo četiri puta, napišimo funkciju koja obavlja kompletnu uparenu analizu i primijenimo je na sve ishode odjednom.
+
+```{r}
+#| label: svi-testovi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Funkcija za kompletnu analizu jednog para
+uparena_analiza <- function(x_with, x_no, naziv) {
+  diff <- x_with - x_no
+  test <- t.test(x_with, x_no, paired = TRUE)
+  d <- mean(diff) / sd(diff)
+  shapiro_p <- shapiro.test(diff)$p.value
+
+  tibble(
+    ishod = naziv,
+    M_bez = round(mean(x_no), 2),
+    M_s = round(mean(x_with), 2),
+    M_razlika = round(mean(diff), 2),
+    t = round(test$statistic, 2),
+    df = test$parameter,
+    p = test$p.value,
+    d = round(d, 2),
+    shapiro_p = round(shapiro_p, 4)
+  )
+}
+
+rezultati <- bind_rows(
+  uparena_analiza(articles$reading_time_with_visual, articles$reading_time_no_visual, "Vrijeme citanja (min)"),
+  uparena_analiza(articles$comprehension_with_visual, articles$comprehension_no_visual, "Razumijevanje (0-10)"),
+  uparena_analiza(articles$sharing_with_visual, articles$sharing_no_visual, "Namjera dijeljenja (1-5)"),
+  uparena_analiza(articles$credibility_with_visual, articles$credibility_no_visual, "Vjerodostojnost (1-7)")
+) |>
+  mutate(
+    znacajno = p < 0.05,
+    velicina = case_when(
+      abs(d) >= 0.8 ~ "veliki",
+      abs(d) >= 0.5 ~ "srednji",
+      abs(d) >= 0.2 ~ "mali",
+      .default = "zanemariv"
+    ),
+    normalnost_ok = shapiro_p >= 0.05
+  )
+
+rezultati |>
+  mutate(p = format(p, scientific = TRUE, digits = 2)) |>
+  select(ishod, M_bez, M_s, M_razlika, t, p, d, velicina, normalnost_ok)
+```
+
+Ova tablica daje kompletnu sliku jednim pogledom. Vrijeme čitanja i razumijevanje imaju normalne razlike (Shapiro p > 0.05) i značajne razlike s velikim učincima. Namjera dijeljenja i vjerodostojnost imaju diskretnije distribucije i nešto manje učinke, ali su i dalje statistički značajni.
+
+Kad imate više ishoda koje uspoređujete, forest plot je standardni način da ih sve prikažete u jednom grafu. Svaka točka predstavlja Cohenov d za jedan ishod, a horizontalna crtica oko nje je 95% interval pouzdanosti.
+
+```{r}
+#| label: forest-plot
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Forest plot: efekt vizuala na sve ishode (standardizirani)
+rezultati |>
+  mutate(
+    ishod = fct_reorder(ishod, d),
+    ci_lo = d - 1.96 * (1 / sqrt(120)),
+    ci_hi = d + 1.96 * (1 / sqrt(120))
+  ) |>
+  ggplot(aes(y = ishod)) +
+  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = d), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = c(0.2, 0.5, 0.8), linetype = "dotted", color = "grey70") +
+  annotate("text", x = c(0.2, 0.5, 0.8), y = 0.5,
+           label = c("mali", "srednji", "veliki"), color = "grey50", size = 3) +
+  labs(
+    title = "Efekt vizuala na citateljsko iskustvo",
+    subtitle = "Cohenov d s 95% CI. Svi efekti su pozitivni: vizuali poboljsavaju sve ishode.",
+    x = "Cohenov d (standardizirana razlika)",
+    y = NULL
+  ) +
+  theme_minimal()
+```
+
+Sve četiri točke leže desno od nule, što znači da vizuali poboljšavaju svaki mjereni ishod. Nijedan interval pouzdanosti ne prelazi nulu, što potvrđuje statističku značajnost. Najveći efekt je na razumijevanje, najmanji na vjerodostojnost. Ova vrsta vizualizacije je posebno korisna kad predstavljate rezultate nekome tko nije statistički stručnjak — vaš glavni urednik može pogledati graf i odmah vidjeti ukupnu sliku.
+
+
+## Kad normalnost zakaže: Wilcoxonov test {#sec-wilcoxon}
+
+Što radite kad normalnost nije zadovoljena i uzorak je premalen da centralni granični teorem kompenzira? Koristite neparametrijske testove. Oni ne pretpostavljaju normalnost jer rade s rangovima umjesto s izvornim vrijednostima — umjesto da uspoređuju prosjeke, uspoređuju relativne položaje podataka.
+
+```{r}
+#| label: wilcoxon-tablica
 #| echo: true
 #| message: false
 #| warning: false
 
 tribble(
-  ~V, ~interpretacija,
-  "0.06", "Mali učinak",
-  "0.17", "Srednji učinak",
-  "0.29", "Veliki učinak"
+  ~parametrijski, ~neparametrijski, ~R_funkcija,
+  "Jednouzorački t-test", "Wilcoxonov signed-rank test", "wilcox.test(x, mu = vrijednost)",
+  "Nezavisni t-test", "Mann-Whitney U test", "wilcox.test(x, y)",
+  "Upareni t-test", "Wilcoxonov signed-rank test", "wilcox.test(x, y, paired = TRUE)"
 )
 ```
 
-Naše V ≈ `r round(cramer_v, 2)` je veliki učinak. Veza između dobi i medijskog tipa je ne samo statistički značajna nego i praktično snažna.
+Wilcoxonov signed-rank test, neparametrijska zamjena za upareni t-test, radi ovako: uzme sve razlike između dvaju uvjeta, rangira ih po apsolutnoj vrijednosti, zatim svakom rangu vrati originalni predznak i testira je li suma pozitivnih rangova značajno veća (ili manja) od očekivane pod nultom hipotezom. Jer radi s rangovima, jedan ekstremni outlier ne može dominirati rezultatom — a to je ključna prednost.
 
----
-
-## Vizualizacija kategoričkih podataka {#sec-vizualizacija}
-
-Kontingencijske tablice su korisne ali teške za brzo čitanje. Vizualizacije pomažu.
+Usporedimo parametrijski i neparametrijski pristup na varijabli namjere dijeljenja, koja je mjerena Likert skalom i možda ne zadovoljava pretpostavku normalnosti.
 
 ```{r}
-#| label: mozaik-ggplot
+#| label: wilcoxon-sharing
+#| echo: true
+#| message: false
+#| warning: false
+
+# Namjera dijeljenja: Likert skala, mozda nije normalna
+# Parametrijski (t-test)
+t_share <- t.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)
+
+# Neparametrijski (Wilcoxon)
+w_share <- wilcox.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)
+
+cat("=== Namjera dijeljenja: parametrijski vs neparametrijski ===\n\n")
+cat("Upareni t-test:          p =", round(t_share$p.value, 4), "\n")
+cat("Wilcoxon signed-rank:    p =", round(w_share$p.value, 4), "\n")
+```
+
+Pogledajmo sada usporedbu za sve četiri ishoda.
+
+```{r}
+#| label: wilcoxon-svi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba t-test vs Wilcoxon za sve ishode
+wilcox_rezultati <- bind_rows(
+  tibble(ishod = "Vrijeme citanja",
+         p_t = t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Razumijevanje",
+         p_t = t.test(articles$comprehension_with_visual, articles$comprehension_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$comprehension_with_visual, articles$comprehension_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Namjera dijeljenja",
+         p_t = t.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$sharing_with_visual, articles$sharing_no_visual, paired = TRUE)$p.value),
+  tibble(ishod = "Vjerodostojnost",
+         p_t = t.test(articles$credibility_with_visual, articles$credibility_no_visual, paired = TRUE)$p.value,
+         p_w = wilcox.test(articles$credibility_with_visual, articles$credibility_no_visual, paired = TRUE)$p.value)
+) |>
+  mutate(
+    p_t = format(p_t, scientific = TRUE, digits = 2),
+    p_w = format(p_w, scientific = TRUE, digits = 2)
+  )
+
+wilcox_rezultati
+```
+
+Za naše podatke, oba pristupa daju konzistentne zaključke. To je čest slučaj kad je uzorak veći od 30 — centralni granični teorem čini t-test dovoljno robusnim čak i uz umjerena odstupanja od normalnosti. Kad rezultati dvaju pristupa nisu konzistentni, to je signal da trebate biti oprezniji u interpretaciji i možda koristiti robusniji neparametrijski pristup.
+
+::: {.callout-tip}
+## Kada posegnuti za Wilcoxonovim testom?
+
+Wilcoxonov test je pravi izbor u četiri situacije. Kao prvo, uzorak je mali (n < 30) i distribucija je jasno nenormalna. Kao drugo, podaci su ordinalni, poput Likert skale s malo kategorija. Kao treće, postoje ekstremni outlieri koji iskrivljuju prosjek. Kao četvrto, želite robusniju analizu kao provjeru — provedite oba testa i izvijestite oba rezultata.
+
+Obrnuto, za uzorak veći od 50 s umjereno normalnim podacima, t-test je gotovo uvijek dobar izbor. Nema potrebe automatski posezati za neparametrijskim testom samo zato što Shapiro-Wilkov test daje p < 0.05.
+:::
+
+
+## Nije li efekt različit za različite teme? {#sec-po-kategoriji}
+
+Prosječni efekt vizuala na razumijevanje je velik, ali prosječni efekt krije varijabilnost. Možda vizuali drastično pomažu kod tehničkih tema (gdje dijagrami pojašnjavaju složene koncepte), ali jedva da imaju utjecaja na sportske vijesti (gdje je tekst sam po sebi jasan). Provjerimo.
+
+```{r}
+#| label: po-kategoriji
+#| echo: true
+#| message: false
+#| warning: false
+
+articles |>
+  group_by(category) |>
+  summarise(
+    n = n(),
+    M_diff_comp = round(mean(diff_comp), 2),
+    SD_diff_comp = round(sd(diff_comp), 2),
+    t = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$statistic, 2),
+    p = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$p.value, 4),
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
+  ) |>
+  arrange(desc(d))
+```
+
+```{r}
+#| label: po-kategoriji-vizualizacija
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 9
-#| fig-height: 6
+#| fig-height: 5
 
-# Grupani stupčasti graf (najprikladniji za prezentaciju)
-survey |>
-  count(age_group, media_type) |>
-  group_by(age_group) |>
-  mutate(udio = n / sum(n)) |>
-  ungroup() |>
-  ggplot(aes(x = age_group, y = udio, fill = media_type)) +
-  geom_col(position = "dodge", alpha = 0.85) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  scale_fill_brewer(palette = "Set2") +
+articles |>
+  group_by(category) |>
+  summarise(
+    M = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    .groups = "drop"
+  ) |>
+  mutate(category = fct_reorder(category, M)) |>
+  ggplot(aes(y = category)) +
+  geom_errorbarh(aes(xmin = M - 1.96 * SE, xmax = M + 1.96 * SE),
+                 height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = M), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
   labs(
-    title = "Preferirani tip medija po dobnim skupinama",
-    subtitle = paste0("χ² = ", round(chi2_val, 1), ", p < 0.001, Cramérovo V = ", 
-                      round(cramer_v, 2), " (veliki učinak)"),
-    x = "Dobna skupina",
-    y = "Udio",
-    fill = "Tip medija"
+    title = "Efekt vizuala na razumijevanje po kategoriji clanka",
+    subtitle = "95% CI za prosjecnu razliku. Vizuali pomazu u svim kategorijama.",
+    x = "Poboljsanje razumijevanja (bodovi, 0-10 skala)",
+    y = NULL
   ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+  theme_minimal()
 ```
-
-```{r}
-#| label: balon-graf
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 9
-#| fig-height: 6
-
-# Balon graf (dobra alternativa za kontingencijske tablice)
-survey |>
-  count(age_group, media_type) |>
-  group_by(age_group) |>
-  mutate(udio = n / sum(n)) |>
-  ungroup() |>
-  ggplot(aes(x = media_type, y = age_group, size = udio, color = udio)) +
-  geom_point() +
-  scale_size_continuous(range = c(2, 15), labels = scales::label_percent()) +
-  scale_color_viridis_c(option = "D", labels = scales::label_percent()) +
-  labs(
-    title = "Balon graf: dob × tip medija",
-    subtitle = "Veći i svjetliji balon = veći udio u toj dobnoj skupini",
-    x = "Tip medija",
-    y = "Dobna skupina",
-    size = "Udio", color = "Udio"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
-```
-
----
-
-## Hi-kvadrat test u praksi: korak po korak {#sec-koraci}
-
-Sažmimo postupak u jasne korake koje možete primijeniti na bilo koji par kategoričkih varijabli.
-
-**Korak 1**: Formulirajte hipoteze.
-
-**Korak 2**: Napravite kontingencijsku tablicu i vizualizirajte podatke.
-
-**Korak 3**: Provjerite pretpostavke (sve očekivane frekvencije ≥ 5).
-
-**Korak 4**: Provedite test i izračunajte p-vrijednost.
-
-**Korak 5**: Izračunajte veličinu učinka (Cramérovo V).
-
-**Korak 6**: Pogledajte reziduale za specifična odstupanja.
-
-**Korak 7**: Interpretirajte u kontekstu.
-
-```{r}
-#| label: primjer-spol-sadrzaj
-#| echo: true
-#| message: false
-#| warning: false
-
-# Primjer: postoji li veza između spola i preferencije sadržaja?
-tablica_spol <- table(survey$gender, survey$content_preference)
-
-# Korak 2: kontingencijska tablica
-tablica_spol
-
-# Korak 3: provjera
-chi_spol <- chisq.test(tablica_spol)
-cat("\nNajmanja očekivana frekvencija:", round(min(chi_spol$expected), 1), "\n")
-
-# Korak 4: test
-chi_spol
-
-# Korak 5: Cramérovo V
-v_spol <- sqrt(chi_spol$statistic / (sum(tablica_spol) * (min(dim(tablica_spol)) - 1)))
-cat("Cramérovo V:", round(v_spol, 3), "\n")
-
-# Korak 6: reziduali
-cat("\nStandardizirani reziduali:\n")
-round(chi_spol$residuals, 2)
-```
-
-U ovom primjeru, odnos između spola i preferencije sadržaja možda nije statistički značajan (ovisi o p-vrijednosti). Ovo je potpuno normalan rezultat: ne mora svaka veza biti značajna. Podatke treba pustiti da govore.
-
----
 
 
 ::: {.callout-note}
-## Podsjetnik
+## Gdje smo, kamo idemo
 
-U prvom dijelu naučili smo hi-kvadrat test za dobrotu prilagodbe i test nezavisnosti, očekivane frekvencije, standardizirane reziduale i Cramérovo V. U ovom dijelu pokrivamo situacije kad standardni hi-kvadrat test nije primjeren te provodimo potpunu analizu kategoričkih podataka.
+U prvom dijelu ovog predavanja proveli smo upareni t-test na podacima o vizualima u člancima, provjerili normalnost (QQ plot, Shapiro-Wilk), usporedili parametrijski i neparametrijski pristup (Wilcoxon) i prikazali efekte forest plotom. U nastavku pokrivamo APA izvještavanje, nezavisni t-test na novom primjeru, utjecaj outliera i kompletnu analizu.
 :::
 
-## Fisherov egzaktni test {#sec-fisher}
 
-Hi-kvadrat test je aproksimacija koja radi dobro kad su očekivane frekvencije dovoljno velike (sve ≥ 5). Kad to nije slučaj (mali uzorak, rijetke kategorije), aproksimacija postaje nepouzdana. **Fisherov egzaktni test** računa točnu p-vrijednost bez aproksimacije.
+## Kako napisati rezultate: APA format {#sec-apa}
 
-Situacija: testirate vezu između tipa CTA (call-to-action) i konverzije na malom uzorku od 40 newsletter kampanja.
+Provesti analizu je pola posla. Druga polovica je napisati rezultate tako da ih drugi istraživači mogu razumjeti i reproducirati. U komunikologiji (kao i u psihologiji i većini društvenih znanosti) standardni format za izvještavanje statističkih rezultata propisuje American Psychological Association (APA).
+
+APA format za t-test može djelovati rigidno, ali ta rigidnost ima svrhu: omogućuje čitatelju da brzo razumije što je testirano, koliko je jak dokaz i koliki je učinak, bez potrebe da tumači autorov slobodni stil pisanja.
+
+### Upareni t-test u APA formatu
 
 ```{r}
-#| label: fisher-primjer
+#| label: apa-upareni
 #| echo: true
 #| message: false
 #| warning: false
 
-# Mali uzorak: 40 kampanja, 2 x 2 tablica
-set.seed(42)
+articles <- read_csv("../resources/datasets/article_visuals.csv") |>
+  mutate(diff_time = reading_time_with_visual - reading_time_no_visual,
+         diff_comp = comprehension_with_visual - comprehension_no_visual,
+         diff_share = sharing_with_visual - sharing_no_visual,
+         diff_cred = credibility_with_visual - credibility_no_visual)
 
-kampanje <- tibble(
-  cta_tip = c(rep("direktni", 20), rep("indirektni", 20)),
-  konverzija = c(
-    sample(c("da", "ne"), 20, replace = TRUE, prob = c(0.45, 0.55)),
-    sample(c("da", "ne"), 20, replace = TRUE, prob = c(0.20, 0.80))
-  )
-)
+# Elementi za APA izvjestaj
+test <- t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)
+d <- mean(articles$diff_time) / sd(articles$diff_time)
+n <- nrow(articles)
 
-tablica_cta <- table(kampanje$cta_tip, kampanje$konverzija)
-tablica_cta
+cat("APA format (upareni t-test):\n\n")
+cat("Clanci s vizualima imali su statisticki znacajno duze vrijeme citanja\n")
+cat("(M = ", round(mean(articles$reading_time_with_visual), 2),
+    ", SD = ", round(sd(articles$reading_time_with_visual), 2),
+    ") od clanaka bez vizuala\n", sep = "")
+cat("(M = ", round(mean(articles$reading_time_no_visual), 2),
+    ", SD = ", round(sd(articles$reading_time_no_visual), 2),
+    "),\nt(", test$parameter, ") = ", round(test$statistic, 2),
+    ", p < .001, d = ", round(d, 2), ".\n", sep = "")
 ```
 
+### Anatomija APA izvještaja
+
+Svaki APA izvještaj t-testa sadrži iste elemente, uvijek istim redoslijedom. Počinje riječima — opisujete smjer razlike ("članci s vizualima imali su značajno duže vrijeme čitanja"). Zatim dajete prosjeke i standardne devijacije obiju grupa. Onda slijedi test s df u zagradi, t-vrijednost zaokružena na dvije decimale, p-vrijednost (točna ili "< .001" za vrlo male vrijednosti), i konačno mjera veličine učinka, najčešće Cohenov d.
+
+Napišimo funkciju koja automatizira ovaj format.
+
 ```{r}
-#| label: fisher-ocekivane
+#| label: apa-funkcija
 #| echo: true
 #| message: false
 #| warning: false
 
-# Provjera ocekivanih frekvencija
-chi_cta <- chisq.test(tablica_cta, correct = FALSE)
-chi_cta$expected
+# Funkcija za automatski APA izvjestaj
+apa_paired <- function(x, y, naziv_x, naziv_y, naziv_ishoda) {
+  test <- t.test(x, y, paired = TRUE)
+  diff <- x - y
+  d <- mean(diff) / sd(diff)
+
+  p_text <- if_else(test$p.value < 0.001, "p < .001",
+                    paste0("p = ", sub("^0", "", sprintf("%.3f", test$p.value))))
+
+  paste0(naziv_x, " imali su ",
+         if_else(mean(diff) > 0, "visi", "nizi"), " ", naziv_ishoda,
+         " (M = ", round(mean(x), 2), ", SD = ", round(sd(x), 2),
+         ") od ", naziv_y,
+         " (M = ", round(mean(y), 2), ", SD = ", round(sd(y), 2),
+         "), t(", test$parameter, ") = ", round(test$statistic, 2),
+         ", ", p_text, ", d = ", round(d, 2), ".")
+}
+
+# Primjeri
+cat(apa_paired(articles$reading_time_with_visual, articles$reading_time_no_visual,
+               "Clanci s vizualima", "clanaka bez vizuala", "vrijeme citanja"), "\n\n")
+
+cat(apa_paired(articles$comprehension_with_visual, articles$comprehension_no_visual,
+               "Clanci s vizualima", "clanaka bez vizuala", "razumijevanje"), "\n")
 ```
-
-Neke očekivane frekvencije su blizu 5 (ili ispod). Hi-kvadrat aproksimacija nije pouzdana. Koristimo Fisherov test.
-
-```{r}
-#| label: fisher-test
-#| echo: true
-#| message: false
-#| warning: false
-
-# Fisherov egzaktni test
-fisher.test(tablica_cta)
-```
-
-```{r}
-#| label: fisher-usporedba
-#| echo: true
-#| message: false
-#| warning: false
-
-# Usporedba tri pristupa
-cat("Hi-kvadrat (bez korekcije):  p =", round(chi_cta$p.value, 4), "\n")
-cat("Hi-kvadrat (Yates korekcija): p =", round(chisq.test(tablica_cta)$p.value, 4), "\n")
-cat("Fisherov egzaktni test:       p =", round(fisher.test(tablica_cta)$p.value, 4), "\n")
-```
-
-Fisherov test daje nešto drugačiju p-vrijednost od hi-kvadrata. Za male uzorke, Fisherov test je pouzdaniji. R po defaultu primjenjuje **Yatesovu korekciju kontinuiteta** na 2x2 tablice (`chisq.test` s `correct = TRUE`), što daje konzervativniju p-vrijednost, ali Fisherov test je ipak bolji izbor kad su očekivane frekvencije male.
-
-### Odds ratio iz Fisherovog testa
-
-Fisherov test za 2x2 tablice automatski računa **odds ratio** (omjer šansi), što je korisna mjera veličine učinka za binarne ishode.
-
-```{r}
-#| label: odds-ratio
-#| echo: true
-#| message: false
-#| warning: false
-
-fisher_rez <- fisher.test(tablica_cta)
-
-cat("Odds ratio:", round(fisher_rez$estimate, 2), "\n")
-cat("95% CI: [", round(fisher_rez$conf.int[1], 2), ",", round(fisher_rez$conf.int[2], 2), "]\n")
-```
-
-Odds ratio > 1 znači da je šansa konverzije veća uz direktni CTA. Odds ratio = 1 bi značio da nema razlike. CI koji ne sadrži 1 sugerira statistički značajnu razliku.
 
 ::: {.callout-tip}
-## Kada koristiti koji test?
+## Praktični savjet za izvještavanje
 
-**Hi-kvadrat test**: Kad su sve očekivane frekvencije >= 5 i tablica je veća od 2x2. Brz i dovoljno točan za velike uzorke.
-
-**Fisherov egzaktni test**: Kad su neke očekivane frekvencije < 5 ili je ukupni uzorak mali (< 50). Funkcionira za bilo koju veličinu tablice, ali je računalno zahtjevniji za veće tablice.
-
-U praksi, Fisherov test možete koristiti uvijek. Za velike uzorke daje identične rezultate kao hi-kvadrat. Razlika se pojavljuje samo za male uzorke, gdje je Fisherov test bolji.
+Koristite ovu `apa_paired()` funkciju kao predložak i prilagodite je za vlastite izvještaje. Konzistentno formatiranje štedi vrijeme i smanjuje mogućnost greške. Postoje i R paketi (poput `report` ili `papaja`) koji automatiziraju APA izvještavanje, ali razumijevanje strukture je važnije od korištenja paketa — jer paketi rade za vas, ali ne objašnjavaju vama.
 :::
 
----
 
-## Spajanje kategorija {#sec-spajanje}
+## Nezavisni t-test: kratki protiv dugih članaka {#sec-nezavisni}
 
-Ponekad kontingencijska tablica ima kategorije s vrlo malo opažanja. Umjesto da odmah pribjegnemo Fisherovom testu, možemo spojiti (kolapsirati) slične kategorije.
+Upareni t-test bio je prikladan za usporedbu uvjeta jer je svaki članak bio u oba uvjeta. Ali ponekad uspoređujete dvije grupe koje nemaju nikakvu vezu jedna s drugom. Na primjer: razlikuje li se razumijevanje između kratkih i dugih članaka? Svaki članak pripada samo jednoj kategoriji dužine, pa nam treba nezavisni t-test.
 
 ```{r}
-#| label: spajanje-kategorija
+#| label: nezavisni-podaci
 #| echo: true
 #| message: false
 #| warning: false
 
-survey <- read_csv("../resources/datasets/media_survey_chi2.csv")
+# Usporedba kratkih vs dugih clanaka (BEZ vizuala, da izoliramo efekt duzine)
+articles_kd <- articles |>
+  filter(length_category %in% c("kratki", "dugi"))
 
-# Originalna tablica: media_type ima 6 kategorija, neke male
-table(survey$media_type)
-
-# Spajanje: digitalni (streaming + web_portal + podcast) vs tradicionalni (TV + radio + tisak)
-survey <- survey |>
-  mutate(media_grupa = if_else(
-    media_type %in% c("streaming", "web_portal", "podcast"),
-    "digitalni",
-    "tradicionalni"
-  ))
-
-# Nova tablica: 4 x 2 (preglednija i s vecim frekvencijama)
-table(survey$age_group, survey$media_grupa)
+articles_kd |>
+  group_by(length_category) |>
+  summarise(
+    n = n(),
+    M_comp = round(mean(comprehension_no_visual), 2),
+    SD_comp = round(sd(comprehension_no_visual), 2),
+    M_time = round(mean(reading_time_no_visual), 2),
+    .groups = "drop"
+  )
 ```
 
+Prije nego pokrenemo test, provjerimo normalnost u svakoj grupi zasebno.
+
 ```{r}
-#| label: spajanje-test
+#| label: nezavisni-provjera
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 4
+
+# Provjera normalnosti po grupama
+articles_kd |>
+  ggplot(aes(sample = comprehension_no_visual)) +
+  stat_qq(color = "steelblue") +
+  stat_qq_line(color = "firebrick") +
+  facet_wrap(~length_category) +
+  labs(
+    title = "QQ plotovi za razumijevanje po duzini clanka",
+    x = "Teoretski kvantili",
+    y = "Opazeni kvantili"
+  ) +
+  theme_minimal()
+```
+
+QQ plotovi izgledaju prihvatljivo. Pokrenimo Welchov t-test.
+
+```{r}
+#| label: nezavisni-test
 #| echo: true
 #| message: false
 #| warning: false
 
-chi_grupa <- chisq.test(table(survey$age_group, survey$media_grupa))
-chi_grupa
+kratki <- articles_kd |> filter(length_category == "kratki") |> pull(comprehension_no_visual)
+dugi <- articles_kd |> filter(length_category == "dugi") |> pull(comprehension_no_visual)
 
-# Cramerovo V za 4 x 2 tablicu
-v_grupa <- sqrt(chi_grupa$statistic / (nrow(survey) * (min(4, 2) - 1)))
-cat("\nCramerovo V:", round(v_grupa, 3), "\n")
+# Welchov t-test (default)
+test_kd <- t.test(kratki, dugi)
+test_kd
+
+# Cohenov d za nezavisni test
+n1 <- length(kratki); n2 <- length(dugi)
+s_pooled <- sqrt(((n1-1)*sd(kratki)^2 + (n2-1)*sd(dugi)^2) / (n1+n2-2))
+d_kd <- (mean(kratki) - mean(dugi)) / s_pooled
+
+cat("\nCohenov d:", round(d_kd, 2), "\n")
 ```
 
-Sažeta tablica je jasnija za komunikaciju rezultata. Umjesto šest kategorija, imamo jednu binarnu podjelu: digitalni vs tradicionalni mediji. Veza s dobi je i dalje izuzetno značajna i velika.
+Primijetite da se Cohenov d za nezavisni test računa drugačije nego za upareni. Ovdje koristimo pooled standard deviation, odnosno zajedničku standardnu devijaciju obiju grupa ponderiranu njihovim veličinama uzoraka. Formula je *(M1 - M2) / s_pooled*, a ne *M_razlika / SD_razlika* kao kod uparenog testa.
 
 ```{r}
-#| label: spajanje-vizualizacija
+#| label: nezavisni-vizualizacija
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 8
 #| fig-height: 5
 
-survey |>
-  count(age_group, media_grupa) |>
-  group_by(age_group) |>
-  mutate(udio = n / sum(n)) |>
-  ungroup() |>
-  ggplot(aes(x = age_group, y = udio, fill = media_grupa)) +
-  geom_col(alpha = 0.85) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  scale_fill_manual(values = c("digitalni" = "#2a9d8f", "tradicionalni" = "#e76f51")) +
-  geom_text(aes(label = paste0(round(udio * 100), "%")), 
-            position = position_stack(vjust = 0.5), color = "white", fontface = "bold") +
+articles_kd |>
+  ggplot(aes(x = length_category, y = comprehension_no_visual, fill = length_category)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.3, size = 2) +
+  scale_fill_manual(values = c("kratki" = "#2a9d8f", "dugi" = "#e76f51")) +
   labs(
-    title = "Digitalni vs tradicionalni mediji po dobnim skupinama",
-    subtitle = paste0("chi2 = ", round(chi_grupa$statistic, 1), ", p < 0.001, V = ", 
-                      round(v_grupa, 2)),
-    x = "Dobna skupina",
-    y = "Udio",
-    fill = NULL
+    title = "Razumijevanje po duzini clanka (bez vizuala)",
+    subtitle = paste0("Welchov t-test: t(", round(test_kd$parameter, 1), ") = ",
+                      round(test_kd$statistic, 2),
+                      ", p = ", round(test_kd$p.value, 3),
+                      ", d = ", round(d_kd, 2)),
+    x = NULL,
+    y = "Razumijevanje (0-10)"
   ) +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "none")
 ```
 
-Priča je sada kristalno jasna: 85% osoba 18-29 preferira digitalne medije, ali samo 26% osoba 60+. Generacijski jaz je masivan.
-
----
-
-## Stratificirana analiza {#sec-stratifikacija}
-
-Ponekad nas zanima je li veza između dviju varijabli konzistentna unutar podgrupa treće varijable. Na primjer: postoji li veza između medijskog tipa i zadovoljstva, ali odvojeno za svaku dobnu skupinu?
+Ako p-vrijednost nije ispod 0.05, to ne znači da dužina članka nema nikakav utjecaj na razumijevanje. Možda je uzorak premalen da detektira razliku, ili je stvarna razlika toliko mala da nema praktični značaj. Tu na scenu stupa analiza snage, koja vam kaže koliko je vaš test "oštrovidna" za razliku određene veličine.
 
 ```{r}
-#| label: stratifikacija
+#| label: nezavisni-snaga
 #| echo: true
 #| message: false
 #| warning: false
 
-# Zadovoljstvo kategorizirano: nisko (1-2), srednje (3), visoko (4-5)
-survey <- survey |>
-  mutate(satisfaction_cat = case_when(
-    satisfaction <= 2 ~ "nisko",
-    satisfaction == 3 ~ "srednje",
-    satisfaction >= 4 ~ "visoko"
-  ))
+# Kolika je snaga ovog testa za detektiranje srednjeg ucinka?
+power_kd <- power.t.test(
+  n = min(n1, n2),
+  delta = 0.5,
+  sd = 1,
+  sig.level = 0.05,
+  type = "two.sample"
+)
 
-# Hi-kvadrat test po dobnim skupinama
-survey |>
-  group_by(age_group) |>
-  summarise(
-    n = n(),
-    chi2 = chisq.test(table(media_grupa, satisfaction_cat))$statistic,
-    p = chisq.test(table(media_grupa, satisfaction_cat))$p.value,
-    V = {
-      tab <- table(media_grupa, satisfaction_cat)
-      sqrt(chisq.test(tab)$statistic / (n() * (min(dim(tab)) - 1)))
-    },
-    .groups = "drop"
-  ) |>
-  mutate(
-    chi2 = round(chi2, 2),
-    p = round(p, 4),
-    V = round(V, 3),
-    znacajno = p < 0.05
-  )
+cat("Snaga za srednji ucinak (d = 0.5) s n =", min(n1, n2), "po grupi:",
+    round(power_kd$power, 2), "\n")
+cat("Za 80% snagu trebamo n =",
+    ceiling(power.t.test(delta = 0.5, sd = 1, sig.level = 0.05, power = 0.80,
+                         type = "two.sample")$n), "po grupi\n")
 ```
 
-Stratificirana analiza može otkriti da veza koja postoji ukupno ne postoji u svim podgrupama (ili obrnuto). Ovo je povezano s Simpsonovim paradoksom: agregirani rezultati mogu biti obmanjujući.
 
----
+## Oprez s outlierima {#sec-outlieri}
 
-## Simpsonov paradoks {#sec-simpson}
-
-**Simpsonov paradoks** nastaje kad se smjer veze promijeni kad kontroliramo treću varijablu. Ovo je jedan od najvažnijih koncepata za razumijevanje kategoričkih podataka u komunikologiji.
+T-test koristi aritmetički prosjek, a prosjek ima jednu poznatu slabost: izuzetno je osjetljiv na ekstremne vrijednosti. Jedan jedini outlier može značajno pomaknuti prosjek i potpuno promijeniti rezultat testa. Pogledajmo to na simuliranom primjeru.
 
 ```{r}
-#| label: simpson-demo
-#| echo: true
-#| message: false
-#| warning: false
-
-# Konstruirani primjer: dva portala, CTR po tipu uredaja
-simpson <- tribble(
-  ~portal, ~uredaj, ~klikovi, ~prikazi,
-  "Portal A", "mobitel",  80, 1000,
-  "Portal A", "desktop", 180,  500,
-  "Portal B", "mobitel",  30,  500,
-  "Portal B", "desktop",  80,  200
-) |>
-  mutate(ctr = round(klikovi / prikazi * 100, 1))
-
-# Ukupni CTR
-simpson |>
-  group_by(portal) |>
-  summarise(
-    ukupno_klikovi = sum(klikovi),
-    ukupno_prikazi = sum(prikazi),
-    ukupni_ctr = round(ukupno_klikovi / ukupno_prikazi * 100, 1),
-    .groups = "drop"
-  )
-```
-
-```{r}
-#| label: simpson-po-uredaju
-#| echo: true
-#| message: false
-#| warning: false
-
-# CTR po uredaju
-simpson |>
-  select(portal, uredaj, ctr, prikazi)
-```
-
-Portal B ima viši CTR na SVAKOM uređaju (mobitel: 6.0% vs 8.0%, desktop: 36.0% vs 40.0%). Ali Portal A može imati viši ukupni CTR! Razlog je u tome što Portal A ima mnogo više mobilnog prometa (1000 od 1500 prikaza) koji ima nizak CTR, dok Portal B ima relativno više desktop prometa s visokim CTR-om. Kad agregiramo, neravnomjerna raspodjela uređaja "prevagne" i stvori obmanjujuće ukupne brojke.
-
-::: {.callout-warning}
-## Upozorenje
-
-Simpsonov paradoks nije rijedak kuriozitet. U komunikološkim istraživanjima je čest jer se grupe (dobne, regionalne, platformske) razlikuju po veličini i karakteristikama. Kad god uspoređujete kategoričke podatke agregirano, zapitajte se: bi li se zaključak promijenio kad biste razdvojili po nekoj trećoj varijabli?
-:::
-
----
-
-## McNemarov test za uparene proporcije {#sec-mcnemar}
-
-Kad imate uparene kategoričke podatke (isti ispitanici mjereni dva puta), standardni hi-kvadrat test nije primjeren. Za tu situaciju koristimo **McNemarov test**.
-
-Situacija: 200 ispitanika je pitano preferiraju li online ili tiskane vijesti, jednom na početku i jednom na kraju semestra.
-
-```{r}
-#| label: mcnemar-podaci
+#| label: outlier-demo
 #| echo: true
 #| message: false
 #| warning: false
 
 set.seed(42)
 
-# Simulacija: pomak prema onlineu kroz semestar
-n_mc <- 200
-prije <- sample(c("online", "tisak"), n_mc, replace = TRUE, prob = c(0.55, 0.45))
+# Simulacija: normalni podaci + jedan outlier
+normalni <- rnorm(30, mean = 5, sd = 1)
+s_outlierom <- c(normalni, 25)  # ekstremna vrijednost
 
-# Poslije: neki presli na online, malo ih preslo na tisak
-poslije <- prije
-promijenili <- sample(1:n_mc, 40)
-for (i in promijenili[1:30]) poslije[i] <- "online"
-for (i in promijenili[31:40]) poslije[i] <- "tisak"
+cat("BEZ outliera:\n")
+cat("  M =", round(mean(normalni), 2), ", SD =", round(sd(normalni), 2), "\n")
+t_bez <- t.test(normalni, mu = 5)
+cat("  t =", round(t_bez$statistic, 2), ", p =", round(t_bez$p.value, 4), "\n\n")
 
-mc_tablica <- table(Prije = prije, Poslije = poslije)
-mc_tablica
+cat("S OUTLIEROM:\n")
+cat("  M =", round(mean(s_outlierom), 2), ", SD =", round(sd(s_outlierom), 2), "\n")
+t_s <- t.test(s_outlierom, mu = 5)
+cat("  t =", round(t_s$statistic, 2), ", p =", round(t_s$p.value, 4), "\n")
 ```
 
-Ova tablica se čita ovako: na dijagonali su ispitanici koji NISU promijenili mišljenje. Izvan dijagonale su oni koji jesu. McNemarov test testira je li broj promjena u jednom smjeru (tisak na online) značajno veći od broja promjena u drugom (online na tisak).
+Jedna jedina vrijednost od 25 — u distribuciji čiji je prosjek oko 5 — dramatično je pomaknula i prosjek i standardnu devijaciju. Rezultat testa se potpuno promijenio. U praksi ovakve situacije nisu rijetke: pogrešno unesena vrijednost, ispitanik koji je odgovarao nasumično, ili stvarno neobičan slučaj koji ne pripada istoj populaciji.
+
+### Kako detektirati outliere
 
 ```{r}
-#| label: mcnemar-test
+#| label: outlier-detekcija
 #| echo: true
 #| message: false
 #| warning: false
 
-mcnemar.test(mc_tablica)
+# Na nasim podacima: outlieri u razlikama vremena citanja
+z_diff <- scale(articles$diff_time)
+
+outlieri <- articles |>
+  mutate(z = as.numeric(z_diff)) |>
+  filter(abs(z) > 2.5)
+
+cat("Clanci s |z| > 2.5 za razliku u vremenu citanja:\n")
+cat("Broj outliera:", nrow(outlieri), "od", nrow(articles), "\n\n")
+
+if (nrow(outlieri) > 0) {
+  outlieri |>
+    select(article_id, category, diff_time, z) |>
+    mutate(z = round(z, 2), diff_time = round(diff_time, 2))
+}
 ```
 
+Standardizirane z-vrijednosti pretvaraju svako opažanje u "koliko standardnih devijacija od prosjeka." Vrijednosti s |z| > 2.5 smatramo potencijalnim outlierima. Usporedimo rezultate s njima i bez njih.
+
 ```{r}
-#| label: mcnemar-detalji
+#| label: outlier-usporedba
 #| echo: true
 #| message: false
 #| warning: false
 
-# Koliko je preslo u kojem smjeru?
-tisak_na_online <- mc_tablica["tisak", "online"]
-online_na_tisak <- mc_tablica["online", "tisak"]
+# Usporedba: s outlierima vs bez
+bez_outliera <- articles |> filter(abs(as.numeric(z_diff)) <= 2.5)
 
-cat("Presli tisak na online:", tisak_na_online, "\n")
-cat("Presli online na tisak:", online_na_tisak, "\n")
-cat("Neto pomak prema onlineu:", tisak_na_online - online_na_tisak, "\n")
+t_svi <- t.test(articles$reading_time_with_visual, articles$reading_time_no_visual, paired = TRUE)
+t_bez_o <- t.test(bez_outliera$reading_time_with_visual, bez_outliera$reading_time_no_visual, paired = TRUE)
+
+tibble(
+  analiza = c("Svi clanci", "Bez outliera (|z| > 2.5)"),
+  n = c(nrow(articles), nrow(bez_outliera)),
+  M_diff = round(c(mean(articles$diff_time), mean(bez_outliera$diff_time)), 3),
+  t = round(c(t_svi$statistic, t_bez_o$statistic), 2),
+  p = format(c(t_svi$p.value, t_bez_o$p.value), scientific = TRUE, digits = 2)
+)
 ```
 
-McNemarov test pokazuje je li pomak prema online vijestima statistički značajan. Više ispitanika je prešlo s tiska na online nego obrnuto.
+U ovom slučaju uklanjanje outliera ne mijenja zaključak — efekt je robustan. Ali to ne znači da provjeru možete preskočiti. U nekim situacijama jedan outlier može biti razlika između "statistički značajno" i "nije značajno."
 
-::: {.callout-important}
-## Kada koristiti McNemarov test?
+### Robusne alternative: podrezani prosjeci
 
-Kad imate **iste ispitanike** mjerene dva puta na istoj binarnoj varijabli. Primjeri: preferencija prije i poslije kampanje, stav prije i poslije vijesti, izbor prije i poslije redizajna. McNemarov test je za kategoričke podatke ono što je upareni t-test za numeričke.
+Uklanjanje outliera je uvijek donekle subjektivna odluka. Zašto baš |z| > 2.5, a ne 3.0? Alternativni pristup koji izbjegava tu arbitrarnost su trimmed means, odnosno podrezani prosjeci. Umjesto da odlučujete koje konkretne točke izbaciti, jednostavno kažete: "ignoriraj 10% najekstremnijih vrijednosti s oba kraja" — i prosjek se automatski stabilizira.
+
+```{r}
+#| label: trimmed
+#| echo: true
+#| message: false
+#| warning: false
+
+# Obicni prosjek vs 10% trimmed mean
+cat("Obicni prosjek razlika:", round(mean(articles$diff_time), 3), "\n")
+cat("10% trimmed mean razlika:", round(mean(articles$diff_time, trim = 0.10), 3), "\n")
+cat("20% trimmed mean razlika:", round(mean(articles$diff_time, trim = 0.20), 3), "\n")
+
+# Bootstrap za robustan CI
+set.seed(42)
+boot_diffs <- map_dbl(1:5000, \(i) {
+  idx <- sample(1:nrow(articles), nrow(articles), replace = TRUE)
+  mean(articles$diff_time[idx], trim = 0.10)
+})
+
+boot_ci <- quantile(boot_diffs, c(0.025, 0.975))
+cat("\nBootstrap 95% CI za 10% trimmed mean: [", round(boot_ci[1], 3), ",", round(boot_ci[2], 3), "]\n")
+cat("Sadrzi 0:", boot_ci[1] <= 0 & boot_ci[2] >= 0, "\n")
+```
+
+::: {.callout-tip}
+## Strategija za outliere u četiri koraka
+
+1. **Identificirajte** ih vizualno (boxplot, histogram) i numerički (|z| > 2.5 ili |z| > 3).
+2. **Pokušajte razumjeti** zašto su ekstremni. Je li to greška u podacima? Pogrešno unesena vrijednost? Ili stvarno neobično opažanje?
+3. **Provedite analizu s i bez outliera.** Ako zaključci ostaju isti, outlieri nisu problematični.
+4. **Ako se zaključci mijenjaju**, koristite robusne metode (podrezane prosjeke, bootstrap, Wilcoxon) i izvijestite oba rezultata. Transparentnost je ključna.
 :::
 
----
 
-## Potpuna analiza: medijske navike i demografija {#sec-analiza}
+## Formula pristup u R-u {#sec-formula}
 
-Provedimo kompletnu analizu kategoričkih podataka na našem datasetu. Istražujemo tri pitanja: (1) Ovisi li tip medija o dobi? (2) Ovisi li o regiji? (3) Ovisi li preferencija sadržaja o obrazovanju?
-
-```{r}
-#| label: analiza-q1
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 9
-#| fig-height: 5
-
-# Pitanje 1: Dob x tip medija (detaljno, svih 6 tipova)
-tab1 <- table(survey$age_group, survey$media_type)
-test_q1 <- chisq.test(tab1)
-v1 <- sqrt(test_q1$statistic / (sum(tab1) * (min(dim(tab1)) - 1)))
-
-cat("=== PITANJE 1: Dob x Tip medija ===\n")
-cat("chi2(", (nrow(tab1)-1)*(ncol(tab1)-1), ") = ", round(test_q1$statistic, 1),
-    ", p < 0.001, V = ", round(v1, 2), "\n", sep = "")
-cat("Interpretacija: Jaka veza. Mladi preferiraju streaming i portale,\n")
-cat("stariji TV i radio.\n\n")
-
-# Koji reziduali su najjaci?
-rez_df <- as.data.frame(test_q1$residuals) |>
-  as_tibble() |>
-  rename(age = Var1, media = Var2, r = Freq) |>
-  filter(abs(r) > 2) |>
-  arrange(desc(abs(r)))
-
-cat("Celije s |rezidual| > 2:\n")
-rez_df |>
-  mutate(r = round(r, 1), smjer = if_else(r > 0, "VISE nego ocekivano", "MANJE nego ocekivano")) |>
-  print(n = 20)
-```
+Do sada smo koristili `t.test(x, y)` sintaksu, gdje eksplicitno navodimo dva vektora. R podržava i formula pristup koji je elegantniji za nezavisni t-test i, što je još važnije, konzistentan sa sintaksom koju ćete koristiti za ANOVU i regresiju na nadolazećim predavanjima.
 
 ```{r}
-#| label: analiza-q2
+#| label: formula-pristup
 #| echo: true
 #| message: false
 #| warning: false
 
-# Pitanje 2: Regija x tip medija (digitalni vs tradicionalni)
-tab2 <- table(survey$region, survey$media_grupa)
-test_q2 <- chisq.test(tab2)
-v2 <- sqrt(test_q2$statistic / (sum(tab2) * (min(dim(tab2)) - 1)))
-
-cat("=== PITANJE 2: Regija x Digitalni/Tradicionalni ===\n")
-cat("chi2(", (nrow(tab2)-1)*(ncol(tab2)-1), ") = ", round(test_q2$statistic, 2),
-    ", p = ", round(test_q2$p.value, 4), ", V = ", round(v2, 3), "\n", sep = "")
-cat("Interpretacija:", if_else(test_q2$p.value < 0.05,
-    "Postoji znacajna razlika medju regijama.",
-    "Nema znacajne razlike medju regijama."), "\n\n")
-
-# Proporcije digitalnih po regiji
-survey |>
-  group_by(region) |>
-  summarise(
-    n = n(),
-    udio_digitalni = round(mean(media_grupa == "digitalni") * 100, 1),
-    .groups = "drop"
+# Podatke moramo prebaciti u dugi format za formula pristup
+articles_long <- articles |>
+  select(article_id, category, length_category,
+         reading_time_no_visual, reading_time_with_visual) |>
+  pivot_longer(
+    cols = c(reading_time_no_visual, reading_time_with_visual),
+    names_to = "uvjet",
+    values_to = "reading_time"
   ) |>
-  arrange(desc(udio_digitalni))
+  mutate(uvjet = if_else(str_detect(uvjet, "no"), "bez_vizuala", "s_vizualima"))
+
+# Formula pristup za nezavisni test (NAPOMENA: ovo NIJE pravi test jer su podaci upareni)
+# Ovo je samo demonstracija sintakse
+t.test(reading_time ~ uvjet, data = articles_long)
 ```
 
+Formula `y ~ grupa` čita se kao "y ovisi o grupi." Lijeva strana tilde (~) je zavisna varijabla, desna strana je grupna varijabla. Ova sintaksa će postati vaš svakodnevni alat na sljedećim predavanjima o ANOVI (gdje uspoređujete više od dvije grupe) i regresiji (gdje modelirate odnos između prediktora i ishoda).
+
+::: {.callout-warning}
+## Česta zamka: formula pristup za uparene podatke
+
+Formula pristup `t.test(y ~ grupa)` uvijek provodi nezavisni t-test. Ne postoji formula pristup za upareni t-test u base R-u. To znači da ako imate uparene podatke i koristite formulu, R će ih tretirati kao da su dvije nezavisne grupe — i dati vam pogrešne rezultate. Za upareni test uvijek koristite `t.test(x, y, paired = TRUE)` sintaksu.
+:::
+
+
+## Sve zajedno: izvještaj za uredništvo {#sec-analiza}
+
+Vrijeme je da spojimo sve što smo naučili u profesionalni izvještaj. Naš cilj nije samo provesti statistiku — nego dati uredništvu jasnu, argumentiranu preporuku temeljenu na podacima.
+
 ```{r}
-#| label: analiza-q3
+#| label: analiza-opisna
 #| echo: true
 #| message: false
 #| warning: false
-#| fig-width: 9
+
+# Opisna statistika po uvjetu, kompaktni format
+tribble(
+  ~ishod, ~M_bez, ~SD_bez, ~M_s, ~SD_s,
+  "Vrijeme citanja (min)",
+    round(mean(articles$reading_time_no_visual), 2), round(sd(articles$reading_time_no_visual), 2),
+    round(mean(articles$reading_time_with_visual), 2), round(sd(articles$reading_time_with_visual), 2),
+  "Razumijevanje (0-10)",
+    round(mean(articles$comprehension_no_visual), 2), round(sd(articles$comprehension_no_visual), 2),
+    round(mean(articles$comprehension_with_visual), 2), round(sd(articles$comprehension_with_visual), 2),
+  "Namjera dijeljenja (1-5)",
+    round(mean(articles$sharing_no_visual), 2), round(sd(articles$sharing_no_visual), 2),
+    round(mean(articles$sharing_with_visual), 2), round(sd(articles$sharing_with_visual), 2),
+  "Vjerodostojnost (1-7)",
+    round(mean(articles$credibility_no_visual), 2), round(sd(articles$credibility_no_visual), 2),
+    round(mean(articles$credibility_with_visual), 2), round(sd(articles$credibility_with_visual), 2)
+)
+```
+
+```{r}
+#| label: analiza-svi-testovi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Svi upareni t-testovi s kompletnim izvjestajima
+ishodi <- list(
+  list(with = "reading_time_with_visual", no = "reading_time_no_visual",
+       naziv = "Vrijeme citanja (min)"),
+  list(with = "comprehension_with_visual", no = "comprehension_no_visual",
+       naziv = "Razumijevanje (0-10)"),
+  list(with = "sharing_with_visual", no = "sharing_no_visual",
+       naziv = "Namjera dijeljenja (1-5)"),
+  list(with = "credibility_with_visual", no = "credibility_no_visual",
+       naziv = "Vjerodostojnost (1-7)")
+)
+
+kompletni_rezultati <- map_df(ishodi, \(ishod) {
+  x <- articles[[ishod$with]]
+  y <- articles[[ishod$no]]
+  diff <- x - y
+
+  t_rez <- t.test(x, y, paired = TRUE)
+  w_rez <- wilcox.test(x, y, paired = TRUE)
+  d_val <- mean(diff) / sd(diff)
+  shap_p <- shapiro.test(diff)$p.value
+
+  tibble(
+    ishod = ishod$naziv,
+    M_bez = round(mean(y), 2),
+    M_s = round(mean(x), 2),
+    razlika = round(mean(diff), 2),
+    t = round(t_rez$statistic, 2),
+    df = t_rez$parameter,
+    p_t = t_rez$p.value,
+    p_w = w_rez$p.value,
+    d = round(d_val, 2),
+    CI_lo = round(t_rez$conf.int[1], 2),
+    CI_hi = round(t_rez$conf.int[2], 2),
+    shapiro_p = round(shap_p, 3)
+  )
+})
+
+kompletni_rezultati |>
+  mutate(p_t = format(p_t, scientific = TRUE, digits = 2),
+         p_w = format(p_w, scientific = TRUE, digits = 2)) |>
+  select(ishod, M_bez, M_s, razlika, t, p_t, d, CI_lo, CI_hi)
+```
+
+```{r}
+#| label: analiza-vizualizacija-kompletna
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
 #| fig-height: 6
 
-# Pitanje 3: Obrazovanje x preferencija sadrzaja
-tab3 <- table(survey$education, survey$content_preference)
-chi3 <- chisq.test(tab3)
-v3 <- sqrt(chi3$statistic / (sum(tab3) * (min(dim(tab3)) - 1)))
-
-cat("=== PITANJE 3: Obrazovanje x Preferencija sadrzaja ===\n")
-cat("chi2(", (nrow(tab3)-1)*(ncol(tab3)-1), ") = ", round(chi3$statistic, 2), 
-    ", p = ", round(chi3$p.value, 4), ", V = ", round(v3, 3), "\n", sep = "")
-cat("Interpretacija:", if_else(chi3$p.value < 0.05, 
-    "Postoji znacajna veza.", 
-    "Nema znacajne veze."), "\n")
-
-# Vizualizacija
-survey |>
-  mutate(education = factor(education, levels = c("osnovna", "srednja", "visa", "visoka"))) |>
-  count(education, content_preference) |>
-  group_by(education) |>
-  mutate(udio = n / sum(n)) |>
-  ungroup() |>
-  ggplot(aes(x = education, y = udio, fill = content_preference)) +
-  geom_col(position = "dodge", alpha = 0.85) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  scale_fill_brewer(palette = "Set2") +
+# Boxplot za sve ishode
+articles |>
+  select(article_id,
+         `Vrijeme citanja_Bez` = reading_time_no_visual,
+         `Vrijeme citanja_S vizualima` = reading_time_with_visual,
+         `Razumijevanje_Bez` = comprehension_no_visual,
+         `Razumijevanje_S vizualima` = comprehension_with_visual,
+         `Dijeljenje_Bez` = sharing_no_visual,
+         `Dijeljenje_S vizualima` = sharing_with_visual,
+         `Vjerodostojnost_Bez` = credibility_no_visual,
+         `Vjerodostojnost_S vizualima` = credibility_with_visual) |>
+  pivot_longer(-article_id) |>
+  separate(name, into = c("ishod", "uvjet"), sep = "_") |>
+  ggplot(aes(x = uvjet, y = value, fill = uvjet)) +
+  geom_boxplot(alpha = 0.7, outlier.alpha = 0.3) +
+  facet_wrap(~ishod, scales = "free_y") +
+  scale_fill_manual(values = c("Bez" = "#e76f51", "S vizualima" = "#2a9d8f")) +
   labs(
-    title = "Preferencija sadrzaja po razini obrazovanja",
-    subtitle = paste0("chi2 = ", round(chi3$statistic, 1), ", p = ", round(chi3$p.value, 3), 
-                      ", V = ", round(v3, 2)),
-    x = "Razina obrazovanja",
-    y = "Udio",
-    fill = "Sadrzaj"
+    title = "Efekt vizuala na cetiri ishoda",
+    subtitle = "Vizuali poboljsavaju sve ishode. Najjaci efekt na razumijevanje.",
+    x = NULL, y = NULL, fill = NULL
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
 ```
 
 ```{r}
-#| label: analiza-sazetak
+#| label: analiza-po-duzini
 #| echo: true
 #| message: false
 #| warning: false
+#| fig-width: 9
+#| fig-height: 5
 
-# Sazetak svih testova
-cat("================================================\n")
-cat("   SAZETAK ANALIZE KATEGORICKIH PODATAKA\n")
-cat("================================================\n\n")
-
-tibble(
-  pitanje = c("Dob x Tip medija", "Regija x Dig./Trad.", "Obrazovanje x Sadrzaj"),
-  chi2 = round(c(test_q1$statistic, test_q2$statistic, chi3$statistic), 1),
-  df = c((nrow(tab1)-1)*(ncol(tab1)-1), (nrow(tab2)-1)*(ncol(tab2)-1), (nrow(tab3)-1)*(ncol(tab3)-1)),
-  p = c(format(test_q1$p.value, scientific = TRUE, digits = 2),
-        round(test_q2$p.value, 4), round(chi3$p.value, 4)),
-  V = round(c(v1, v2, v3), 3),
-  velicina = c(
-    if_else(v1 > 0.29, "veliki", if_else(v1 > 0.17, "srednji", "mali")),
-    if_else(v2 > 0.29, "veliki", if_else(v2 > 0.17, "srednji", "mali")),
-    if_else(v3 > 0.29, "veliki", if_else(v3 > 0.17, "srednji", "mali"))
-  )
-)
-```
-
-Analiza otkriva jasan obrazac. Veza između dobi i tipa medija je najjača i najvažnija: generacijski jaz u medijskim navikama je velik i statistički nedvojben. Regionalne razlike u digitalnim vs tradicionalnim medijima su mnogo manje (ako uopće postoje). Veza obrazovanja i preferencije sadržaja varira ovisno o uzorku.
-
----
-
-## Uobičajene pogreške i ograničenja {#sec-pogreske}
-
-Hi-kvadrat testovi su jednostavni za provesti ali lako ih je krivo primijeniti ili interpretirati.
-
-**Pogreška 1: Korištenje postotaka umjesto frekvencija.** Chi2 test zahtijeva frekvencije (apsolutne brojeve), ne postotke ili proporcije. `chisq.test(c(30, 20, 50))` je ispravno. `chisq.test(c(0.30, 0.20, 0.50))` će dati besmislene rezultate jer misli da ukupno imate 1 opažanje.
-
-```{r}
-#| label: pogreska-postoci
-#| echo: true
-#| message: false
-#| warning: false
-
-# KRIVO: postoci
-cat("KRIVO (postoci):\n")
-chisq.test(c(0.30, 0.20, 0.50))
-
-cat("\nISPRAVNO (frekvencije):\n")
-chisq.test(c(30, 20, 50))
-```
-
-**Pogreška 2: Pretjerana granularnost.** Tablica 10 x 8 s ukupno 100 opažanja imat će mnogo ćelija s malim frekvencijama. Bolje je spojiti kategorije i imati manje ali punije ćelije.
-
-**Pogreška 3: Kauzalna interpretacija.** Chi2 test detektira asocijaciju (vezu), ne kauzalnost. Činjenica da su dob i medijski tip povezani ne znači da dob uzrokuje preferenciju (možda je obrazovanje, socioekonomski status ili kohorta efekt). Za kauzalne zaključke trebate eksperimentalni dizajn ili napredne metode.
-
-**Pogreška 4: Zaboravljanje veličine učinka.** Kao i kod t-testa, p-vrijednost ovisi o veličini uzorka. S dovoljno velikim uzorkom, i trivijalna veza postaje "statistički značajna." Uvijek izvijestite Cramérovo V uz chi2 i p.
-
-**Pogreška 5: Testiranje iste hipoteze više puta.** Ako testirate 10 parova varijabli, imate isti problem višestrukog testiranja kao kod t-testa. Koristite korekciju (Bonferroni ili BH).
-
-```{r}
-#| label: visestruko-chi
-#| echo: true
-#| message: false
-#| warning: false
-
-# Testiramo sve parove kategorickih varijabli
-parovi <- list(
-  c("age_group", "media_type"),
-  c("age_group", "content_preference"),
-  c("age_group", "media_grupa"),
-  c("gender", "media_type"),
-  c("gender", "content_preference"),
-  c("education", "media_type"),
-  c("education", "content_preference"),
-  c("region", "media_grupa")
-)
-
-multi_chi <- map_df(parovi, \(par) {
-  tab <- table(survey[[par[1]]], survey[[par[2]]])
-  test <- chisq.test(tab)
-  tibble(
-    var1 = par[1],
-    var2 = par[2],
-    chi2 = round(test$statistic, 1),
-    p = test$p.value
-  )
-}) |>
-  mutate(
-    p_adj = p.adjust(p, method = "BH"),
-    znacajno_orig = p < 0.05,
-    znacajno_adj = p_adj < 0.05
+# Moderira li duzina clanka efekt vizuala na razumijevanje?
+articles |>
+  group_by(length_category) |>
+  summarise(
+    n = n(),
+    M_diff = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
   ) |>
-  arrange(p)
-
-multi_chi |>
-  mutate(p = format(p, scientific = TRUE, digits = 2),
-         p_adj = format(p_adj, scientific = TRUE, digits = 2))
+  mutate(length_category = fct_relevel(length_category, "kratki", "srednji", "dugi")) |>
+  ggplot(aes(y = length_category)) +
+  geom_errorbarh(aes(xmin = M_diff - 1.96 * SE, xmax = M_diff + 1.96 * SE),
+                 height = 0.3, linewidth = 1, color = "steelblue") +
+  geom_point(aes(x = M_diff), size = 3, color = "steelblue") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_text(aes(x = M_diff + 1.96 * SE + 0.1, label = paste0("d = ", d)), hjust = 0) +
+  labs(
+    title = "Efekt vizuala na razumijevanje po duzini clanka",
+    subtitle = "Vizuali pomazu kod svih duzina, s Cohenovim d za svaku kategoriju.",
+    x = "Poboljsanje razumijevanja (bodovi)",
+    y = NULL
+  ) +
+  theme_minimal()
 ```
 
-Nakon BH korekcije, možda se neki marginalno značajni rezultati izgube. Ovo je cijena korektnog pristupa višestrukom testiranju.
+```{r}
+#| label: analiza-po-kategoriji
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
 
----
-
-## Pomoćna funkcija za kompletni hi-kvadrat izvještaj {#sec-funkcija}
-
-U praksi često ponavljamo iste korake za svaki par varijabli. Napišimo funkciju koja automatizira cijeli postupak.
+# Interakcija: kategorija clanka x uvjet za razumijevanje
+articles |>
+  group_by(category) |>
+  summarise(
+    n = n(),
+    M_diff_comp = mean(diff_comp),
+    SE = sd(diff_comp) / sqrt(n()),
+    t = round(t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$statistic, 2),
+    p = t.test(comprehension_with_visual, comprehension_no_visual, paired = TRUE)$p.value,
+    d = round(mean(diff_comp) / sd(diff_comp), 2),
+    .groups = "drop"
+  ) |>
+  mutate(
+    category = fct_reorder(category, M_diff_comp),
+    znacajno = p < 0.05,
+    p_label = if_else(p < 0.001, "p < .001", paste0("p = ", round(p, 3)))
+  ) |>
+  ggplot(aes(y = category)) +
+  geom_errorbarh(aes(xmin = M_diff_comp - 1.96 * SE, xmax = M_diff_comp + 1.96 * SE,
+                      color = znacajno), height = 0.3, linewidth = 1) +
+  geom_point(aes(x = M_diff_comp, color = znacajno), size = 3) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  scale_color_manual(values = c("TRUE" = "#2a9d8f", "FALSE" = "#e76f51"),
+                     labels = c("TRUE" = "p < .05", "FALSE" = "p >= .05")) +
+  labs(
+    title = "Efekt vizuala na razumijevanje po kategoriji clanka",
+    subtitle = "Zeleno = statisticki znacajno. Vizuali pomazu u vecini kategorija.",
+    x = "Poboljsanje razumijevanja (bodovi, 0-10 skala)",
+    y = NULL,
+    color = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
 
 ```{r}
-#| label: chi-funkcija
+#| label: izvjestaj-final
 #| echo: true
 #| message: false
 #| warning: false
 
-chi_izvjestaj <- function(data, var1, var2) {
-  tab <- table(data[[var1]], data[[var2]])
-  test <- chisq.test(tab)
-  v <- sqrt(test$statistic / (sum(tab) * (min(dim(tab)) - 1)))
-  min_exp <- min(test$expected)
-  
-  cat("======================================\n")
-  cat(var1, "x", var2, "\n")
-  cat("======================================\n")
-  cat("Dimenzije tablice:", nrow(tab), "x", ncol(tab), "\n")
-  cat("Najm. ocekivana frekvencija:", round(min_exp, 1), "\n")
-  
-  if (min_exp < 5) {
-    cat("Ocekivane frekvencije < 5. Koristim Fisherov test.\n")
-    fisher <- fisher.test(tab, simulate.p.value = TRUE)
-    cat("P-vrijednost (Fisher):", round(fisher$p.value, 4), "\n")
-  } else {
-    cat("chi2(", (nrow(tab)-1)*(ncol(tab)-1), ") = ", 
-        round(test$statistic, 2), "\n", sep = "")
-    cat("P-vrijednost:", format(test$p.value, scientific = TRUE, digits = 3), "\n")
-  }
-  
-  cat("Cramerovo V:", round(v, 3), "\n")
-  cat("Odluka:", if_else(test$p.value < 0.05, 
-    "Postoji statisticki znacajna veza.", 
-    "Nema statisticki znacajne veze."), "\n\n")
-  
-  invisible(list(table = tab, test = test, V = v))
+cat("================================================================\n")
+cat("   IZVJESTAJ: UTJECAJ VIZUALA NA CITATELJSKO ISKUSTVO\n")
+cat("================================================================\n\n")
+
+cat("DIZAJN: Within-subjects eksperiment. 120 clanaka prezentirano\n")
+cat("u dva uvjeta (s vizualima i bez). Cetiri ishoda mjerena.\n\n")
+
+cat("GLAVNI NALAZI:\n\n")
+
+for (i in 1:nrow(kompletni_rezultati)) {
+  r <- kompletni_rezultati[i, ]
+  smjer <- if_else(r$razlika > 0, "povecavaju", "smanjuju")
+  cat(i, ". ", r$ishod, ": Vizuali ", smjer, " za ", abs(r$razlika),
+      " bodova.\n", sep = "")
+  cat("   t(", r$df, ") = ", r$t, ", p ",
+      if_else(r$p_t < 0.001, "< .001", paste0("= ", round(r$p_t, 3))),
+      ", d = ", r$d, " (",
+      case_when(abs(r$d) >= 0.8 ~ "veliki", abs(r$d) >= 0.5 ~ "srednji",
+                abs(r$d) >= 0.2 ~ "mali", .default = "zanemariv"),
+      " ucinak)\n", sep = "")
+  cat("   95% CI: [", r$CI_lo, ", ", r$CI_hi, "]\n\n", sep = "")
 }
 
-# Primjeri koristenja
-chi_izvjestaj(survey, "age_group", "media_type")
-chi_izvjestaj(survey, "gender", "content_preference")
+cat("PROVJERA PRETPOSTAVKI:\n")
+cat("  Normalnost razlika: Shapiro-Wilk prolazi za vrijeme citanja\n")
+cat("  i razumijevanje. Likert varijable provjerene Wilcoxonovim\n")
+cat("  testom (zakljucci konzistentni s t-testom).\n\n")
+
+cat("MODERACIJA:\n")
+cat("  Efekt vizuala na razumijevanje je konzistentan preko svih\n")
+cat("  kategorija clanaka i svih duzina.\n\n")
+
+cat("PREPORUKA:\n")
+cat("  Implementirajte vizualne elemente u sve clanke na portalu.\n")
+cat("  Prioritet: clanci o zdravlju i tehnologiji gdje je vizualno\n")
+cat("  pojasnjenje najkorisnije. Ocekivani ucinak: znacajno bolje\n")
+cat("  razumijevanje (d > 0.8) i duze vrijeme na stranici.\n")
 ```
 
-Ova funkcija automatski provjerava pretpostavke, odabire odgovarajući test i računa veličinu učinka. Možete je koristiti u svim budućim analizama kategoričkih podataka.
 
----
+## Koji test odabrati? {#sec-dijagram}
 
-## Pregled svih testova za kategoričke podatke {#sec-pregled}
+Na kraju predavanja, svedimo sve opcije u preglednu tablicu odlučivanja. Kad sjednete za podatke, ovo su pitanja koja si trebate postaviti — i odgovori koji vas vode do pravog testa.
 
 ```{r}
-#| label: pregled-tablica
+#| label: dijagram
 #| echo: true
 #| message: false
 #| warning: false
 
 tribble(
-  ~test, ~situacija, ~R_kod,
-  "chi2 goodness-of-fit", "Jedna varijabla vs ocekivana distribucija", "chisq.test(frekvencije, p = proporcije)",
-  "chi2 nezavisnosti", "Veza dviju kategorickih varijabli", "chisq.test(table(x, y))",
-  "Fisherov egzaktni", "Male ocekivane frekvencije ili mali n", "fisher.test(table(x, y))",
-  "McNemarov test", "Uparene kategoricke varijable", "mcnemar.test(table(prije, poslije))"
+  ~pitanje, ~odgovor, ~test,
+  "Koliko grupa usporedujete?", "Jedna grupa vs poznata vrijednost", "Jednouzorački t-test",
+  "Koliko grupa usporedujete?", "Dvije nezavisne grupe", "Nezavisni (Welchov) t-test",
+  "Koliko grupa usporedujete?", "Ista jedinica, dva mjerenja", "Upareni t-test",
+  "Koliko grupa usporedujete?", "Tri ili vise grupa", "ANOVA (sljedeci tjedan)",
+  "Normalnost narusena?", "Da, mali uzorak (n < 30)", "Wilcoxonov test",
+  "Normalnost narusena?", "Ne, ili n >= 30", "t-test (CLT pomaze)",
+  "Varijable su kategoricke?", "Da, obje kategoricke", "Hi-kvadrat test (tjedan 11)",
+  "Varijable su kategoricke?", "Jedna kategoricka, jedna numericka", "t-test ili ANOVA"
 )
 ```
 
----
+
+## Tri testa, jedan pregled {#sec-usporedba-svih}
+
+Za kraj, sažmimo sve tri varijante t-testa na jednom mjestu. Ovu tablicu možete koristiti kao podsjetnik kad radite vlastite analize.
+
+```{r}
+#| label: svi-testovi-recap
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~element, ~jednouzorački, ~nezavisni, ~upareni,
+  "H0", "mu = mu_0", "mu_1 = mu_2", "mu_diff = 0",
+  "R kod", "t.test(x, mu = ...)", "t.test(x, y)", "t.test(x, y, paired = TRUE)",
+  "Formula", "nema", "t.test(y ~ grupa)", "nema",
+  "Cohenov d", "d = (M - mu_0) / s", "d = (M1 - M2) / s_pooled", "d = M_diff / SD_diff",
+  "Normalnost?", "x normalno", "x1 i x2 normalno", "razlike normalno",
+  "Wilcoxon", "wilcox.test(x, mu = ...)", "wilcox.test(x, y)", "wilcox.test(x, y, paired = TRUE)",
+  "Primjer", "Prosjek vs norma", "Muski vs zenski", "Prije vs poslije"
+)
+```
+
 
 ::: {.callout-important}
 ## Ključni zaključci
 
-1. Hi-kvadrat testovi se koriste kad su varijable kategoričke. Test za dobrotu prilagodbe uspoređuje jednu varijablu s očekivanom distribucijom. Test nezavisnosti testira vezu dviju varijabli.
+**Odaberite pravi test prema dizajnu.** Jednouzorački kad uspoređujete jednu grupu s poznatom vrijednošću. Nezavisni kad imate dvije odvojene grupe. Upareni kad iste jedinice mjerite u dva uvjeta.
 
-2. Chi2 statistika mjeri ukupno odstupanje opaženih od očekivanih frekvencija: chi2 = suma (O minus E)^2 / E. Veći chi2 = jači dokaz protiv H0.
+**Provjeravajte pretpostavke, ali s mjerom.** Normalnost provjeravajte vizualno (QQ plot) i formalno (Shapiro-Wilk). Za upareni test provjeravajte normalnost razlika, ne pojedinačnih mjerenja. Imajte na umu da Shapiro-Wilk s velikim uzorkom detektira trivijalna odstupanja — vizualna procjena je jednako važna.
 
-3. Očekivane frekvencije pod H0 su E = (ukupno u retku puta ukupno u stupcu) / ukupno. Pretpostavka: sve E >= 5.
+**Welchov t-test je uvijek bolji izbor** za nezavisne uzorke. On je default u R-u i ne zahtijeva jednake varijance. Nema razloga koristiti Studentov test osim za reprodukciju starijih rezultata.
 
-4. Standardizirani reziduali identificiraju specifične ćelije koje najviše doprinose vezi. |r| > 2 je značajno. Uvijek ih izvijestite jer chi2 sam ne govori gdje je veza najjača.
+**Wilcoxonov test koristite kad t-test ne može.** Mali uzorak s nenormalnim podacima, ordinalni podaci, ekstremni outlieri — to su situacije za neparametrijski pristup. Za n > 50 s umjerenom normalnosti, t-test je dovoljno robustan.
 
-5. Cramérovo V mjeri jačinu veze (0 do 1). Za k = 4: V oko 0.06 mali, V oko 0.17 srednji, V oko 0.29 veliki učinak. Uvijek ga izvijestite uz chi2 i p.
+**Veličina učinka je jednako važna kao p-vrijednost.** Cohenov d govori koliko je razlika velika u praktičnom smislu. Za upareni test: d = M_razlika / SD_razlika. Za nezavisni: d = (M1 - M2) / s_pooled. Smjernice: 0.2 mali, 0.5 srednji, 0.8 veliki.
 
-6. Fisherov egzaktni test koristite kad su očekivane frekvencije < 5 ili je uzorak mali. Za 2x2 tablice automatski daje odds ratio.
+**APA format ima svoja pravila.** Opis smjera riječima, prosjeci i SD obiju grupa, t(df) = vrijednost, p-vrijednost, Cohenov d. Konzistentnost štedi vrijeme i smanjuje greške.
 
-7. Spajanje kategorija (kolapsiranje) je legitiman pristup kad su neke kategorije prerijetke. Digitalni vs tradicionalni mediji je informativnije od šest odvojenih kategorija.
+**Outlieri zaslužuju pažnju, ne paniku.** Identificirajte ih, pokušajte razumjeti zašto su ekstremni, provedite analizu s njima i bez njih. Ako se zaključci razlikuju, koristite robusne metode i izvijestite oboje.
 
-8. Simpsonov paradoks upozorava da agregirani rezultati mogu biti obmanjujući. Uvijek provjerite rezultate stratificirane po relevantnoj trećoj varijabli.
+**Formula pristup samo za nezavisni test.** `t.test(y ~ grupa)` nikad ne koristite za uparene podatke — R će ignorirati parove i dati pogrešne rezultate.
 
-9. McNemarov test je za uparene kategoričke podatke (isti ispitanici, dva mjerenja). Ekvivalent uparenom t-testu za kategoričke varijable.
-
-10. Hi-kvadrat test detektira asocijaciju, ne kauzalnost. Veza dobi i medijskog tipa ne znači da dob uzrokuje preferenciju.
-
-11. Višestruko testiranje je problem i kod hi-kvadrat testova. Koristite BH ili Bonferroni korekciju kad testirate mnogo parova varijabli.
-
-12. Kompletni izvještaj uključuje kontingencijsku tablicu, vizualizaciju (stacked/dodged barplot), chi2 s df i p, Cramérovo V s interpretacijom, reziduale za specifična odstupanja i praktičnu interpretaciju u kontekstu istraživačkog pitanja.
+**Snaga testa određuje što možete detektirati.** Prije nego zaključite "nema razlike", provjerite jeste li uopće imali dovoljno podataka da razliku detektirate. `power.t.test()` računa potreban n.
 :::
 
----
 
 ## Zadaci za pripremu
 
-1. Učitajte `media_survey_chi2.csv`. Testirajte postoji li veza između regije i preferencije sadržaja (`content_preference`). Izračunajte Cramérovo V i interpretirajte ga. Koji reziduali su najjači?
+1. Učitajte `article_visuals.csv`. Provedite nezavisni t-test za usporedbu razumijevanja (s vizualima) između članaka o zdravlju i članaka o sportu. Izračunajte Cohenov d i napišite rezultat u APA formatu.
 
-2. Kreirajte novu varijablu `zadovoljni` (satisfaction >= 4 = "da", inače "ne"). Testirajte postoji li veza između `media_grupa` (digitalni/tradicionalni) i `zadovoljni` pomoću Fisherovog egzaktnog testa. Interpretirajte odds ratio.
+2. Za varijablu `credibility_with_visual`, usporedite upareni t-test s Wilcoxonovim testom. Jesu li zaključci konzistentni? Provjerite normalnost razlika QQ plotom.
 
-3. Napišite funkciju `chi_vizualizacija(data, var1, var2)` koja prima podatke i imena dviju varijabli te automatski crta grupani barplot s rezultatima testa u podnaslovu.
+3. Napišite funkciju `kompletni_ttest(data, var_with, var_no, naziv)` koja automatski provjerava normalnost (Shapiro-Wilk), odabire parametrijski ili neparametrijski test, računa Cohenov d i generira APA rečenicu.
 
----
 
 ## Dodatno čitanje
 
 **Obavezno**
 
-Navarro, D. (2018). *Learning Statistics with R*, Chapter 12 (Categorical Data Analysis). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva hi-kvadrat testove s R kodom.
+Navarro, D. (2018). *Learning Statistics with R*, Chapter 13 (Comparing Two Means). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Detaljan pregled t-testova, pretpostavki i alternativa.
 
 **Preporučeno**
 
-Agresti, A. (2018). *An Introduction to Categorical Data Analysis* (3rd edition). Wiley. Poglavlja 1-3. Referentni udžbenik za kategoričke podatke.
+Field, A. (2018). *Discovering Statistics Using R*. SAGE. Poglavlje 9. Praktičan pristup t-testovima s naglaskom na provjeru pretpostavki i efektivne vizualizacije.
 
-Wickham, H. & Grolemund, G. (2017). *R for Data Science*. O'Reilly. Besplatno na [r4ds.had.co.nz](https://r4ds.had.co.nz). Poglavlja o faktorima i vizualizaciji kategoričkih podataka.
+Lakens, D. (2013). Calculating and reporting effect sizes to facilitate cumulative science. *Frontiers in Psychology*, 4, 863. Praktičan vodič za izračun i izvještavanje veličina učinka.
 
----
 
 ## Pojmovnik
 
 | Pojam | Objašnjenje |
 |---|---|
-| Kategorička varijabla | Varijabla čije su vrijednosti kategorije (npr. spol, regija, tip medija). Nema smisleni numerički poredak (nominalna) ili ima (ordinalna). |
-| Kontingencijska tablica | Tablica frekvencija za sve kombinacije dviju kategoričkih varijabli. Temelj za test nezavisnosti. |
-| Hi-kvadrat statistika | Mjera ukupnog odstupanja opaženih od očekivanih frekvencija. |
-| Goodness-of-fit test | Testira odgovara li distribucija jedne varijable očekivanoj distribuciji. df = k minus 1. |
-| Test nezavisnosti | Testira postoji li veza između dviju kategoričkih varijabli. df = (r minus 1)(c minus 1). |
-| Očekivana frekvencija | Frekvencija pod H0. Za test nezavisnosti: E = (redak total puta stupac total) / ukupno. |
-| Standardizirani rezidual | (O minus E) / korijen(E). Doprinos svake ćelije ukupnom chi2. Značajno ako |r| > 2. |
-| Cramérovo V | Mjera veličine učinka za hi-kvadrat test. V = korijen(chi2/(n(k minus 1))). Raspon 0 do 1. |
-| Fisherov egzaktni test | Točan test za male uzorke ili male očekivane frekvencije. Ne koristi chi2 aproksimaciju. |
-| Odds ratio (omjer šansi) | Mjera asocijacije za 2x2 tablice. OR = 1 znači nema veze. OR > 1 ili < 1 znači veza postoji. |
-| Yatesova korekcija | Korekcija kontinuiteta za 2x2 tablice. R je primjenjuje po defaultu u `chisq.test()`. |
-| McNemarov test | Test za uparene kategoričke podatke (isti ispitanici, dva mjerenja). |
-| Simpsonov paradoks | Smjer veze se promijeni kad kontroliramo treću varijablu. Agregirani rezultati obmanjuju. |
-| Stratificirana analiza | Provođenje testa odvojeno za podgrupe treće varijable. Otkriva Simpsonov paradoks. |
-| Spajanje kategorija | Kolapsiranje rijetkih kategorija u šire grupe. Povećava očekivane frekvencije i preglednost. |
-| `chisq.test()` | R funkcija za hi-kvadrat test. Prima vektor frekvencija (gof) ili kontingencijsku tablicu. |
-| `fisher.test()` | R funkcija za Fisherov egzaktni test. Prima kontingencijsku tablicu. |
-| `mcnemar.test()` | R funkcija za McNemarov test. Prima 2x2 tablicu uparenih podataka. |
-| `table()` | R funkcija za kreiranje kontingencijske tablice. `table(x, y)` za dvije varijable. |
-| `prop.table()` | Pretvara frekvencije u proporcije. `margin = 1` za retke, `margin = 2` za stupce. |
-| `p.adjust()` | Korekcija p-vrijednosti za višestruko testiranje. `method = "BH"` je preporučen. |
+| Upareni t-test | Test za usporedbu dvaju mjerenja na istim jedinicama. Testira prosjek razlika. `t.test(x, y, paired = TRUE)`. |
+| Nezavisni t-test | Test za usporedbu prosjeka dviju nezavisnih grupa. Default u R-u je Welchov. `t.test(x, y)`. |
+| Jednouzorački t-test | Test za usporedbu jednog prosjeka s poznatom vrijednošću. `t.test(x, mu = vrijednost)`. |
+| Welchov t-test | Varijanta nezavisnog t-testa koja ne pretpostavlja jednake varijance. Default u R-u. Uvijek bolji izbor. |
+| Normalnost | Pretpostavka normalne distribucije. Za upareni test: normalnost razlika, ne pojedinačnih mjerenja. |
+| Shapiro-Wilkov test | Formalni test normalnosti. `shapiro.test(x)`. H0: podaci su normalni. S velikim n previše osjetljiv. |
+| QQ plot | Dijagnostički graf: točke blizu linije = normalno. `stat_qq()` + `stat_qq_line()` u ggplot2. |
+| Homogenost varijance | Pretpostavka jednakih varijanci u grupama. Potrebna samo za Studentov (ne Welchov) t-test. |
+| Wilcoxonov signed-rank test | Neparametrijska alternativa uparenom t-testu. `wilcox.test(x, y, paired = TRUE)`. |
+| Mann-Whitney U test | Neparametrijska alternativa nezavisnom t-testu. `wilcox.test(x, y)`. Isto kao rank-sum test. |
+| Cohenov d (upareni) | d = M_razlika / SD_razlika. Standardizirana mjera veličine učinka za uparene podatke. |
+| Cohenov d (nezavisni) | d = (M1 minus M2) / s_pooled. Standardizirana mjera veličine učinka za nezavisne grupe. |
+| Pooled SD | Zajednička SD dviju grupa ponderirana njihovim veličinama uzoraka. |
+| Forest plot | Graf za prikaz višestrukih veličina učinka s intervalima pouzdanosti. Standardan u meta-analizama. |
+| Trimmed mean | Prosjek koji ignorira ekstremne vrijednosti (npr. 10% s oba kraja). `mean(x, trim = 0.10)`. |
+| Outlier | Opažanje ekstremno udaljeno od ostatka. Identifikacija: |z| > 2.5, boxplot, ili Cookova udaljenost. |
+| APA format | Standardizirani format izvještavanja: M, SD, t(df), p, d. Koristi se u komunikologiji i psihologiji. |
+| Formula pristup | `t.test(y ~ grupa)` sintaksa za nezavisni test. Konzistentno s ANOVA i regresijom. NE za upareni test. |
+| Bootstrap | Metoda ponovnog uzorkovanja s vraćanjem za robustan CI. Ne pretpostavlja normalnost. |
+| `shapiro.test()` | R funkcija za Shapiro-Wilkov test normalnosti. Prima vektor numeričkih podataka. |
+| `wilcox.test()` | R funkcija za Wilcoxonov test. Argumenti isti kao `t.test()`: mu, paired, alternative. |
+| `power.t.test()` | R funkcija za analizu snage t-testa. Računa n, snagu ili detektabilni učinak. |

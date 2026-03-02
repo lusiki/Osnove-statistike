@@ -81,7 +81,7 @@ Ovo je tipičan izgled sirovih podataka iz ankete. Prije bilo kakve analize, mor
 
 Prva stvar koju radimo sa svakim novim datasetom je standardizacija imena stupaca. Imena poput `TV (min/dan)` i `Povjerenje društvene mreže (1-10)` su problematična jer sadrže razmake, zagrade i specijalne znakove. Kad ih želite koristiti u kodu, morate ih stavljati u obrnute navodnike: `` `TV (min/dan)` ``. To je neugodno, nečitljivo i podložno greškama.
 
-Paket janitor ima funkciju `clean_names()` koja automatski pretvara sva imena u snake_case format: mala slova, razmaci zamijenjeni podvlakama, specijalni znakovi uklonjeni.
+Paket janitor ima funkciju `clean_names()` koja automatski pretvara sva imena u snake_case format, uključujući mala slova, zamjenu razmaka podvlakama i uklanjanje specijalnih znakova.
 
 ```{r}
 #| label: clean-names
@@ -307,7 +307,7 @@ Svaki put kad koristite `filter()` ili `drop_na()`, dokumentirajte koliko redova
 
 ## select(): odabir i preimenovanje stupaca {#sec-select}
 
-Dok `filter()` radi s redovima, `select()` radi sa stupcima. Koristi se za tri svrhe: odabir stupaca koji vam trebaju, uklanjanje stupaca koji vam ne trebaju i preimenovanje stupaca.
+Dok `filter()` radi s redovima, `select()` radi sa stupcima. Koristi se za tri svrhe, a to su odabir stupaca koji vam trebaju, uklanjanje stupaca koji vam ne trebaju i preimenovanje stupaca.
 
 ### Odabir po imenu
 
@@ -548,7 +548,7 @@ Rezultat je čist stupac `spol_clean` s tri konzistentne kategorije umjesto dvan
 ::: {.callout-tip}
 ## Praktični savjet
 
-Kad čistite tekstualne podatke, uvijek najprije pretvorite u mala slova pomoću `str_to_lower()`. Ovo odmah eliminira najčešći izvor nekonzistentnosti (razliku u kapitalizaciji) i smanjuje broj slučajeva koje morate pokriti u `case_when()`. Redoslijed je važan: najprije `str_to_lower()`, pa onda provjere.
+Kad čistite tekstualne podatke, uvijek najprije pretvorite u mala slova pomoću `str_to_lower()`. Ovo odmah eliminira najčešći izvor nekonzistentnosti (razliku u kapitalizaciji) i smanjuje broj slučajeva koje morate pokriti u `case_when()`. Redoslijed je važan. Najprije trebate koristiti `str_to_lower()`, pa tek onda provjerite uvjete.
 :::
 
 ### Rekodiranje numeričkih varijabli u kategorije
@@ -601,7 +601,7 @@ raw |>
   count(visoko_koristenje_sm)
 ```
 
-Funkcija `if_else()` prima tri argumenta: uvjet, vrijednost za TRUE i vrijednost za FALSE. Prednost nad base R `ifelse()` je što `if_else()` strogo provjerava tipove i daje razumljivije greške kad nešto ne štima.
+Funkcija `if_else()` prima tri argumenta, uključujući uvjet, vrijednost za TRUE i vrijednost za FALSE. Prednost nad base R `ifelse()` je što `if_else()` strogo provjerava tipove i daje razumljivije greške kad nešto ne štima.
 
 ### Čišćenje stupca godina studija
 
@@ -1261,7 +1261,7 @@ Društvene mreže dominiraju s velikim razmakom. TV je daleko na dnu. Ovi podaci
 ::: {.callout-important}
 ## Važna napomena
 
-Zapamtite pravilo: `pivot_longer()` koristite kad želite pretvoriti podatke iz oblika čitljivog za ljude u oblik pogodan za analizu i vizualizaciju. `pivot_wider()` koristite kad želite rezultate pretvoriti natrag u oblik čitljiv za ljude (za tablice u izvještajima). Tipičan radni tok je: učitajte podatke, pretvorite u dugački format, analizirajte, pretvorite rezultate u široki format za prezentaciju.
+Zapamtite sljedeće pravilo. `pivot_longer()` koristite kad želite pretvoriti podatke iz oblika čitljivog za ljude u oblik pogodan za analizu i vizualizaciju. `pivot_wider()` koristite kad želite rezultate pretvoriti natrag u oblik čitljiv za ljude (za tablice u izvještajima). Tipičan radni tok uključuje sljedeće korake: učitajte podatke, pretvorite u dugački format, analizirajte i pretvorite rezultate u široki format za prezentaciju.
 :::
 
 ---
@@ -1362,7 +1362,7 @@ clean |>
 
 ## Stringovi: osnove rada s tekstom {#sec-stringovi}
 
-U komunikologiji se često radi s tekstualnim podacima: imena platformi, naslovi članaka, otvoreni odgovori u anketama. Paket stringr (dio tidyverse) pruža konzistentan skup funkcija za rad s tekstom.
+U komunikologiji se često radi s tekstualnim podacima, kao što su imena platformi, naslovi članaka i otvoreni odgovori u anketama. Paket stringr (dio tidyverse) pruža konzistentan skup funkcija za rad s tekstom.
 
 Već smo koristili `str_to_lower()` i `str_detect()`. Pogledajmo još nekoliko korisnih funkcija.
 
@@ -1426,7 +1426,7 @@ Funkcija `str_replace()` zamjenjuje prvo pojavljivanje uzorka, a `str_replace_al
 
 ## Sve zajedno: kompletna analiza od sirovih do gotovih podataka {#sec-kompletna}
 
-Zaokružimo ovo predavanje tako da napišemo kompletnu analizu koja prolazi kroz sve faze: učitavanje, čišćenje, transformaciju, analizu i prezentaciju rezultata. Ovo je obrazac koji ćete ponavljati u svakom projektu.
+Zaokružimo ovo predavanje tako da napišemo kompletnu analizu koja prolazi kroz sve faze, a to su učitavanje, čišćenje, transformacija, analiza i prezentacija rezultata. Ovo je obrazac koji ćete ponavljati u svakom projektu.
 
 ```{r}
 #| label: kompletna-1-ucitavanje
@@ -1603,7 +1603,7 @@ Ova kompletna analiza, od učitavanja sirovih podataka do gotovih tablica, stane
 
 11. stringr funkcije (`str_detect()`, `str_to_lower()`, `str_replace()`, `str_count()`) omogućuju rad s tekstualnim podacima. Bitne za čišćenje anketnih podataka.
 
-12. Svaka analiza ima jasne faze: učitavanje, čišćenje, provjera, analiza, prezentacija. Dokumentirajte svaki korak i svaki izbor (osobito koliko redova gubite filtiranjem).
+12. Svaka analiza ima jasne faze, a to su učitavanje, čišćenje, provjera, analiza i prezentacija. Dokumentirajte svaki korak i svaki izbor (osobito koliko redova gubite filtiranjem).
 :::
 
 ---

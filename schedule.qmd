@@ -36,7 +36,7 @@ subtitle: "Predavanja i seminari po tjednima"
 | 10 | TBD | [Kategorički podaci: hi-kvadrat testovi](lectures/week-11.qmd) | Vježba: hi-kvadrat testovi | [Uskoro]{.badge-upcoming} |
 | 11 | TBD | [Usporedba prosjeka: t-testovi](lectures/week-12.qmd) | Vježba: t-testovi i interpretacija | [Uskoro]{.badge-upcoming} |
 | 12 | TBD | [Usporedba više grupa: ANOVA](lectures/week-13.qmd) | Vježba: ANOVA analiza | [Uskoro]{.badge-upcoming} |
-| 13 | TBD | [Linearna regresija](lectures/week-14.qmd) | Radionica: regresijski model | [Uskoro]{.badge-upcoming} |
+| 13 | TBD | [Linearna regresija](lectures/week-13.qmd) | Radionica: regresijski model | [Uskoro]{.badge-upcoming} |
 
 ## Legenda statusa
 

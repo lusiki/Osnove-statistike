@@ -36,7 +36,7 @@ Ovo je pitanje koje studenti postavljaju na prvom satu, i to je potpuno legitimn
 
 Odgovor ima nekoliko slojeva i vrijedi ih proći redom jer razumijevanje prednosti R-a mijenja način na koji pristupate cijelom kolegiju.
 
-**Ponovljivost.** Kad radite analizu u Excelu, vaš rad je nevidljiv. Klikate po ćelijama, povlačite formule, sortirate stupce, i na kraju imate rezultat, ali nemate zapis toga kako ste do njega došli. Ako vas kolega pita kako ste izračunali nešto, morate mu pokazati i objasniti svaki korak. Ako trebate ponoviti istu analizu s novim podacima, morate sve raditi ispočetka. U R-u, vaša analiza je skripta, dakle tekstualna datoteka koja sadrži svaki korak od učitavanja podataka do konačnog rezultata. Tu skriptu možete pokrenuti ponovo jednim klikom, poslati je kolegi, objaviti uz akademski rad, ili je modificirati za novi dataset. Ovo nije trivijalna prednost. U vremenu kad se sve više govori o krizi repliciranja u društvenim znanostima, ponovljivost analize nije luksuz nego nužnost.
+**Ponovljivost.** Kad radite analizu u Excelu, vaš rad je nevidljiv jer klikate po ćelijama, povlačite formule, sortirate stupce, i na kraju imate rezultat, ali nemate zapis toga kako ste do njega došli. Ako vas kolega pita kako ste izračunali nešto, morate mu pokazati i objasniti svaki korak. Ako trebate ponoviti istu analizu s novim podacima, morate sve raditi ispočetka. U R-u, vaša analiza je skripta, dakle tekstualna datoteka koja sadrži svaki korak od učitavanja podataka do konačnog rezultata. Tu skriptu možete pokrenuti ponovo jednim klikom, poslati je kolegi, objaviti uz akademski rad, ili je modificirati za novi dataset. Ovo nije trivijalna prednost. U vremenu kad se sve više govori o krizi repliciranja u društvenim znanostima, ponovljivost analize nije luksuz nego nužnost.
 
 **Fleksibilnost.** SPSS ima meni za t-test. Ima meni za ANOVA-u. Ima meni za regresiju. Ali što kad trebate nešto što nije u meniju? Što kad trebate kombinirati podatke iz tri različite ankete, izračunati prilagođenu mjeru angažmana koja uključuje i klikove i vrijeme na stranici i komentare, filtrirati samo ispitanike koji zadovoljavaju tri uvjeta istovremeno, i onda vizualizirati rezultat na način koji SPSS ne podržava? U R-u, granica je samo vaša mašta (i znanje, ali znanje raste). SPSS je poput restorana s fiksnim menijem. R je kuhinja u kojoj možete pripremiti bilo što.
 
@@ -197,9 +197,9 @@ Svih 500 ispitanika u našem imaginarnom uzorku zajedno provede gotovo 44 tisuć
 
 ### Pravila imenovanja objekata
 
-R ima nekoliko pravila i mnogo dobrih praksi za imenovanje objekata. Pravila su stroga: ime mora počinjati slovom (ne brojem), ne smije sadržavati razmake ni specijalne znakove osim točke i podvlake, i R razlikuje velika i mala slova (`prosjek` i `Prosjek` su dva različita objekta).
+R ima nekoliko pravila i mnogo dobrih praksi za imenovanje objekata. Pravila su stroga i traže da ime mora počinjati slovom (ne brojem), ne smije sadržavati razmake ni specijalne znakove osim točke i podvlake, i R razlikuje velika i mala slova (`prosjek` i `Prosjek` su dva različita objekta).
 
-Dobre prakse su mekše ali važne za čitljivost. Na ovom kolegiju koristimo konvenciju **snake_case** u kojoj su riječi odvojene podvlakom i sve je malim slovima: `prosjek_minuta`, `n_ispitanika`, `dnevno_koristenje`. Ova konvencija je standard u tidyverse zajednici i čini kod čitljivijim od alternativa poput `prosjekMinuta` (camelCase) ili `prosjek.minuta` (dot notation).
+Dobre prakse su mekše ali važne za čitljivost. Na ovom kolegiju koristimo konvenciju **snake_case**, u kojoj su riječi odvojene podvlakom i sve je malim slovima (npr. `prosjek_minuta`, `n_ispitanika`, `dnevno_koristenje`). Ova konvencija je standard u tidyverse zajednici i čini kod čitljivijim od alternativa poput `prosjekMinuta` (camelCase) ili `prosjek.minuta` (dot notation).
 
 ```{r}
 #| label: imenovanje-objekata
@@ -820,7 +820,7 @@ social |>
   )
 ```
 
-Ovo je prvi primjer obrasca `group_by() |> summarise()` koji će postati vaš najvažniji alat u tjednima koji dolaze. Logika je jednostavna: `group_by()` dijeli podatke u grupe po varijabli `age_group`, a `summarise()` izračunava statistike za svaku grupu zasebno. Vidimo jasnu razliku u korištenju društvenih mreža između dobnih skupina, s mladima koji provode daleko više vremena na platformama.
+Ovo je prvi primjer obrasca `group_by() |> summarise()` koji će postati vaš najvažniji alat u tjednima koji dolaze. Logika je jednostavna. `group_by()` dijeli podatke u grupe po varijabli `age_group`, a `summarise()` izračunava statistike za svaku grupu zasebno. Vidimo jasnu razliku u korištenju društvenih mreža između dobnih skupina, s mladima koji provode daleko više vremena na platformama.
 
 ::: {.callout-tip}
 ## Praktični savjet
@@ -923,7 +923,7 @@ sum(dobi < 20 | dobi > 50)
 
 U stvarnom svijetu podaci gotovo nikad nisu potpuni. Ispitanik preskoči pitanje u anketi, senzor ne zabilježi podatak, sistem zapiše grešku. R koristi posebnu oznaku **`NA`** (not available) za nedostajuće vrijednosti i ove vrijednosti zahtijevaju posebnu pažnju od prvog dana jer se ponašaju drugačije od svega ostalog.
 
-Temeljno pravilo je jednostavno i nemilosrdno: svaka operacija koja uključuje NA vraća NA.
+Temeljno pravilo je jednostavno i nemilosrdno. Svaka operacija koja uključuje NA vraća NA.
 
 ```{r}
 #| label: na-osnovno
@@ -1239,7 +1239,7 @@ Upitnik ispred imena funkcije (`?mean`) otvara stranicu pomoći za tu funkciju. 
 
 Realno, za većinu problema ćete koristiti internet. Tri resursa su daleko najkorisnija.
 
-**Stack Overflow** je forum za programerska pitanja. Gotovo svako pitanje o R-u koje možete zamisliti već je postavljeno i odgovoreno na Stack Overflowu. Ključ je znati kako formulirati pitanje za pretragu: umjesto "moj kod ne radi", tražite "r dplyr filter multiple conditions" ili "r ggplot change axis labels".
+**Stack Overflow** je forum za programerska pitanja. Gotovo svako pitanje o R-u koje možete zamisliti već je postavljeno i odgovoreno na Stack Overflowu. Ključ je znati kako formulirati pitanje za pretragu. Umjesto "moj kod ne radi", tražite "r dplyr filter multiple conditions" ili "r ggplot change axis labels".
 
 **Posit Community** (community.rstudio.com) je forum specifičan za R i tidyverse. Atmosfera je prijateljska i odgovori su obično vrlo detaljni.
 

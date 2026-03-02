@@ -6,13 +6,15 @@
 
 **Web stranica kolegija:** [**https://lusiki.github.io/Osnove-statistike/**](https://lusiki.github.io/Osnove-statistike/)
 
+**Preuzmi cijelu knjigu:** [**Osnove-statistike.pdf**](https://lusiki.github.io/Osnove-statistike/Osnove-statistike.pdf)
+
 ---
 
 ## O kolegiju
 
 Kolegij *Osnove statistike* pruža temeljna znanja iz statistike prilagođena studentima komunikologije. Naglasak je na praktičnoj primjeni u analizi medijskih podataka — od angažmana na društvenim mrežama do istraživanja povjerenja u medije.
 
-Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke koristeći programski jezik **R** i **tidyverse** ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija.
+Kroz 13 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke koristeći programski jezik **R** i **tidyverse** ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija.
 
 **Nositelj kolegija:** doc. dr. sc. Luka Šikić ([luka.sikic@unicath.hr](mailto:luka.sikic@unicath.hr))
 
@@ -20,9 +22,10 @@ Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke 
 
 | Cjelina | Tjedni | Sadržaj |
 |---------|:------:|---------|
-| **Deskriptivna statistika** | 1–5 | Uvod u statistiku, R i tidyverse, rad s podacima, deskriptivna statistika, vizualizacija |
-| **Statistička teorija** | 6–10 | Programiranje u R, vjerojatnost, distribucije vjerojatnosti, uzorkovanje i procjena, testiranje hipoteza |
-| **Inferencijalna statistika** | 11–15 | Hi-kvadrat testovi, t-testovi, ANOVA, linearna regresija, prezentacije projekata |
+| **Uvod i osnove programiranja** | 1–4 | Uvod u statistiku, R i tidyverse, rad s podacima, programiranje u R |
+| **Deskriptivna statistika i vizualizacija** | 5–6 | Deskriptivna statistika, vizualizacija podataka |
+| **Statistička teorija** | 7–9 | Vjerojatnost, uzorkovanje i procjena, testiranje hipoteza |
+| **Inferencijalna statistika** | 10–13 | Hi-kvadrat testovi, t-testovi, ANOVA, linearna regresija |
 
 ## Tjedni pregled predavanja
 
@@ -31,18 +34,16 @@ Kroz 15 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke 
 | 1 | Zašto statistika? Uvod u istraživački dizajn |
 | 2 | Uvod u R i tidyverse |
 | 3 | Rad s podacima |
-| 4 | Deskriptivna statistika |
-| 5 | Vizualizacija podataka s ggplot2 |
-| 6 | Programiranje u R |
+| 4 | Programiranje u R |
+| 5 | Deskriptivna statistika |
+| 6 | Vizualizacija podataka s ggplot2 |
 | 7 | Uvod u vjerojatnost |
-| 8 | Distribucije vjerojatnosti |
-| 9 | Uzorkovanje, procjena i intervali pouzdanosti |
-| 10 | Testiranje hipoteza |
-| 11 | Kategorički podaci: hi-kvadrat testovi |
-| 12 | Usporedba prosjeka: t-testovi |
-| 13 | Usporedba više grupa: ANOVA |
-| 14 | Linearna regresija |
-| 15 | Prezentacije projekata i pogled naprijed |
+| 8 | Uzorkovanje, procjena i intervali pouzdanosti |
+| 9 | Testiranje hipoteza |
+| 10 | Kategorički podaci i hi-kvadrat testovi |
+| 11 | Usporedba prosjeka t-testovima |
+| 12 | Usporedba više grupa ANOVA-om |
+| 13 | Linearna regresija |
 
 ## Ocjenjivanje
 

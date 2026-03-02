@@ -16,7 +16,7 @@ Nakon ovog predavanja moći ćete
 3. Razlikovati četiri razine mjerenja (nominalna, ordinalna, intervalna, omjerna) i prepoznati kojoj razini pripadaju tipične varijable u komunikološkim istraživanjima.
 4. Objasniti pojmove pouzdanosti i valjanosti mjerenja te navesti primjere za svaki tip.
 5. Razlikovati eksperimentalni i neeksperimentalni istraživački dizajn te objasniti prednosti i ograničenja svakog pristupa u kontekstu medijskih istraživanja.
-6. Definirati ključne pojmove: varijabla, nezavisna i zavisna varijabla, operacionalizacija, konfundirajuća varijabla, interna i eksterna valjanost.
+6. Definirati ključne pojmove poput varijable, nezavisne i zavisne varijable, operacionalizacije, konfundirajuće varijable te interne i eksterne valjanosti.
 7. Kritički procijeniti jednostavna istraživačka izvješća i prepoznati potencijalne prijetnje valjanosti zaključaka.
 :::
 
@@ -24,7 +24,7 @@ Nakon ovog predavanja moći ćete
 
 Zamislite da radite u novinarskoj redakciji i da vam šef kaže: naš portal gubi čitatelje, trebamo promijeniti pristup. Vi pitate što točno ne valja, a on odgovara: ljudi ne klikaju na naše članke. I onda doda: mislim da su naslovi previše dosadni. Promijenite stil naslova, stavite više clickbaita, i sve će biti u redu.
 
-Zvuči uvjerljivo. Ali razmislite na trenutak. Otkud šefu to znanje? Možda je u pravu. Možda su naslovi zaista problem. Ali možda je problem nešto sasvim drugo: vrijeme objave, duljina članaka, tematika, konkurentski portali koji su lansirali novu aplikaciju, ili činjenica da je ljeto i ljudi su na moru umjesto za računalom. Bez podataka, ova rasprava je čisto nagađanje. Svatko ima svoju teoriju, svi su uvjereni u svoje, a odluka se na kraju donosi na temelju toga tko je najglasnije govorio na sastanku.
+Zvuči uvjerljivo. Ali razmislite na trenutak. Otkud šefu to znanje? Možda je u pravu. Možda su naslovi zaista problem. Ali možda je problem nešto sasvim drugo, poput vremena objave, duljine članaka, tematike, konkurentskih portala koji su lansirali novu aplikaciju, ili činjenica da je ljeto i ljudi su na moru umjesto za računalom. Bez podataka, ova rasprava je čisto nagađanje. Svatko ima svoju teoriju, svi su uvjereni u svoje, a odluka se na kraju donosi na temelju toga tko je najglasnije govorio na sastanku.
 
 Statistika postoji upravo zato da bismo izbjegli ovakve situacije. Njezin temeljni cilj nije komplicirati vam život formulama i grčkim slovima (iako se ponekad čini tako). Cilj je pružiti alate kojima se od gomile podataka dolazi do zaključaka u koje se možemo pouzdati, barem više nego u nagađanje šefa na jutarnjem sastanku. I tu dolazimo do pitanja iz naslova: imate li uopće izbora? Trebate li vi, kao budući komunikolog, zaista učiti statistiku?
 
@@ -38,7 +38,7 @@ Komunikologija je empirijska znanost. To znači da se njezine tvrdnje moraju tem
 
 Ali potreba za statistikom u komunikologiji ide dublje od akademskog istraživanja. Moderna medijska industrija je u potpunosti prožeta podacima. Svaki klik na web stranici, svako otvaranje newslettera, svaka sekunda provedena na video sadržaju se bilježi i analizira. Društvene mreže generiraju enormne količine podataka o ponašanju korisnika. Oglašivačka industrija troši milijarde na temelju statističkih modela koji predviđaju koji će oglas izazvati reakciju kod koje publike. Ako ne razumijete kako ti podaci nastaju, kako se analiziraju i što njihovi rezultati zapravo znače (i ne znače!), ne možete se ravnopravno uključiti u rasprave koje oblikuju medijski krajolik.
 
-Navarro u svojoj knjizi, koja služi kao temelj za ovaj kolegij, koristi zgodnu analogiju. Kaže da je statistika pomalo poput učenja kuharskog recepta. Na prvu, čini se kao skup mehaničkih koraka: dodaj ovo, izmiješaj ono, stavi u pećnicu na toliko stupnjeva. Ali kad počnete razumjeti zašto svaki korak postoji, zašto se maslac dodaje hladan a ne topao, zašto se tijesto ostavlja da odmara, odjednom prestajete pratiti recept i počinjete kuhati. Isto je sa statistikom: na početku izgleda kao skup formula i pravila, ali kad shvatite logiku iza toga, dobivate alat za razmišljanje koji mijenja način na koji gledate na bilo koju tvrdnju, u akademskom radu ili u svakodnevnom životu.
+Navarro u svojoj knjizi, koja služi kao temelj za ovaj kolegij, koristi zgodnu analogiju. Kaže da je statistika pomalo poput učenja kuharskog recepta. Na prvu, čini se kao skup mehaničkih koraka u stilu dodaj ovo, izmiješaj ono, stavi u pećnicu na toliko stupnjeva. Ali kad počnete razumjeti zašto svaki korak postoji, zašto se maslac dodaje hladan a ne topao, zašto se tijesto ostavlja da odmara, odjednom prestajete pratiti recept i počinjete kuhati. Isto je sa statistikom: na početku izgleda kao skup formula i pravila, ali kad shvatite logiku iza toga, dobivate alat za razmišljanje koji mijenja način na koji gledate na bilo koju tvrdnju, u akademskom radu ili u svakodnevnom životu.
 
 ---
 
@@ -80,7 +80,7 @@ Za komunikologe, Simpsonov paradoks je posebno relevantan jer medijska istraživ
 
 Prije nego što uopće počnemo razmišljati o statističkim metodama, moramo se zapitati nešto fundamentalnije: što znači mjeriti nešto? Ovo pitanje zvuči trivijalno kad govorimo o fizičkim veličinama. Mjeriti visinu osobe znači staviti metar uz nju i pročitati broj. Ali što znači mjeriti povjerenje u medije? Ili angažman korisnika na društvenim mrežama? Ili kvalitetu novinarstva?
 
-U komunikologiji, kao i u drugim društvenim znanostima, većina stvari koje želimo mjeriti su apstraktni koncepti (teoretski konstrukti) koje ne možemo izravno vidjeti ili dotaknuti. Povjerenje u medije je mentalno stanje. Kvaliteta novinarstva je procjena koja ovisi o kriterijima. Angažman korisnika je složeni fenomen koji se može manifestirati na mnogo načina: klikom, komentarom, dijeljenjem, vremenom provedenim na stranici.
+U komunikologiji, kao i u drugim društvenim znanostima, većina stvari koje želimo mjeriti su apstraktni koncepti (teoretski konstrukti) koje ne možemo izravno vidjeti ili dotaknuti. Povjerenje u medije je mentalno stanje. Kvaliteta novinarstva je procjena koja ovisi o kriterijima. Angažman korisnika je složeni fenomen koji se može manifestirati na mnogo načina, od klika i komentara do dijeljenja i vremena provedenog na stranici.
 
 Proces pretvaranja apstraktnog koncepta u nešto mjerljivo zove se **operacionalizacija**. Kad kažemo da ćemo mjeriti povjerenje u medije, moramo točno definirati kako ćemo to napraviti. Hoćemo li pitati ljude koliko vjeruju pojedinim medijima na skali od 1 do 10? Ili ćemo im dati tvrdnje poput "vjerujem informacijama koje pročitam na portalu X" i zamoliti ih da izraze stupanj slaganja? Ili ćemo mjeriti ponašanje, na primjer koliko često dijele članke s određenog portala?
 
@@ -108,21 +108,21 @@ Nije svaka varijabla iste prirode, i način na koji varijablu mjerimo određuje 
 
 ### Nominalna razina
 
-Na nominalnoj razini, brojevi (ili oznake) služe samo za imenovanje kategorija. Nema nikakve prirodne hijerarhije ili redoslijeda između kategorija. U komunikološkim istraživanjima tipične nominalne varijable su: spol (muški, ženski, ostalo), tip medija (televizija, radio, web portal, društvena mreža, podcast), politička opcija, država prebivališta, ime platforme.
+Na nominalnoj razini, brojevi (ili oznake) služe samo za imenovanje kategorija. Nema nikakve prirodne hijerarhije ili redoslijeda između kategorija. U komunikološkim istraživanjima tipične nominalne varijable uključuju spol (muški, ženski, ostalo), tip medija (televizija, radio, web portal, društvena mreža, podcast), političku opciju, državu prebivališta i ime platforme.
 
 Jedino što možemo smisleno napraviti s nominalnim podacima jest prebrojati koliko opažanja pripada svakoj kategoriji i izračunati proporcije. Ne možemo ih zbrajati, oduzimati ili izračunavati prosjek. "Prosječni spol" nema smisla. "Prosječni tip medija" također ne.
 
 ### Ordinalna razina
 
-Ordinalna razina dodaje informaciju o redoslijedu. Kategorije imaju prirodan poredak, ali razmaci između njih nisu nužno jednaki. Klasičan primjer su odgovori na Likertovoj skali: "uopće se ne slažem" (1), "ne slažem se" (2), "niti se slažem niti ne" (3), "slažem se" (4), "potpuno se slažem" (5). Znamo da je 4 više od 3 i 3 više od 2, ali ne možemo tvrditi da je razlika između "ne slažem se" i "niti se slažem niti ne" jednaka razlici između "slažem se" i "potpuno se slažem".
+Ordinalna razina dodaje informaciju o redoslijedu. Kategorije imaju prirodan poredak, ali razmaci između njih nisu nužno jednaki. Klasičan primjer su odgovori na Likertovoj skali poput "uopće se ne slažem" (1), "ne slažem se" (2), "niti se slažem niti ne" (3), "slažem se" (4), "potpuno se slažem" (5). Znamo da je 4 više od 3 i 3 više od 2, ali ne možemo tvrditi da je razlika između "ne slažem se" i "niti se slažem niti ne" jednaka razlici između "slažem se" i "potpuno se slažem".
 
-Drugi primjeri ordinalnih varijabli u komunikologiji: rangiranje omiljenih medija (prvi, drugi, treći izbor), obrazovna razina (osnovna škola, srednja škola, prvostupnik, magistar, doktor), rang na ljestvici najčitanijih članaka.
+Drugi primjeri ordinalnih varijabli u komunikologiji uključuju rangiranje omiljenih medija (prvi, drugi, treći izbor), obrazovnu razinu (osnovna škola, srednja škola, prvostupnik, magistar, doktor) i rang na ljestvici najčitanijih članaka.
 
 S ordinalnim podacima možemo raditi sve što i s nominalnim (prebrojavanje, proporcije), plus možemo govoriti o redoslijedu i izračunavati medijan. Ali prosjek je, strogo govoreći, problematičan jer pretpostavlja jednake razmake. U praksi se prosjeci Likertovih skala ipak računaju gotovo svugdje, i to je jedna od onih situacija u kojima se stroga metodološka čistoća sukobljava s praktičnošću. Vrijedi biti svjestan da je to kompromis.
 
 ### Intervalna razina
 
-Na intervalnoj razini, razmaci između vrijednosti su jednaki i smisleni, ali nulta točka je proizvoljno određena. Klasičan primjer je temperatura u Celzijevim stupnjevima: razlika između 20 i 30 stupnjeva jednaka je razlici između 30 i 40 stupnjeva, ali 0 stupnjeva ne znači "nema temperature" (to je samo točka na kojoj se voda ledi). Zbog toga ne možemo reći da je 40 stupnjeva dvostruko toplije od 20 stupnjeva.
+Na intervalnoj razini, razmaci između vrijednosti su jednaki i smisleni, ali nulta točka je proizvoljno određena. Klasičan primjer je temperatura u Celzijevim stupnjevima, gdje je razlika između 20 i 30 stupnjeva jednaka je razlici između 30 i 40 stupnjeva, ali 0 stupnjeva ne znači "nema temperature" (to je samo točka na kojoj se voda ledi). Zbog toga ne možemo reći da je 40 stupnjeva dvostruko toplije od 20 stupnjeva.
 
 U komunikologiji su prave intervalne skale relativno rijetke. Mnogi istraživači tretiraju Likertove skale kao intervalne (pod pretpostavkom da su razmaci između odgovora psihološki jednaki), ali to je pretpostavka, ne činjenica. Standardizirani testovi znanja o medijskoj pismenosti ili indeksi poput nekih kompozitnih mjera medijskog pluralizma mogu se opravdano tretirati kao intervalni.
 
@@ -130,7 +130,7 @@ S intervalnim podacima možemo raditi sve dosad navedeno plus izračunavati arit
 
 ### Omjerna razina
 
-Omjerna (ratio) razina ima sve karakteristike intervalne, plus ima apsolutnu nultu točku koja znači potpuno odsustvo mjerne veličine. Vrijeme provedeno na platformi je omjerna varijabla: 0 minuta zaista znači da osoba uopće nije koristila platformu, a 60 minuta je zaista dvostruko više od 30 minuta. Broj dijeljenja objave, broj pratitelja, prihod od oglašavanja, stopa klikanja (click through rate), sve su to omjerne varijable.
+Omjerna (ratio) razina ima sve karakteristike intervalne, plus ima apsolutnu nultu točku koja znači potpuno odsustvo mjerne veličine. Vrijeme provedeno na platformi je omjerna varijabla jer 0 minuta zaista znači da osoba uopće nije koristila platformu, a 60 minuta je zaista dvostruko više od 30 minuta. Broj dijeljenja objave, broj pratitelja, prihod od oglašavanja, stopa klikanja (click through rate), sve su to omjerne varijable.
 
 S omjernim podacima možemo raditi apsolutno sve: zbrajati, oduzimati, množiti, dijeliti, izračunavati omjere. Izjava "Portal A ima dvostruko više čitatelja od Portala B" ima smisla jer je broj čitatelja omjerna varijabla.
 
@@ -202,7 +202,7 @@ Ova terminologija može zbuniti jer u neeksperimentalnim istraživanjima nema pr
 
 Jedna od najopasnijih prijetnji valjanosti istraživanja su **konfundirajuće varijable** (confounding variables, ili kraće konfaunderi). To su varijable koje utječu i na nezavisnu i na zavisnu varijablu, stvarajući lažni dojam da između njih postoji uzročna veza.
 
-Zamislite da istražujete vezu između korištenja Instagrama i samopoštovanja adolescenata. Rezultati pokazuju negativnu korelaciju: oni koji više koriste Instagram imaju niže samopoštovanje. Ali pričekajte. Adolescenti koji imaju niže samopoštovanje možda provode više vremena na društvenim mrežama jer traže potvrdu. Ili pak treća varijabla, poput socijalne izolacije, uzrokuje i više korištenja Instagrama i niže samopoštovanje. Bez kontrole konfundirajućih varijabli, ne možete znati što uzrokuje što.
+Zamislite da istražujete vezu između korištenja Instagrama i samopoštovanja adolescenata. Rezultati pokazuju negativnu korelaciju, odnosno oni koji više koriste Instagram imaju niže samopoštovanje. Ali pričekajte. Adolescenti koji imaju niže samopoštovanje možda provode više vremena na društvenim mrežama jer traže potvrdu. Ili pak treća varijabla, poput socijalne izolacije, uzrokuje i više korištenja Instagrama i niže samopoštovanje. Bez kontrole konfundirajućih varijabli, ne možete znati što uzrokuje što.
 
 Navarro u knjizi koristi termin "treća varijabla" (third variable problem) i naglašava da je to razlog zbog kojeg korelacija ne implicira kauzalnost. Mi ćemo se na ovu temu vraćati mnogo puta tijekom kolegija. Zapamtite je od prvog dana: kad god vidite da netko tvrdi da X uzrokuje Y na temelju korelacijskih podataka, pitajte se postoji li varijabla Z koja bi mogla objasniti vezu.
 
@@ -212,7 +212,7 @@ Navarro u knjizi koristi termin "treća varijabla" (third variable problem) i na
 
 Kako onda možemo utvrditi da jedna stvar zaista uzrokuje drugu, a ne samo da su povezane? Odgovor je eksperiment. Eksperiment je istraživački dizajn u kojem istraživač aktivno **manipulira** nezavisnom varijablom i promatra učinak te manipulacije na zavisnu varijablu, uz kontrolu svih ostalih relevantnih čimbenika.
 
-Zamislite klasičan primjer iz komunikologije: A/B test naslova na web portalu. Istraživač pripremi dva naslova za isti članak: jedan neutralan ("Rezultati istraživanja o utjecaju društvenih mreža na mlade") i jedan senzacionalistički ("Šokantan nalaz: društvene mreže uništavaju generaciju Z"). Zatim nasumično odabere koji čitatelji će vidjeti koji naslov. Nakon određenog vremena, mjeri stopu klikanja za svaki naslov.
+Zamislite klasičan primjer iz komunikologije: A/B test naslova na web portalu. Istraživač pripremi dva naslova za isti članak, jedan neutralan ("Rezultati istraživanja o utjecaju društvenih mreža na mlade") i jedan senzacionalistički ("Šokantan nalaz: društvene mreže uništavaju generaciju Z"). Zatim nasumično odabere koji čitatelji će vidjeti koji naslov. Nakon određenog vremena, mjeri stopu klikanja za svaki naslov.
 
 Ovaj dizajn ima tri ključna svojstva pravog eksperimenta.
 
@@ -222,7 +222,7 @@ Ovaj dizajn ima tri ključna svojstva pravog eksperimenta.
 
 **Kontrola ostalih varijabli.** Sve ostalo osim nezavisne varijable treba biti jednako za obje grupe. Isti članak, isto vrijeme objave, ista pozicija na stranici. Ako se grupe razlikuju po nečemu osim naslova, taj nešto postaje konfundirajuća varijabla.
 
-Kad su ova tri uvjeta ispunjena, logika eksperimenta je jednostavna i snažna: ako se grupe razlikuju u zavisnoj varijabli, a jedina razlika između grupa je nezavisna varijabla, onda nezavisna varijabla mora biti uzrok te razlike. Ovo je jedini istraživački dizajn koji dopušta kauzalne zaključke.
+Kad su ova tri uvjeta ispunjena, logika eksperimenta je jednostavna i snažna. Ako se grupe razlikuju u zavisnoj varijabli, a jedina razlika između grupa je nezavisna varijabla, onda nezavisna varijabla mora biti uzrok te razlike. Ovo je jedini istraživački dizajn koji dopušta kauzalne zaključke.
 
 ::: {.callout-important}
 ## Važna napomena

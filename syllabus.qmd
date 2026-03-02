@@ -150,7 +150,7 @@ Kada želimo usporediti vjerodostojnost vijesti iz pet različitih izvora (TV, p
 Svi dosadašnji testovi uspoređivali su grupe. Regresija ide korak dalje i omogućuje predviđanje jedne varijable na temelju jedne ili više drugih. Koliko dodatnih lajkova donosi svaki dodatni hashtag? Predavanje gradi put od jednostavne regresije (jedan prediktor) do višestruke regresije (više prediktora), objašnjava R-kvadrat kao mjeru koliko model objašnjava varijabilnost, te uvodi dijagnostiku modela kroz rezidualne plotove, Cookovu udaljenost i provjeru multikolinearnosti. Na datasetu o angažmanu objava na Instagramu, studenti grade, uspoređuju i interpretiraju regresijske modele.
 
 ::: {.material-links}
-[HTML](lectures/week-14.html){.btn-material} | [PDF](lectures/week-14.pdf){.btn-material} | [DOCX](lectures/week-14.docx){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-14.qmd){.btn-material}
+[HTML](lectures/week-13.html){.btn-material} | [Izvorni kod](https://github.com/lusiki/Osnove-statistike/blob/main/lectures/week-13.qmd){.btn-material}
 :::
 
 ## Seminarske aktivnosti

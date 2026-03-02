@@ -1,8 +1,8 @@
 ---
-title: "Tjedan 9: Uzorkovanje, procjena i intervali pouzdanosti"
-subtitle: "Kako iz dijela saznati nešto o cjelini"
-date: 2025-04-19
-categories: [uzorkovanje, centralni granični teorem, intervali pouzdanosti, procjena parametara]
+title: "Tjedan 9: Testiranje hipoteza"
+subtitle: "Kako donijeti odluku na temelju podataka"
+date: 2025-04-26
+categories: [testiranje hipoteza, p-vrijednost, t-test, greške tipa I i II, veličina učinka]
 draft: false
 ---
 
@@ -18,505 +18,349 @@ library(tidyverse)
 ::: {.callout-note}
 ## Ishodi učenja
 
-Nakon ovog predavanja moći ćete
+Nakon ovog predavanja moći ćete:
 
-1. Objasniti razliku između populacije i uzorka te između parametra i statistike.
-2. Opisati kako veličina uzorka utječe na preciznost procjene populacijskog parametra.
-3. Objasniti što je distribucija uzorkovanja (sampling distribution) i zašto je važna.
-4. Opisati centralni granični teorem i demonstrirati ga simulacijom.
-5. Izračunati standardnu pogrešku prosjeka i objasniti njezino značenje.
-6. Konstruirati i interpretirati interval pouzdanosti za prosjek.
-7. Prepoznati uobičajene pristranosti u uzorkovanju i objasniti zašto su online ankete problematične.
-8. Kritički ocijeniti marginu pogreške u medijskim izvještajima o anketama.
+1. Formulirati nultu i alternativnu hipotezu za istraživačko pitanje.
+2. Objasniti logiku testiranja hipoteza kroz analogiju sa suđenjem.
+3. Izračunati i interpretirati testnu statistiku i p-vrijednost.
+4. Provesti jednosmjerni i dvosmjerni t-test u R-u pomoću `t.test()`.
+5. Objasniti razliku između greške tipa I i greške tipa II.
+6. Izračunati i interpretirati Cohenov d kao mjeru veličine učinka.
+7. Objasniti koncept statističke snage i faktore koji na nju utječu.
+8. Kritički ocijeniti statističku značajnost u kontekstu praktične važnosti.
 :::
 
-## Temeljni problem statistike
+## Jesu li carouseli zaista bolji?
 
-Statistika rješava jedan temeljni problem: želimo znati nešto o cijeloj populaciji, ali nemamo pristup cijeloj populaciji. Želimo znati koliki je prosječni dnevni medijski ekran-time svih odraslih Hrvata, ali ne možemo pitati svaku od 3.5 milijuna odraslih osoba. Želimo znati preferiraju li čitatelji kratke ili dugačke članke, ali ne možemo testirati svaki članak na svakom čitatelju. Želimo znati koliki je CTR novog oglasa, ali ne možemo ga pokazati svim korisnicima interneta.
+Radite kao analitičarka u redakciji medijske kuće. Vaš Instagram profil objavljuje sadržaj u dva formata — carousel (objave s više slika koje korisnik lista) i obične slike (single image). Urednica vas jednog jutra zaustavi u hodniku i pita: "Imam osjećaj da carousel objave generiraju više angažmana. Imamo li za to dokaz?"
 
-Umjesto toga, uzimamo **uzorak** (manji dio populacije), mjerimo što nas zanima u uzorku i na temelju toga donosimo zaključak o cijeloj populaciji. Ovo zvuči jednostavno, ali otvara niz pitanja. Koliko veliki uzorak trebamo? Koliko možemo vjerovati procjeni iz uzorka? Kako znamo da uzorak nije pristran?
+Vi znate odgovoriti na to pitanje. Otvarate podatke i gledate prosjeke — carousel objave imaju engagement rate od 10.1%, a obične slike 7.5%. Razlika postoji. Ali urednica nije pitala "je li prosjek različit u uzorku" — ona pita "možemo li se osloniti na tu razliku kad planiramo strategiju." A to je sasvim drugo pitanje. Možda je razlika realna i stabilna. Ali možda je samo artefakt — slučajni šum u podacima koji bi nestao kad bismo ponovili usporedbu na novom skupu objava.
 
-Ovo predavanje daje odgovore na ta pitanja. Koncepti koje ćemo naučiti (distribucija uzorkovanja, centralni granični teorem, standardna pogreška, interval pouzdanosti) su temelj za sve statističke testove koji dolaze u nastavku kolegija.
-
----
-
-## Naši podaci: populacija i uzorci {#sec-podaci}
-
-Za ovo predavanje imamo luksuz koji u stvarnom životu nikad nemamo: poznajemo cijelu populaciju. Dataset sadrži 50 000 odraslih osoba iz fiktivnog hrvatskog grada, s podacima o dobi, spolu, obrazovanju, primarnom izvoru vijesti, povjerenju u medije i dnevnoj medijskoj konzumaciji.
+Ovo je temeljno pitanje testiranja hipoteza — je li opažena razlika dovoljno velika da isključimo slučajnost kao objašnjenje? Drugim riječima, koliko bismo bili iznenađeni ovakvom razlikom da carousel zapravo *nije* bolji?
 
 ```{r}
-#| label: ucitavanje-populacije
+#| label: ucitavanje
 #| echo: true
 #| message: false
 #| warning: false
 
-pop <- read_csv("../resources/datasets/media_population.csv")
-glimpse(pop)
+ig <- read_csv("../resources/datasets/instagram_ab_test.csv")
+glimpse(ig)
 ```
 
-Zato što poznajemo cijelu populaciju, možemo izračunati prave populacijske parametre i onda vidjeti koliko dobro ih procjenjuju uzorci različitih veličina. Ovo je pedagoški trik: u stvarnom istraživanju nikad ne znate populacijske parametre (da ih znate, ne biste trebali statistiku). Ali ovdje ih znamo pa možemo procijeniti kvalitetu naših procjena.
-
 ```{r}
-#| label: populacijski-parametri
+#| label: opisna-statistika
 #| echo: true
 #| message: false
 #| warning: false
 
-# PRAVI populacijski parametri (u praksi ih NIKAD ne znamo)
-pop_params <- pop |>
+ig |>
+  group_by(format) |>
   summarise(
-    mu_trust = round(mean(media_trust), 2),
-    sigma_trust = round(sd(media_trust), 2),
-    mu_media_min = round(mean(daily_media_min), 1),
-    sigma_media_min = round(sd(daily_media_min), 1),
-    udio_portal = round(mean(primary_news_source == "portal"), 3)
+    n = n(),
+    M_engagement = round(mean(engagement_rate) * 100, 2),
+    SD_engagement = round(sd(engagement_rate) * 100, 2),
+    M_likes = round(mean(likes), 1),
+    M_comments = round(mean(comments), 1),
+    .groups = "drop"
   )
-
-pop_params
 ```
 
-Zapamtite ove brojeve. To su istine o populaciji. Sve što radimo dalje pokušava se približiti ovim vrijednostima iz uzoraka.
+Carousel objave imaju viši angažman u prosjeku. Ali svaka grupa ima i vlastitu varijabilnost — unutar carousela postoje sjajne i loše objave, isto kao i unutar običnih slika. Pitanje je — kolika je šansa da bismo vidjeli ovakvu ili veću razliku čak i da carousel zapravo nije bolji?
 
----
 
-## Populacija vs uzorak: terminologija {#sec-terminologija}
+## Logika testiranja hipoteza {#sec-logika}
 
-Statistika strogo razlikuje populaciju i uzorak te njihove mjere.
+Testiranje hipoteza slijedi logiku koja je iznenađujuće slična suđenju u kaznenom pravu. Na sudu, optuženik je nevin dok se ne dokaže krivnja. Ne morate dokazati nevinost — morate dokazati krivnju, i to izvan razumne sumnje. Ako dokazi nisu dovoljno jaki, presuda nije "nevin" nego "nije dokazano."
 
-**Populacija** je cjelokupni skup jedinica o kojima želimo donijeti zaključak. Mjere populacije zovemo **parametri** i označavamo ih grčkim slovima: μ (prosjek), σ (standardna devijacija), π ili p (proporcija).
+U statistici, uloge su analogne. Početna pretpostavka je da nema učinka — nema razlike, nema veze, nema efekta. Ovu pretpostavku zovemo nulta hipoteza i označavamo je s H₀. Istraživač pokušava prikupiti dovoljno dokaza da odbaci nultu hipotezu u korist alternativne hipoteze (H₁), koja tvrdi da učinak postoji.
 
-**Uzorak** je podskup populacije koji zaista mjerimo. Mjere uzorka zovemo **statistike** i označavamo ih latinskim slovima: x̄ (prosjek uzorka), s (standardna devijacija uzorka), p̂ (proporcija uzorka).
+Za naš Instagram primjer, hipoteze izgledaju ovako:
 
-Statistike su procjene parametara. Procjena nikad nije savršena jer uzorak nije cijela populacija, ali dobra procjena može biti dovoljno blizu za praktične svrhe.
+**H₀**: Nema razlike u angažmanu između carousel i single image formata. Svaka opažena razlika je posljedica slučajnosti.
 
-```{r}
-#| label: uzorak-vs-populacija
-#| echo: true
-#| message: false
-#| warning: false
+**H₁**: Postoji razlika u angažmanu između dva formata. Opažena razlika odražava stvarnu razliku u populaciji.
 
-set.seed(42)
+Matematički:
 
-# Uzmimo jedan uzorak od 100 osoba
-uzorak_100 <- pop |> slice_sample(n = 100)
+$$H_0: \mu_{carousel} = \mu_{single}$$
+$$H_1: \mu_{carousel} \neq \mu_{single}$$
 
-# Usporedba parametra i statistike
-tibble(
-  mjera = c("Prosjek povjerenja", "SD povjerenja", "Udio portal"),
-  populacija = c(
-    round(mean(pop$media_trust), 2),
-    round(sd(pop$media_trust), 2),
-    round(mean(pop$primary_news_source == "portal"), 3)
-  ),
-  uzorak_100 = c(
-    round(mean(uzorak_100$media_trust), 2),
-    round(sd(uzorak_100$media_trust), 2),
-    round(mean(uzorak_100$primary_news_source == "portal"), 3)
-  )
-)
-```
+::: {.callout-important}
+## Nulta hipoteza uvijek sadrži jednakost
 
-Uzorak od 100 osoba daje procjene koje su blizu populacijskim vrijednostima, ali nisu identične. Razlika između parametra i statistike naziva se **pogreška uzorkovanja** (sampling error). Ovo nije greška u smislu da smo nešto krivo napravili. To je neizbježna posljedica toga što radimo s dijelom umjesto s cjelinom.
-
----
-
-## Što se događa kad ponovimo uzorkovanje? {#sec-ponavljanje}
-
-Ključan uvid je da bismo, da smo uzeli drugi uzorak od 100 osoba, dobili malo drugačije rezultate. Svaki uzorak je drugačiji. Statistika varira od uzorka do uzorka.
-
-```{r}
-#| label: tri-uzorka
-#| echo: true
-#| message: false
-#| warning: false
-
-set.seed(1)
-u1 <- pop |> slice_sample(n = 100) |> summarise(M = round(mean(media_trust), 2)) |> pull(M)
-
-set.seed(2)
-u2 <- pop |> slice_sample(n = 100) |> summarise(M = round(mean(media_trust), 2)) |> pull(M)
-
-set.seed(3)
-u3 <- pop |> slice_sample(n = 100) |> summarise(M = round(mean(media_trust), 2)) |> pull(M)
-
-cat("Populacijski prosjek:", round(mean(pop$media_trust), 2), "\n")
-cat("Uzorak 1 (n=100):", u1, "\n")
-cat("Uzorak 2 (n=100):", u2, "\n")
-cat("Uzorak 3 (n=100):", u3, "\n")
-```
-
-Svaki uzorak daje malo drugačiji prosjek. Ovo je normalno i neizbježno. Pitanje je: koliko ti prosjeci variraju? I kako ta varijacija ovisi o veličini uzorka?
-
----
-
-## Distribucija uzorkovanja {#sec-distribucija-uzorkovanja}
-
-**Distribucija uzorkovanja** je distribucija statistike (npr. prosjeka) kroz mnogo ponovljenih uzoraka. Zamislite da uzimate 10 000 uzoraka od po 100 osoba iz populacije. Svaki uzorak daje jedan prosjek. Distribucija tih 10 000 prosjeka je distribucija uzorkovanja.
-
-```{r}
-#| label: distribucija-uzorkovanja
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-set.seed(42)
-
-# 10 000 uzoraka od po 100 osoba
-sampling_dist <- tibble(
-  uzorak = 1:10000,
-  prosjek = map_dbl(1:10000, \(i) {
-    pop |> slice_sample(n = 100) |> pull(media_trust) |> mean()
-  })
-)
-
-# Populacijski prosjek
-mu <- mean(pop$media_trust)
-
-sampling_dist |>
-  ggplot(aes(x = prosjek)) +
-  geom_histogram(fill = "steelblue", color = "white", bins = 50) +
-  geom_vline(xintercept = mu, color = "firebrick", linewidth = 1, linetype = "dashed") +
-  labs(
-    title = "Distribucija uzorkovanja prosjeka povjerenja u medije",
-    subtitle = "10 000 uzoraka od po n = 100 iz populacije od 50 000",
-    x = "Prosjek uzorka",
-    y = "Frekvencija"
-  ) +
-  theme_minimal()
-```
-
-Tri stvari su odmah uočljive. Prvo, distribucija je centrirana oko pravog populacijskog prosjeka (crvena crta). Ovo znači da je prosjek uzorka **nepristrana procjena** populacijskog prosjeka: ne precjenjuje ni podcjenjuje sustavno. Drugo, distribucija je približno normalna (zvonolika), čak i bez pretpostavke o obliku izvorne distribucije. Treće, distribucija je mnogo uža od distribucije pojedinačnih opažanja: prosjeci manje variraju od pojedinačnih vrijednosti.
-
-```{r}
-#| label: sampling-vs-individual
-#| echo: true
-#| message: false
-#| warning: false
-
-# Usporedba varijabilnosti
-cat("SD pojedinačnih opažanja (σ):", round(sd(pop$media_trust), 2), "\n")
-cat("SD distribucije uzorkovanja:", round(sd(sampling_dist$prosjek), 3), "\n")
-cat("Omjer:", round(sd(pop$media_trust) / sd(sampling_dist$prosjek), 1), "\n")
-```
-
-SD distribucije uzorkovanja je otprilike 10 puta manji od SD pojedinačnih opažanja. Taj omjer nije slučajan: on je približno jednak √n = √100 = 10. Ovo nas vodi do ključnog koncepta.
-
----
-
-## Standardna pogreška {#sec-se}
-
-**Standardna pogreška** (standard error, SE) je standardna devijacija distribucije uzorkovanja. Ona mjeri koliko tipično prosjeci uzoraka variraju oko populacijskog prosjeka.
-
-Za prosjek, standardna pogreška se računa formulom:
-
-$$SE = \frac{\sigma}{\sqrt{n}}$$
-
-gdje je σ standardna devijacija populacije, a n veličina uzorka. U praksi ne znamo σ pa koristimo procjenu iz uzorka (s):
-
-$$SE \approx \frac{s}{\sqrt{n}}$$
-
-```{r}
-#| label: se-izracun
-#| echo: true
-#| message: false
-#| warning: false
-
-# Teorijska SE za n = 100
-sigma <- sd(pop$media_trust)
-se_teorijska <- sigma / sqrt(100)
-
-# Procijenjena SE iz jednog uzorka
-set.seed(42)
-uzorak <- pop |> slice_sample(n = 100)
-se_procijenjena <- sd(uzorak$media_trust) / sqrt(100)
-
-# Empirijska SE (iz 10 000 uzoraka)
-se_empirijska <- sd(sampling_dist$prosjek)
-
-cat("Teorijska SE:", round(se_teorijska, 3), "\n")
-cat("Procijenjena SE (iz jednog uzorka):", round(se_procijenjena, 3), "\n")
-cat("Empirijska SE (iz simulacije):", round(se_empirijska, 3), "\n")
-```
-
-Sve tri vrijednosti su blizu jedna drugoj. Ovo potvrđuje da formula SE = s/√n dobro procjenjuje stvarnu varijabilnost prosjeka uzoraka.
-
-### Veličina uzorka i preciznost
-
-Formula SE = σ/√n odmah govori nešto fundamentalno: preciznost procjene raste s korijenom veličine uzorka, ne linearno.
-
-```{r}
-#| label: se-po-velicini
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-set.seed(42)
-
-velicine <- c(10, 25, 50, 100, 200, 500, 1000, 2000)
-
-sim_se <- map_df(velicine, \(n) {
-  prosjeci <- map_dbl(1:2000, \(i) {
-    pop |> slice_sample(n = n) |> pull(media_trust) |> mean()
-  })
-  tibble(n = n, se_empirijska = sd(prosjeci), se_formula = sigma / sqrt(n))
-})
-
-sim_se |>
-  ggplot(aes(x = n)) +
-  geom_line(aes(y = se_empirijska, color = "Empirijska (simulacija)"), linewidth = 1) +
-  geom_line(aes(y = se_formula, color = "Teorijska (σ/√n)"), linewidth = 1, linetype = "dashed") +
-  scale_x_continuous(breaks = velicine) +
-  labs(
-    title = "Standardna pogreška pada s veličinom uzorka",
-    subtitle = "Ali zakon opadajućih prinosa: od 100 do 1000 nije 10x preciznije",
-    x = "Veličina uzorka (n)",
-    y = "Standardna pogreška",
-    color = NULL
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-Pad je strm na početku (od n=10 do n=100 je ogromno poboljšanje) ali se postepeno usporava. Da biste prepolovili SE, morate učetverostručiti uzorak. Ovo objašnjava zašto su anketni uzorci obično između 500 i 2000: povećanje iznad toga donosi malo dodatne preciznosti u odnosu na trošak.
-
-```{r}
-#| label: se-tablica
-#| echo: true
-#| message: false
-#| warning: false
-
-sim_se |>
-  mutate(
-    se_formula = round(se_formula, 3),
-    se_empirijska = round(se_empirijska, 3),
-    raspon_95 = paste0("±", round(1.96 * se_formula, 2))
-  ) |>
-  select(n, se_formula, raspon_95)
-```
-
-Stupac `raspon_95` pokazuje koliko širok je 95% interval oko prosjeka. S uzorkom od 100, prosjek povjerenja je precizan na ±0.39 bodova. S uzorkom od 1000, preciznost je ±0.12 bodova. U praksi, odlučujete kolika je vam preciznost dovoljna i na temelju toga birate veličinu uzorka.
-
-::: {.callout-tip}
-## Praktični savjet
-
-Kad čitate medijske izvještaje o anketama, uvijek tražite veličinu uzorka i marginu pogreške. Anketa s n = 500 ima marginu pogreške oko ±4.4 postotna boda za proporcije (na 95% razini). Anketa s n = 1000 ima oko ±3.1. Kad novinar kaže "stranka A ima 32% a stranka B 29%", razlika od 3 postotna boda je unutar margine pogreške za većinu anketa. Zaključak "A vodi" iz takve ankete nije opravdan.
+Nulta hipoteza uvijek sadrži znak jednakosti (= ili ≤ ili ≥). Alternativna hipoteza sadrži znak nejednakosti (≠ ili > ili <). Nikad obrnuto. Mi testiramo nultu hipotezu i tražimo dokaze *protiv* nje — baš kao što tužitelj traži dokaze protiv pretpostavke nevinosti.
 :::
 
----
 
-## Centralni granični teorem {#sec-clt}
+## Od hipoteze do odluke {#sec-koraci}
 
-**Centralni granični teorem** (Central Limit Theorem, CLT) je najvažniji teorem u cijeloj statistici. Kaže sljedeće:
+Cijeli postupak testiranja hipoteza možete sažeti u pet koraka. Prvi — postavite hipoteze, jasno formulirajte H₀ i H₁ prije nego pogledate podatke. Drugi — odaberite razinu značajnosti α, prag ispod kojeg ćete odbaciti H₀ (konvencija je α = 0.05, odnosno 5%). Treći — izračunajte testnu statistiku iz podataka, broj koji kvantificira koliko se vaši podaci razlikuju od očekivanih pod H₀. Četvrti — izračunajte p-vrijednost, vjerojatnost da biste dobili ovako ekstremnu ili ekstremniju testnu statistiku kad bi H₀ bila istinita. Peti — donesite odluku, ako je p < α, odbacujete H₀; ako je p ≥ α, ne možete je odbaciti.
 
-Distribucija uzorkovanja prosjeka je približno normalna, neovisno o obliku izvorne distribucije, pod uvjetom da je uzorak dovoljno velik.
+Krenimo korak po korak na jednostavnijem primjeru prije nego se vratimo na Instagram podatke.
 
-Ovo je izuzetno moćno jer znači da možemo koristiti normalnu distribuciju za donošenje zaključaka o prosjecima čak i kad izvorna varijabla nije normalna.
 
-Demonstrirajmo to na varijabli `willing_to_pay` koja je jako iskrivljena (mnogo nula i dugačak desni rep).
+## Jednouzorački t-test {#sec-one-sample}
+
+Najjednostavniji oblik t-testa uspoređuje prosjek jednog uzorka s nekom poznatom ili pretpostavljenom vrijednošću. Evo konkretne situacije — medijska kuća tvrdi da njihovi korisnici provode prosječno 3 minute čitajući članak. Vi ste skeptični — vaš osjećaj je da je stvarno vrijeme kraće. Provedete mjerenje na uzorku od 45 članaka.
 
 ```{r}
-#| label: clt-izvorna
+#| label: one-sample-podaci
+#| echo: true
+#| message: false
+#| warning: false
+
+set.seed(42)
+
+# Simulirani podaci: stvarno prosječno vrijeme je 2.6 minuta
+vrijeme_citanja <- tibble(
+  clanak_id = 1:45,
+  minuta = round(rnorm(45, mean = 2.6, sd = 0.9), 1)
+)
+
+# Opisna statistika
+vrijeme_citanja |>
+  summarise(
+    n = n(),
+    M = round(mean(minuta), 2),
+    SD = round(sd(minuta), 2),
+    SE = round(sd(minuta) / sqrt(n()), 3)
+  )
+```
+
+Prosjek uzorka je ispod 3 minute. Ali je li dovoljno daleko od 3 da možemo odbaciti tvrdnju medijske kuće? Možda je razlika samo slučajni šum.
+
+### Testna statistika
+
+Testna statistika za jednouzorački t-test mjeri koliko je prosjek uzorka udaljen od pretpostavljene vrijednosti, izraženo u jedinicama standardne pogreške:
+
+$$t = \frac{\bar{x} - \mu_0}{SE} = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}$$
+
+Raspakujmo formulu. U brojniku je razlika između prosjeka uzorka ($\bar{x}$) i vrijednosti koju testiramo ($\mu_0$ = 3 minute). U nazivniku je standardna pogreška (SE), koja vam govori koliko prosjek uzorka tipično varira od uzorka do uzorka. Cijeli razlomak, dakle, kaže: "koliko standardnih pogrešaka je moj prosjek udaljen od pretpostavljene vrijednosti?" Što je taj broj veći po apsolutnoj vrijednosti, to su podaci neobičniji pod nultom hipotezom.
+
+```{r}
+#| label: t-stat-rucno
+#| echo: true
+#| message: false
+#| warning: false
+
+x_bar <- mean(vrijeme_citanja$minuta)
+mu_0 <- 3  # tvrdnja medijske kuće
+s <- sd(vrijeme_citanja$minuta)
+n <- nrow(vrijeme_citanja)
+se <- s / sqrt(n)
+
+t_stat <- (x_bar - mu_0) / se
+
+cat("x̄ =", round(x_bar, 2), "\n")
+cat("μ₀ =", mu_0, "\n")
+cat("SE =", round(se, 3), "\n")
+cat("t =", round(t_stat, 3), "\n")
+cat("df =", n - 1, "\n")
+```
+
+Testna statistika t je negativna jer je prosjek uzorka manji od pretpostavljene vrijednosti. Apsolutna vrijednost |t| govori koliko standardnih pogrešaka je prosjek udaljen od μ₀. Što je ta udaljenost veća, to su jači dokazi protiv H₀.
+
+### P-vrijednost
+
+Sada dolazi ključni korak. P-vrijednost je vjerojatnost da biste dobili testnu statistiku jednako ekstremnu ili ekstremniju od opažene, *pod pretpostavkom da je H₀ istinita*. Ovo je suptilno ali ključno — p-vrijednost vam ne govori koliko je vjerojatno da je H₀ istinita. Ona vam govori koliko bi vaši podaci bili neobični u svijetu gdje je H₀ istinita.
+
+```{r}
+#| label: p-vrijednost-vizualizacija
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 8
-#| fig-height: 4
+#| fig-height: 5
 
-# Izvorna distribucija: daleko od normalne
-pop |>
-  ggplot(aes(x = willing_to_pay)) +
-  geom_histogram(fill = "steelblue", color = "white", bins = 40) +
+# Dvosmjerni test: gledamo obje strane
+p_value <- 2 * pt(abs(t_stat), df = n - 1, lower.tail = FALSE)
+
+x_vals <- seq(-5, 5, length.out = 300)
+
+t_data <- tibble(x = x_vals, density = dt(x_vals, df = n - 1))
+
+ggplot(t_data, aes(x = x, y = density)) +
+  geom_line(linewidth = 1) +
+  geom_area(data = t_data |> filter(x <= -abs(t_stat)),
+            fill = "firebrick", alpha = 0.4) +
+  geom_area(data = t_data |> filter(x >= abs(t_stat)),
+            fill = "firebrick", alpha = 0.4) +
+  geom_vline(xintercept = c(-abs(t_stat), abs(t_stat)),
+             color = "firebrick", linetype = "dashed") +
+  annotate("text", x = t_stat - 0.3, y = 0.05,
+           label = paste("t =", round(t_stat, 2)), color = "firebrick", hjust = 1) +
   labs(
-    title = "Distribucija spremnosti za plaćanje vijesti (populacija)",
-    subtitle = "Jako iskrivljena: mnogo nula, dugačak desni rep",
-    x = "Iznos (kn/mjesec)",
-    y = "Broj osoba"
-  ) +
-  theme_minimal()
-```
-
-Ovo definitivno nije normalna distribucija. Većina ljudi nije spremna platiti ništa, a oni koji jesu spremni plaćaju različite iznose.
-
-```{r}
-#| label: clt-demonstracija
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 10
-#| fig-height: 8
-
-set.seed(42)
-
-# Distribucije uzorkovanja za različite veličine uzorka
-clt_sim <- map_df(c(5, 15, 30, 100), \(n) {
-  prosjeci <- map_dbl(1:5000, \(i) {
-    pop |> slice_sample(n = n) |> pull(willing_to_pay) |> mean()
-  })
-  tibble(n_label = paste("n =", n), n = n, prosjek = prosjeci)
-}) |>
-  mutate(n_label = fct_reorder(n_label, n))
-
-clt_sim |>
-  ggplot(aes(x = prosjek)) +
-  geom_histogram(aes(y = after_stat(density)), fill = "steelblue", color = "white", bins = 40) +
-  stat_function(fun = dnorm,
-    args = list(mean = mean(pop$willing_to_pay), 
-                sd = sd(pop$willing_to_pay) / sqrt(5)),
-    data = clt_sim |> filter(n == 5),
-    color = "firebrick", linewidth = 0.8) +
-  facet_wrap(~n_label, scales = "free_y") +
-  labs(
-    title = "Centralni granični teorem na djelu",
-    subtitle = "Što veći uzorak, to normalnija distribucija uzorkovanja",
-    x = "Prosjek uzorka (kn/mjesec)",
+    title = "P-vrijednost je crveno osjenčano područje",
+    subtitle = paste0("Dvosmjerni test. p = ", round(p_value, 4),
+                      ". Ako je p < 0.05, odbacujemo H₀."),
+    x = "t-vrijednost",
     y = "Gustoća"
   ) +
   theme_minimal()
 ```
 
-Rezultat je zapanjujuć. S n = 5, distribucija prosjeka je još uvijek iskrivljena (jer je izvorni oblik još dominantan). S n = 15, već se počinje formirati zvonoliki oblik. S n = 30, distribucija je gotovo savršeno normalna. S n = 100, normalna aproksimacija je izvrsna.
-
-Pravilo palca je da je n ≥ 30 obično dovoljno za CLT, ali za jako iskrivljene distribucije može trebati i više. Za približno normalne izvorne distribucije, i n = 10 može biti dovoljno.
-
-### Zašto je CLT toliko važan?
-
-CLT je razlog zašto većina statističkih testova radi. T-test pretpostavlja da je distribucija prosjeka približno normalna. Ne pretpostavlja da su individualna opažanja normalna. Zahvaljujući CLT-u, distribucija prosjeka je (približno) normalna čak i kad individualna opažanja nisu, pod uvjetom da je uzorak dovoljno velik. Ovo daje statistici ogromnu moć jer možemo koristiti iste alate (normalnu distribuciju) na gotovo svaku vrstu podataka.
-
----
-
-## Pristranosti u uzorkovanju {#sec-pristranosti}
-
-CLT i formula za SE pretpostavljaju da je uzorak **slučajan**: svaka osoba u populaciji ima jednaku šansu biti odabrana. U praksi, ova pretpostavka je često narušena, i to uzrokuje veće probleme od male veličine uzorka.
-
-### Convenience sampling (prigodan uzorak)
-
-Najčešća pristranost u komunikološkim istraživanjima. Anketirate studente na svom kolegiju jer su dostupni. Ali studenti nisu reprezentativni za opću populaciju ni po dobi, ni po obrazovanju, ni po medijskim navikama.
-
 ```{r}
-#| label: pristranost-demo
+#| label: p-izracun
 #| echo: true
 #| message: false
 #| warning: false
 
-set.seed(42)
-
-# "Populacija" = svi
-pop_prosjek_trust <- round(mean(pop$media_trust), 2)
-
-# "Prigodan uzorak" = samo mladi (18-24) s visokim obrazovanjem
-pristrani_uzorak <- pop |>
-  filter(age <= 24, education %in% c("viša/prvostupnik", "magistar/doktor")) |>
-  slice_sample(n = 100)
-
-# "Slučajni uzorak" iste veličine
-slucajni_uzorak <- pop |> slice_sample(n = 100)
-
-tibble(
-  izvor = c("Populacija", "Slučajni uzorak (n=100)", "Pristrani uzorak (n=100)"),
-  prosjek_trust = c(
-    round(mean(pop$media_trust), 2),
-    round(mean(slucajni_uzorak$media_trust), 2),
-    round(mean(pristrani_uzorak$media_trust), 2)
-  ),
-  udio_portal = c(
-    round(mean(pop$primary_news_source == "portal"), 3),
-    round(mean(slucajni_uzorak$primary_news_source == "portal"), 3),
-    round(mean(pristrani_uzorak$primary_news_source == "portal"), 3)
-  )
-)
+cat("t-statistika:", round(t_stat, 3), "\n")
+cat("P-vrijednost (dvosmjerni):", round(p_value, 4), "\n")
+cat("α = 0.05\n")
+cat("Odluka:", if_else(p_value < 0.05, "Odbacujemo H₀", "Ne možemo odbaciti H₀"), "\n")
 ```
 
-Pristrani uzorak daje drugačije procjene od populacijskih vrijednosti. Mladi visokoobrazovani ljudi imaju drugačije medijske navike od opće populacije. Nijedna količina povećanja uzorka ne može ispraviti ovu pristranost: 10 000 studenata i dalje nije reprezentativno za opću populaciju.
+### `t.test()` obavlja sve za vas
 
-### Online ankete i self-selection bias
-
-Online ankete, koje su izuzetno popularne u komunikološkim istraživanjima, pate od posebnog oblika pristranosti. Odgovaraju samo ljudi koji su online, koji su na toj platformi, koji su vidjeli poziv na anketu i koji su motivirani odgovoriti. Svaki od ovih koraka filtrira populaciju.
+U praksi ne trebate ručno računati t-statistiku i p-vrijednost. Funkcija `t.test()` sve radi u jednom pozivu.
 
 ```{r}
-#| label: self-selection
+#| label: t-test-funkcija
 #| echo: true
 #| message: false
 #| warning: false
 
-# Simulacija: online anketa privlači neproporcijalno mlade korisnike mreža
-online_uzorak <- pop |>
-  mutate(
-    vjerojatnost_odgovora = case_when(
-      age < 30 & primary_news_source == "društvene mreže" ~ 0.15,
-      age < 30 ~ 0.08,
-      age < 50 & primary_news_source %in% c("portal", "društvene mreže") ~ 0.06,
-      age < 50 ~ 0.03,
-      age >= 50 & primary_news_source %in% c("portal", "društvene mreže") ~ 0.02,
-      .default = 0.005
-    )
-  ) |>
-  mutate(odgovorio = runif(n()) < vjerojatnost_odgovora) |>
-  filter(odgovorio)
-
-cat("Veličina online uzorka:", nrow(online_uzorak), "\n\n")
-
-# Usporedba
-tribble(
-  ~karakteristika, ~populacija, ~online_uzorak,
-  "Prosjek dobi", round(mean(pop$age), 1), round(mean(online_uzorak$age), 1),
-  "Udio mlađih od 30", round(mean(pop$age < 30) * 100, 1), round(mean(online_uzorak$age < 30) * 100, 1),
-  "Udio portal kao primarni", round(mean(pop$primary_news_source == "portal") * 100, 1), round(mean(online_uzorak$primary_news_source == "portal") * 100, 1),
-  "Udio društvene mreže", round(mean(pop$primary_news_source == "društvene mreže") * 100, 1), round(mean(online_uzorak$primary_news_source == "društvene mreže") * 100, 1),
-  "Prosjek povjerenja", round(mean(pop$media_trust), 2), round(mean(online_uzorak$media_trust), 2)
-)
+t.test(vrijeme_citanja$minuta, mu = 3)
 ```
 
-Online uzorak je mlađi, koristi više digitalne medije i ima drugačije povjerenje u medije. Čak i s velikim uzorkom, ove procjene su pristrane jer mehanizam uzorkovanja nije slučajan.
+Funkcija vraća testnu statistiku, stupnjeve slobode, p-vrijednost, 95% interval pouzdanosti i prosjek uzorka. P-vrijednost je ispod 0.05, što znači da imamo dovoljno dokaza da odbacimo tvrdnju medijske kuće — prosječno vrijeme čitanja je statistički značajno različito od 3 minute.
 
-::: {.callout-important}
-## Važna napomena
+::: {.callout-tip}
+## CI i testiranje hipoteza su dva lica istog novčića
 
-Veličina uzorka i kvaliteta uzorka su dva različita problema. Velik pristran uzorak je gori od malog slučajnog uzorka. Čuveni primjer je anketa Literary Digesta iz 1936. koja je imala 2.4 milijuna odgovora ali je pogrešno predvidjela američke predsjedničke izbore jer je uzorak bio pristran (bogatiji birači). Gallup je s uzorkom od samo 50 000 pogodio rezultat jer je koristio slučajno uzorkovanje. Veličina bez reprezentativnosti ne vrijedi ništa.
+Pogledajte 95% interval pouzdanosti iz gornjeg rezultata. Ne sadrži vrijednost 3. To nije slučajnost — odbacivanje H₀ na razini α = 0.05 je matematički ekvivalentno tome da 95% CI ne sadrži testiranu vrijednost μ₀. Ovo su dva načina gledanja na isti problem — i obje perspektive su korisne.
 :::
 
----
 
-## Procjena proporcija {#sec-proporcije}
+## Dvosmjerni i jednosmjerni test {#sec-smjerovi}
 
-Do sada smo se fokusirali na procjenu prosjeka. Ali u komunikologiji često procjenjujemo i proporcije (udjele). Koliki je udio ljudi koji portale koriste kao primarni izvor vijesti? Koliki je udio čitatelja koji kliknu na oglas?
+U prethodnom primjeru koristili smo dvosmjerni test (two-tailed): testirali smo je li prosjek *različit* od 3, u bilo kojem smjeru. Hipoteze su bile H₀: μ = 3 nasuprot H₁: μ ≠ 3.
 
-Standardna pogreška za proporciju ima drugačiju formulu:
-
-$$SE_p = \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}}$$
-
-gdje je p̂ procijenjena proporcija iz uzorka.
+Ponekad unaprijed znate smjer. Ako Instagram tim očekuje da su carousel objave *bolje* (ne samo različite), može koristiti jednosmjerni test (one-tailed): H₀: μ_carousel ≤ μ_single nasuprot H₁: μ_carousel > μ_single.
 
 ```{r}
-#| label: se-proporcija
+#| label: smjerovi-demo
 #| echo: true
 #| message: false
 #| warning: false
 
-set.seed(42)
-
-# Pravi udio korisnika portala
-p_populacija <- mean(pop$primary_news_source == "portal")
-
-# Procjena iz uzorka od 500
-uzorak_500 <- pop |> slice_sample(n = 500)
-p_hat <- mean(uzorak_500$primary_news_source == "portal")
-
-se_p <- sqrt(p_hat * (1 - p_hat) / 500)
-
-cat("Populacijski udio portala:", round(p_populacija, 3), "\n")
-cat("Procjena iz uzorka (n=500):", round(p_hat, 3), "\n")
-cat("SE proporcije:", round(se_p, 3), "\n")
-cat("Margina pogreške (95%):", round(1.96 * se_p, 3), "\n")
+# Jednosmjerni: je li prosjek MANJI od 3?
+t.test(vrijeme_citanja$minuta, mu = 3, alternative = "less")
 ```
 
-Margina pogreške za proporcije ovisi o samoj proporciji. Najveća je kad je p̂ = 0.5 (maksimalna neizvjesnost) i smanjuje se kako se p̂ približava 0 ili 1 (veća izvjesnost). Zato medijske ankete navode "marginu pogreške ±3%" koja zapravo vrijedi samo za proporcije oko 50%.
+P-vrijednost jednosmjernog testa je točno pola dvosmjernog (kad je smjer u skladu s podacima). Jednosmjerni test je osjetljiviji u tom smjeru, ali potpuno slijep za razliku u suprotnom smjeru.
+
+::: {.callout-warning}
+## Smjer morate odrediti prije nego pogledate podatke
+
+Jednosmjerni test koristite samo ako ste smjer hipoteze odredili *prije* nego ste pogledali podatke. Ako pogledate podatke, vidite da je prosjek manji od 3, pa onda odlučite testirati "je li manji" — to je pristranost istraživača. Kad ste u sumnji, koristite dvosmjerni test. Velika većina objavljenih istraživanja koristi dvosmjerne testove upravo iz ovog razloga.
+:::
+
+
+## Dvouzorački t-test: natrag na Instagram {#sec-two-sample}
+
+Sada se vraćamo na naš motivacijski primjer. Želimo testirati razlikuje li se angažman između carousel i single image objava. Budući da uspoređujemo prosjeke dviju nezavisnih skupina (carousel objave su jedne, single image su druge, i nema parenja), koristimo dvouzorački t-test.
+
+$$H_0: \mu_{carousel} = \mu_{single}$$
+$$H_1: \mu_{carousel} \neq \mu_{single}$$
+
+Prije svega, pogledajmo distribucije.
 
 ```{r}
-#| label: simulacija-proporcije
+#| label: two-sample-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 5
+
+ig |>
+  ggplot(aes(x = engagement_rate * 100, fill = format)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(data = ig |> group_by(format) |> summarise(M = mean(engagement_rate) * 100),
+             aes(xintercept = M, color = format), linewidth = 1, linetype = "dashed") +
+  scale_fill_manual(values = c("carousel" = "#2a9d8f", "single_image" = "#e76f51")) +
+  scale_color_manual(values = c("carousel" = "#2a9d8f", "single_image" = "#e76f51")) +
+  labs(
+    title = "Distribucija angažmana po formatu objave",
+    subtitle = "Isprekidane linije = prosjeci. Distribucije se preklapaju ali su centri različiti.",
+    x = "Engagement rate (%)",
+    y = "Gustoća",
+    fill = "Format", color = "Format"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+Distribucije se preklapaju — postoje single image objave s visokim angažmanom i carousel objave s niskim — ali carousel distribucija je pomaknuta udesno. Testna statistika za dvouzorački t-test mjeri razliku prosjeka u jedinicama zajedničke standardne pogreške:
+
+$$t = \frac{\bar{x}_1 - \bar{x}_2}{SE_{razlika}}$$
+
+```{r}
+#| label: two-sample-test
+#| echo: true
+#| message: false
+#| warning: false
+
+carousel <- ig |> filter(format == "carousel") |> pull(engagement_rate)
+single <- ig |> filter(format == "single_image") |> pull(engagement_rate)
+
+rezultat <- t.test(carousel, single)
+rezultat
+```
+
+```{r}
+#| label: two-sample-interpretacija
+#| echo: true
+#| message: false
+#| warning: false
+
+cat("Razlika prosjeka:", round((mean(carousel) - mean(single)) * 100, 2), "postotnih bodova\n")
+cat("t-statistika:", round(rezultat$statistic, 2), "\n")
+cat("P-vrijednost:", format(rezultat$p.value, scientific = TRUE), "\n")
+cat("95% CI za razliku: [", round(rezultat$conf.int[1] * 100, 2), ",",
+    round(rezultat$conf.int[2] * 100, 2), "] postotnih bodova\n")
+```
+
+P-vrijednost je iznimno mala — mnogo, mnogo manja od 0.05. Imamo snažne dokaze da se angažman zaista razlikuje između dva formata. Carousel objave imaju statistički značajno viši angažman.
+
+### Welchov t-test: default koji ne trebate mijenjati
+
+R po defaultu koristi Welchov t-test, koji ne pretpostavlja jednake varijance u dvjema skupinama. Usporedimo ga s klasičnim Studentovim t-testom da vidite zašto je ovo mudar default.
+
+```{r}
+#| label: welch-vs-student
+#| echo: true
+#| message: false
+#| warning: false
+
+# Welchov (default)
+welch <- t.test(carousel, single, var.equal = FALSE)
+
+# Studentov (pretpostavlja jednake varijance)
+student <- t.test(carousel, single, var.equal = TRUE)
+
+tibble(
+  test = c("Welch (default)", "Student (var.equal=TRUE)"),
+  t = round(c(welch$statistic, student$statistic), 3),
+  df = round(c(welch$parameter, student$parameter), 1),
+  p = format(c(welch$p.value, student$p.value), scientific = TRUE, digits = 3)
+)
+```
+
+Rezultati su slični, ali Welchov test ima nerunde stupnjeve slobode jer ih prilagođava za razliku u varijancama. Kad su varijance jednake, oba testa daju gotovo identične rezultate. Kad varijance nisu jednake, Welchov je točniji. Zaključak je jednostavan — koristite Welchov test uvijek, jer ne zahtijeva dodatnu pretpostavku i nikad nije lošiji.
+
+
+## Simulacija: što p-vrijednost zapravo znači {#sec-simulacija-p}
+
+P-vrijednost je jedan od najčešće pogrešno shvaćenih koncepata u cijeloj statistici. Simulacija pomaže izgraditi ispravnu intuiciju na način na koji teorijsko objašnjenje ne može.
+
+Zamislimo svijet u kojem je H₀ istinita — carousel i single image imaju identičan angažman, nema nikakve razlike. Ako u tom svijetu mnogo puta uzorkujemo i testiramo, koliko ćemo često *slučajno* dobiti p < 0.05?
+
+```{r}
+#| label: simulacija-h0-istinita
 #| echo: true
 #| message: false
 #| warning: false
@@ -525,798 +369,763 @@ Margina pogreške za proporcije ovisi o samoj proporciji. Najveća je kad je p̂
 
 set.seed(42)
 
-# 5000 uzoraka od po 500 osoba
-prop_sim <- tibble(
-  uzorak = 1:5000,
-  p_hat = map_dbl(1:5000, \(i) {
-    pop |> slice_sample(n = 500) |> 
-      pull(primary_news_source) |>
-      (\(x) mean(x == "portal"))()
-  })
-)
+# Simulacija: H₀ je ISTINITA (isti prosjek za obje grupe)
+sim_p <- map_dbl(1:10000, \(i) {
+  grupa_a <- rnorm(100, mean = 0.08, sd = 0.02)
+  grupa_b <- rnorm(100, mean = 0.08, sd = 0.02)  # ISTI prosjek!
+  t.test(grupa_a, grupa_b)$p.value
+})
 
-prop_sim |>
-  ggplot(aes(x = p_hat)) +
-  geom_histogram(fill = "steelblue", color = "white", bins = 40) +
-  geom_vline(xintercept = p_populacija, color = "firebrick", linewidth = 1, linetype = "dashed") +
+cat("H₀ je ISTINITA. Od 10 000 testova:\n")
+cat("p < 0.05:", sum(sim_p < 0.05), "(", round(mean(sim_p < 0.05) * 100, 1), "%)\n")
+cat("p < 0.01:", sum(sim_p < 0.01), "(", round(mean(sim_p < 0.01) * 100, 1), "%)\n")
+
+tibble(p = sim_p) |>
+  ggplot(aes(x = p)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 50) +
+  geom_vline(xintercept = 0.05, color = "firebrick", linewidth = 1, linetype = "dashed") +
+  annotate("text", x = 0.06, y = 400, label = "α = 0.05", color = "firebrick", hjust = 0) +
   labs(
-    title = "Distribucija uzorkovanja za udio korisnika portala",
-    subtitle = "5000 uzoraka od po n = 500",
-    x = "Procijenjen udio korisnika portala",
+    title = "Distribucija p-vrijednosti kad je H₀ ISTINITA",
+    subtitle = "P-vrijednosti su uniformno raspoređene. ~5% pada ispod 0.05.",
+    x = "P-vrijednost",
     y = "Frekvencija"
   ) +
   theme_minimal()
 ```
 
-Distribucija proporcija uzorka je također normalna (zahvaljujući CLT) i centrirana oko prave populacijske proporcije. Ovo nam omogućuje konstrukciju intervala pouzdanosti za proporcije, što je temelj za interpretaciju anketnih rezultata.
+Ovo je ključan uvid. Kad je H₀ istinita, p-vrijednosti su uniformno raspoređene između 0 i 1. Točno 5% pada ispod 0.05 — po definiciji α. To znači da ćemo u 5% slučajeva pogrešno odbaciti H₀ *čak i kad je istinita*. Ovo je greška tipa I, lažno pozitivni rezultat, i potpuno je neizbježna posljedica toga da smo postavili prag na 5%.
 
----
-
-## Interval pouzdanosti: osnovna ideja {#sec-ci-uvod}
-
-Kad kažemo "prosječno povjerenje u medije je 4.87", to je točkasta procjena (point estimate). Problem s točkastom procjenom je da ne govori ništa o tome koliko je precizna. Je li pravi prosjek negdje između 4.5 i 5.2? Ili između 4.85 i 4.89?
-
-**Interval pouzdanosti** (confidence interval, CI) daje raspon vrijednosti unutar kojeg se, s određenom vjerojatnošću, nalazi pravi populacijski parametar.
-
-Za prosjek, 95% interval pouzdanosti je:
-
-$$CI_{95\%} = \bar{x} \pm 1.96 \times SE$$
+### Kad razlika zaista postoji
 
 ```{r}
-#| label: ci-prvi
-#| echo: true
-#| message: false
-#| warning: false
-
-set.seed(42)
-uzorak <- pop |> slice_sample(n = 200)
-
-x_bar <- mean(uzorak$media_trust)
-se <- sd(uzorak$media_trust) / sqrt(200)
-ci_lower <- x_bar - 1.96 * se
-ci_upper <- x_bar + 1.96 * se
-
-cat("Prosjek uzorka:", round(x_bar, 2), "\n")
-cat("SE:", round(se, 3), "\n")
-cat("95% CI: [", round(ci_lower, 2), ",", round(ci_upper, 2), "]\n")
-cat("Pravi populacijski prosjek:", round(mean(pop$media_trust), 2), "\n")
-```
-
-Interval pouzdanosti pokriva pravi populacijski prosjek (u ovom slučaju). Ali ne mora uvijek: 5% intervala iz ponovljenih uzoraka neće pokriti pravi parametar. Zato se zove 95% interval, ne 100%.
-
-### Vizualizacija: 100 intervala pouzdanosti
-
-```{r}
-#| label: ci-vizualizacija
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 9
-#| fig-height: 8
-
-set.seed(42)
-
-mu_pop <- mean(pop$media_trust)
-
-ci_sim <- map_df(1:100, \(i) {
-  u <- pop |> slice_sample(n = 200)
-  xbar <- mean(u$media_trust)
-  se <- sd(u$media_trust) / sqrt(200)
-  tibble(
-    uzorak = i,
-    xbar = xbar,
-    ci_lo = xbar - 1.96 * se,
-    ci_hi = xbar + 1.96 * se,
-    pokriva_mu = ci_lo <= mu_pop & ci_hi >= mu_pop
-  )
-})
-
-cat("Intervala koji pokrivaju pravi prosjek:", sum(ci_sim$pokriva_mu), "od 100\n")
-
-ci_sim |>
-  ggplot(aes(x = xbar, y = uzorak, color = pokriva_mu)) +
-  geom_point(size = 1.5) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0) +
-  geom_vline(xintercept = mu_pop, color = "firebrick", linewidth = 0.8, linetype = "dashed") +
-  scale_color_manual(values = c("TRUE" = "steelblue", "FALSE" = "#e76f51"),
-                     labels = c("TRUE" = "Pokriva μ", "FALSE" = "Ne pokriva μ")) +
-  labs(
-    title = "100 intervala pouzdanosti (95%) iz 100 različitih uzoraka",
-    subtitle = "Crvena crta = pravi populacijski prosjek. Narančasti intervali ne pokrivaju pravi parametar.",
-    x = "Povjerenje u medije",
-    y = "Uzorak",
-    color = NULL
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-Ovaj graf je jedna od najvažnijih vizualizacija u cijelom kolegiju. Svaki horizontalni interval je jedan 95% CI iz zasebnog uzorka. Većina (oko 95) pokriva pravi prosjek (crvena crta). Nekolicina (oko 5) ne pokriva. Ovo je precizno značenje 95% intervala pouzdanosti: 95% takvih intervala, konstruiranih iz ponovljenih uzoraka, pokrit će pravi parametar.
-
-::: {.callout-important}
-## Važna napomena
-
-Česta pogrešna interpretacija je "postoji 95% šansa da je pravi prosjek unutar ovog intervala." Ispravna interpretacija je: "ako bismo ponovili uzorkovanje mnogo puta i svaki put konstruirali 95% CI, 95% tih intervala bi pokrilo pravi prosjek." Razlika zvuči suptilno, ali je konceptualno važna. Pravi prosjek je fiksan broj (nije slučajan). Interval je slučajan (jer ovisi o uzorku). Vjerojatnost se odnosi na postupak, ne na parametar.
-:::
-
----
-
-
-::: {.callout-note}
-## Podsjetnik
-
-U prvom dijelu predavanja naučili smo da distribucija uzorkovanja prosjeka ima oblik normalne distribucije (CLT), da se njezina širina mjeri standardnom pogreškom SE = s/√n i da 95% interval pouzdanosti pokriva prosjek ± 1.96 × SE. U ovom dijelu prelazimo na alate koji se koriste u praksi: t-distribuciju, funkciju `t.test()` i planiranje veličine uzorka.
-:::
-
-## Od z do t: mali uzorci {#sec-t-distribucija}
-
-Do sada smo koristili z = 1.96 za 95% CI. Ovo je točno kad poznajemo populacijski σ ili kad je uzorak velik (n > 100). Ali u praksi obično ne poznajemo σ pa ga procjenjujemo iz uzorka pomoću s. Za male uzorke, ova dodatna nesigurnost znači da trebamo širi interval.
-
-**t-distribucija** rješava ovaj problem. Izgleda poput normalne distribucije, ali ima deblje repove (veću vjerojatnost ekstremnijih vrijednosti). Oblik t-distribucije ovisi o **stupnjevima slobode** (degrees of freedom, df), koji su za jedan prosjek df = n − 1.
-
-```{r}
-#| label: t-vs-normalna
+#| label: simulacija-h1-istinita
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 8
 #| fig-height: 5
 
-x <- seq(-4, 4, length.out = 300)
-
-t_usporedba <- tibble(x = x) |>
-  mutate(
-    `Normalna (z)` = dnorm(x),
-    `t (df = 5)` = dt(x, df = 5),
-    `t (df = 15)` = dt(x, df = 15),
-    `t (df = 50)` = dt(x, df = 50)
-  ) |>
-  pivot_longer(-x, names_to = "distribucija", values_to = "gustoca") |>
-  mutate(distribucija = fct_relevel(distribucija, 
-    "Normalna (z)", "t (df = 50)", "t (df = 15)", "t (df = 5)"))
-
-t_usporedba |>
-  ggplot(aes(x = x, y = gustoca, color = distribucija)) +
-  geom_line(linewidth = 1) +
-  scale_color_manual(values = c(
-    "Normalna (z)" = "firebrick", 
-    "t (df = 5)" = "#2a9d8f", 
-    "t (df = 15)" = "#e9c46a", 
-    "t (df = 50)" = "steelblue"
-  )) +
-  labs(
-    title = "t-distribucija vs normalna distribucija",
-    subtitle = "S više stupnjeva slobode t-distribucija konvergira prema normalnoj",
-    x = "Vrijednost",
-    y = "Gustoća",
-    color = NULL
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-S df = 5 (uzorak od 6), t-distribucija ima znatno deblje repove od normalne. S df = 50, razlika je jedva vidljiva. Praktična posljedica je da za male uzorke koristimo veći multiplikator od 1.96.
-
-```{r}
-#| label: kriticne-vrijednosti-t
-#| echo: true
-#| message: false
-#| warning: false
-
-tibble(
-  df = c(5, 10, 15, 25, 50, 100, Inf),
-  n = df + 1,
-  t_95 = round(qt(0.975, df), 3),
-  t_99 = round(qt(0.995, df), 3)
-) |>
-  mutate(n = if_else(is.infinite(df), "∞ (normalna)", as.character(n)))
-```
-
-Za n = 6 (df = 5), kritična vrijednost za 95% CI je 2.571 umjesto 1.960. Interval je značajno širi jer imamo manje podataka pa moramo biti oprezniji. Za n > 100, razlika između t i z je zanemariva i u praksi se često ignorira.
-
----
-
-## `t.test()`: sve u jednoj funkciji {#sec-t-test}
-
-R ima ugrađenu funkciju `t.test()` koja automatski računa t-interval pouzdanosti. Za sada je koristimo samo za CI (ne za testiranje hipoteza, to dolazi sljedeći tjedan).
-
-```{r}
-#| label: t-test-osnovno
-#| echo: true
-#| message: false
-#| warning: false
-
 set.seed(42)
-uzorak_200 <- pop |> slice_sample(n = 200)
 
-# CI za prosjek povjerenja u medije
-rezultat <- t.test(uzorak_200$media_trust, conf.level = 0.95)
-rezultat
+# Simulacija: H₁ je ISTINITA (razlika postoji)
+sim_p_h1 <- map_dbl(1:10000, \(i) {
+  grupa_a <- rnorm(100, mean = 0.10, sd = 0.02)
+  grupa_b <- rnorm(100, mean = 0.08, sd = 0.02)  # RAZLIČIT prosjek
+  t.test(grupa_a, grupa_b)$p.value
+})
+
+cat("H₁ je ISTINITA (razlika = 0.02). Od 10 000 testova:\n")
+cat("p < 0.05:", sum(sim_p_h1 < 0.05), "(", round(mean(sim_p_h1 < 0.05) * 100, 1), "%)\n")
+
+tibble(p = sim_p_h1) |>
+  ggplot(aes(x = p)) +
+  geom_histogram(fill = "#2a9d8f", color = "white", bins = 50) +
+  geom_vline(xintercept = 0.05, color = "firebrick", linewidth = 1, linetype = "dashed") +
+  labs(
+    title = "Distribucija p-vrijednosti kad je H₁ ISTINITA",
+    subtitle = "Većina p-vrijednosti je blizu nule. Test je imao snagu detektirati razliku.",
+    x = "P-vrijednost",
+    y = "Frekvencija"
+  ) +
+  theme_minimal()
 ```
 
-Funkcija `t.test()` vraća mnogo informacija odjednom. Za interval pouzdanosti nas zanima `conf.int` i `estimate`.
+Slika je potpuno drugačija. Kad razlika zaista postoji, p-vrijednosti su koncentrirane blizu nule. Većina testova uspješno detektira razliku. Ali ne svi — neki testovi daju p ≥ 0.05 unatoč tome što razlika postoji. Postotak testova koji uspješno detektiraju pravu razliku zove se statistička snaga (power). Testovi koji je propuste čine grešku tipa II, lažno negativni rezultat.
+
+
+## Dvije vrste pogrešaka {#sec-greske}
+
+Kad donosite odluku na temelju testa, možete pogriješiti na dva načina. Razumijevanje ovih dviju vrsta pogrešaka ključno je za mudru interpretaciju rezultata.
 
 ```{r}
-#| label: t-test-elementi
+#| label: tablica-odluka
 #| echo: true
 #| message: false
 #| warning: false
 
-# Pristup pojedinim elementima
-cat("Prosjek uzorka:", round(rezultat$estimate, 3), "\n")
-cat("95% CI: [", round(rezultat$conf.int[1], 3), ",", round(rezultat$conf.int[2], 3), "]\n")
-cat("Stupnjevi slobode:", rezultat$parameter, "\n")
-
-# Usporedba s populacijom
-cat("\nProvi populacijski prosjek:", round(mean(pop$media_trust), 3), "\n")
-cat("Pokriva CI pravi prosjek?", 
-    mean(pop$media_trust) >= rezultat$conf.int[1] & 
-    mean(pop$media_trust) <= rezultat$conf.int[2], "\n")
-```
-
-### Mijenjanje razine pouzdanosti
-
-Možemo tražiti i 90% ili 99% interval.
-
-```{r}
-#| label: razine-pouzdanosti
-#| echo: true
-#| message: false
-#| warning: false
-
-ci_90 <- t.test(uzorak_200$media_trust, conf.level = 0.90)$conf.int
-ci_95 <- t.test(uzorak_200$media_trust, conf.level = 0.95)$conf.int
-ci_99 <- t.test(uzorak_200$media_trust, conf.level = 0.99)$conf.int
-
-xbar <- mean(uzorak_200$media_trust)
-
-tibble(
-  razina = c("90%", "95%", "99%"),
-  donja = round(c(ci_90[1], ci_95[1], ci_99[1]), 3),
-  gornja = round(c(ci_90[2], ci_95[2], ci_99[2]), 3),
-  sirina = round(c(diff(ci_90), diff(ci_95), diff(ci_99)), 3)
+tribble(
+  ~` `, ~`H₀ je istinita`, ~`H₀ je lažna`,
+  "Ne odbacujemo H₀", "✅ Ispravna odluka (1 - α)", "❌ Greška tipa II (β)",
+  "Odbacujemo H₀", "❌ Greška tipa I (α)", "✅ Ispravna odluka (snaga = 1 - β)"
 )
 ```
 
-Veća pouzdanost znači širi interval. 99% CI je širi od 95% jer morate pokriti više mogućih vrijednosti. Postoji kompromis između pouzdanosti i preciznosti: 100% CI bi bio od −∞ do +∞ (potpuno beskoristan ali potpuno siguran). U praksi se najčešće koristi 95% kao konvencija.
+Greška tipa I (α) nastaje kad odbacite H₀ iako je istinita — zaključite da razlika postoji kad je zapravo nema. Kontrolirate je postavljanjem α (obično 0.05). U analogiji sa suđenjem, to je osuda nevine osobe.
+
+Greška tipa II (β) nastaje kad ne odbacite H₀ iako je lažna — propustite pravu razliku. Ovisi o veličini uzorka, veličini učinka i razini α. U analogiji sa suđenjem, to je oslobađanje krivca.
 
 ```{r}
-#| label: ci-razine-vizualizacija
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 7
-#| fig-height: 3
-
-mu_pop <- mean(pop$media_trust)
-
-tibble(
-  razina = factor(c("90%", "95%", "99%"), levels = c("99%", "95%", "90%")),
-  lo = c(ci_90[1], ci_95[1], ci_99[1]),
-  hi = c(ci_90[2], ci_95[2], ci_99[2]),
-  xbar = xbar
-) |>
-  ggplot(aes(y = razina)) +
-  geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.3, linewidth = 1.2, color = "steelblue") +
-  geom_point(aes(x = xbar), size = 3, color = "steelblue") +
-  geom_vline(xintercept = mu_pop, color = "firebrick", linewidth = 0.8, linetype = "dashed") +
-  labs(
-    title = "Veća pouzdanost = širi interval",
-    subtitle = "Crvena crta = pravi populacijski prosjek",
-    x = "Povjerenje u medije",
-    y = "Razina pouzdanosti"
-  ) +
-  theme_minimal()
-```
-
-### CI za podgrupe
-
-U praksi nas često zanima CI za specifične podgrupe, ne samo za cijeli uzorak.
-
-```{r}
-#| label: ci-po-izvoru
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-set.seed(42)
-uzorak_500 <- pop |> slice_sample(n = 500)
-
-ci_po_izvoru <- uzorak_500 |>
-  group_by(primary_news_source) |>
-  filter(n() >= 20) |>
-  summarise(
-    n = n(),
-    prosjek = mean(media_trust),
-    se = sd(media_trust) / sqrt(n()),
-    ci_lo = prosjek - qt(0.975, n() - 1) * se,
-    ci_hi = prosjek + qt(0.975, n() - 1) * se,
-    .groups = "drop"
-  )
-
-# Pravi populacijski prosjeci za usporedbu
-pop_prosjeci <- pop |>
-  group_by(primary_news_source) |>
-  summarise(mu = mean(media_trust), .groups = "drop")
-
-ci_po_izvoru |>
-  left_join(pop_prosjeci, by = "primary_news_source") |>
-  mutate(primary_news_source = fct_reorder(primary_news_source, prosjek)) |>
-  ggplot(aes(y = primary_news_source)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
-  geom_point(aes(x = prosjek), size = 3, color = "steelblue") +
-  geom_point(aes(x = mu), size = 3, shape = 4, color = "firebrick", stroke = 1.5) +
-  labs(
-    title = "95% CI za povjerenje u medije po primarnom izvoru vijesti",
-    subtitle = "Plavi krug = prosjek uzorka. Crveni X = pravi populacijski prosjek.",
-    x = "Povjerenje u medije",
-    y = NULL
-  ) +
-  theme_minimal()
-```
-
-Ovaj graf je izuzetno koristan za prezentaciju rezultata. Kad se intervali dviju grupa ne preklapaju, to sugerira statistički značajnu razliku (o čemu ćemo formalno govoriti na predavanju o t-testu). Korisnici radija imaju najviše povjerenje, a korisnici društvenih mreža najmanje.
-
-::: {.callout-tip}
-## Praktični savjet
-
-Kad prezentirate rezultate istraživanja, graf s intervalima pouzdanosti govori mnogo više od tablice prosjeka. Uključuje i veličinu uzorka (uži interval = više podataka) i nesigurnost procjene (širi interval = manje sigurni u točnu vrijednost). Naviknite se koristiti ovaj tip grafa.
-:::
-
----
-
-## Interval pouzdanosti za proporcije {#sec-ci-proporcije}
-
-Za proporcije (udjele), CI se računa malo drugačije jer je SE za proporciju √(p̂(1−p̂)/n).
-
-```{r}
-#| label: ci-proporcija-rucno
-#| echo: true
-#| message: false
-#| warning: false
-
-set.seed(42)
-uzorak_500 <- pop |> slice_sample(n = 500)
-
-# Udio koji koristi portal kao primarni izvor
-p_hat <- mean(uzorak_500$primary_news_source == "portal")
-se_p <- sqrt(p_hat * (1 - p_hat) / 500)
-ci_lo <- p_hat - 1.96 * se_p
-ci_hi <- p_hat + 1.96 * se_p
-
-cat("Procjena p̂:", round(p_hat, 3), "\n")
-cat("SE:", round(se_p, 3), "\n")
-cat("95% CI: [", round(ci_lo, 3), ",", round(ci_hi, 3), "]\n")
-cat("Pravi populacijski udio:", round(mean(pop$primary_news_source == "portal"), 3), "\n")
-```
-
-### `prop.test()` za proporcije
-
-R ima funkciju `prop.test()` koja računa CI za proporcije. Koristi malo drugačiju metodu (Wilsonov interval) koja je preciznija za male uzorke i ekstremne proporcije.
-
-```{r}
-#| label: prop-test
-#| echo: true
-#| message: false
-#| warning: false
-
-# Koliko koristi portal od 500 ispitanika?
-n_portal <- sum(uzorak_500$primary_news_source == "portal")
-
-prop_rez <- prop.test(n_portal, n = 500, conf.level = 0.95)
-
-cat("Procjena:", round(prop_rez$estimate, 3), "\n")
-cat("95% CI: [", round(prop_rez$conf.int[1], 3), ",", round(prop_rez$conf.int[2], 3), "]\n")
-```
-
-```{r}
-#| label: ci-svi-izvori
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-# CI za sve izvore vijesti
-izvore <- unique(pop$primary_news_source)
-
-ci_izvore <- map_df(izvore, \(izvor) {
-  n_da <- sum(uzorak_500$primary_news_source == izvor)
-  test <- prop.test(n_da, n = 500, conf.level = 0.95)
-  tibble(
-    izvor = izvor,
-    p_hat = test$estimate,
-    ci_lo = test$conf.int[1],
-    ci_hi = test$conf.int[2]
-  )
-})
-
-# Pravi populacijski udjeli
-pop_udjeli <- pop |>
-  count(primary_news_source) |>
-  mutate(udio = n / sum(n))
-
-ci_izvore |>
-  left_join(pop_udjeli, by = c("izvor" = "primary_news_source")) |>
-  mutate(izvor = fct_reorder(izvor, p_hat)) |>
-  ggplot(aes(y = izvor)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
-  geom_point(aes(x = p_hat), size = 3, color = "steelblue") +
-  geom_point(aes(x = udio), size = 3, shape = 4, color = "firebrick", stroke = 1.5) +
-  scale_x_continuous(labels = scales::label_percent()) +
-  labs(
-    title = "95% CI za udio korisnika po primarnom izvoru vijesti",
-    subtitle = "Plavi krug = procjena iz uzorka (n=500). Crveni X = pravi populacijski udio.",
-    x = "Udio",
-    y = NULL
-  ) +
-  theme_minimal()
-```
-
-Ovaj graf otkriva nešto što medijske ankete rijetko prikazuju: nesigurnost oko svakog broja. Portal i društvene mreže se ne mogu jasno razlučiti (intervali se preklapaju). TV i radio se mogu jasno razlučiti (intervali se ne preklapaju). Ovo je razlog zašto je prikaz intervala pouzdanosti uvijek pošteniji od samih postotaka.
-
----
-
-## Margina pogreške i planiranje uzorka {#sec-planiranje}
-
-U medijskim izvještajima o anketama čujete izraz "margina pogreške ±3%". Što to znači i kako se računa?
-
-Margina pogreške (margin of error, MoE) je pola širine intervala pouzdanosti. Za proporcije:
-
-$$MoE = z^* \times \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
-
-Ako ne znamo p̂ unaprijed, koristimo najgori slučaj p̂ = 0.5 (koji daje najširu marginu):
-
-$$MoE_{max} = \frac{z^*}{2\sqrt{n}}$$
-
-Za 95% CI: MoE_max = 1.96 / (2√n) ≈ 1/√n.
-
-```{r}
-#| label: moe-tablica
-#| echo: true
-#| message: false
-#| warning: false
-
-tibble(
-  n = c(100, 200, 400, 500, 800, 1000, 1500, 2000),
-  MoE_95 = round(1.96 * sqrt(0.25 / n) * 100, 1)
-) |>
-  mutate(opis = paste0("±", MoE_95, "%"))
-```
-
-Ovo objašnjava zašto su većina medijskih anketa u rasponu 500 do 1500 ispitanika. S n = 1000, margina je oko ±3.1%. S n = 2000, pada na ±2.2%. Poboljšanje je malo u odnosu na dodatni trošak i vrijeme.
-
-### Obrnuto: koliki uzorak trebam?
-
-Češće pitanje u praksi je obrnuto: imam ciljanu marginu pogreške, koliki mi uzorak treba?
-
-$$n = \frac{z^{*2} \times \hat{p}(1-\hat{p})}{MoE^2}$$
-
-Za najgori slučaj (p̂ = 0.5):
-
-$$n = \frac{z^{*2}}{4 \times MoE^2}$$
-
-```{r}
-#| label: planiranje-uzorka
-#| echo: true
-#| message: false
-#| warning: false
-
-# Funkcija za izračun potrebne veličine uzorka
-velicina_uzorka <- function(moe, conf = 0.95, p = 0.5) {
-  z <- qnorm(1 - (1 - conf) / 2)
-  ceiling(z^2 * p * (1 - p) / moe^2)
-}
-
-tibble(
-  ciljna_MoE = c("±5%", "±4%", "±3%", "±2%", "±1%"),
-  moe = c(0.05, 0.04, 0.03, 0.02, 0.01),
-  n_potreban = map_int(moe, velicina_uzorka)
-)
-```
-
-Za marginu od ±3% trebate 1068 ispitanika. Za ±2% trebate 2401. Za ±1% trebate čak 9604. Ovo ponovno potvrđuje zakon opadajućih prinosa: svako sljedeće poboljšanje je sve skuplje.
-
-```{r}
-#| label: planiranje-vizualizacija
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-tibble(
-  moe = seq(0.01, 0.10, by = 0.001)
-) |>
-  mutate(n = map_dbl(moe, velicina_uzorka)) |>
-  ggplot(aes(x = moe * 100, y = n)) +
-  geom_line(color = "steelblue", linewidth = 1.2) +
-  geom_hline(yintercept = c(500, 1000, 2000), linetype = "dashed", color = "grey60") +
-  annotate("text", x = 9, y = c(500, 1000, 2000) + 200, 
-           label = c("n = 500", "n = 1000", "n = 2000"), color = "grey40") +
-  scale_x_reverse(breaks = seq(1, 10, 1)) +
-  scale_y_continuous(labels = scales::label_comma()) +
-  labs(
-    title = "Potrebna veličina uzorka za zadanu marginu pogreške",
-    subtitle = "Najgori slučaj (p = 0.5), 95% razina pouzdanosti",
-    x = "Ciljna margina pogreške (%)",
-    y = "Potreban n"
-  ) +
-  theme_minimal()
-```
-
-::: {.callout-tip}
-## Praktični savjet
-
-Kad planirate istraživanje, odlučite o margini pogreške PRIJE nego počnete prikupljati podatke. Pitajte se: "Koja razlika je praktično važna u mom kontekstu?" Ako vas zanima razlikuje li se popularnost dviju platformi za 5 postotnih bodova, trebate marginu manju od 5%, znači uzorak od barem 400. Ako trebate razlučiti razlike od 2 postotna boda, trebate barem 2400 ispitanika.
-:::
-
----
-
-## Čitanje medijskih anketa kritički {#sec-kriticko-citanje}
-
-Naučeno dosad daje nam alate za kritičku evaluaciju medijskih izvještaja o anketama. Pogledajmo tipičan primjer.
-
-```{r}
-#| label: medijska-anketa-sim
-#| echo: true
-#| message: false
-#| warning: false
-
-# Simulacija: medijska anketa o primarnom izvoru vijesti
-set.seed(123)
-anketa <- pop |> slice_sample(n = 800)
-
-rezultati <- anketa |>
-  count(primary_news_source) |>
-  mutate(
-    udio = n / sum(n),
-    se = sqrt(udio * (1 - udio) / sum(n)),
-    moe = 1.96 * se,
-    ci_lo = udio - moe,
-    ci_hi = udio + moe
-  ) |>
-  arrange(desc(udio))
-
-rezultati |>
-  mutate(across(c(udio, se, moe, ci_lo, ci_hi), \(x) round(x * 100, 1)))
-```
-
-Novinar piše: "Portal je najpopularniji izvor vijesti (31%), a društvene mreže su na drugom mjestu (26%)." Tehnički točno, ali zanemaruje intervale pouzdanosti. Kad uzmemo u obzir marginu pogreške, intervali za portal i društvene mreže se preklapaju. Ne možemo sa sigurnošću tvrditi da je portal popularniji od društvenih mreža.
-
-```{r}
-#| label: medijska-anketa-graf
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 8
-#| fig-height: 5
-
-rezultati |>
-  mutate(primary_news_source = fct_reorder(primary_news_source, udio)) |>
-  ggplot(aes(y = primary_news_source)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
-  geom_point(aes(x = udio), size = 3, color = "steelblue") +
-  geom_text(aes(x = ci_hi + 0.01, label = paste0(round(udio * 100, 1), "%")), hjust = 0) +
-  scale_x_continuous(labels = scales::label_percent(), limits = c(0, 0.42)) +
-  labs(
-    title = "Anketni rezultati S intervalima pouzdanosti",
-    subtitle = "n = 800. Preklapajući intervali znače da razlike nisu statistički jasne.",
-    x = "Udio ispitanika",
-    y = NULL
-  ) +
-  theme_minimal()
-```
-
-### Kontrolna lista za čitanje anketa
-
-Kad sretnete medijski izvještaj o anketi, postavite sedam pitanja. Koliki je uzorak? Ako ga ne navode, rezultati su sumnjivi. Kako su odabrali ispitanike? Slučajno telefonsko pozivanje ili online panel? Kolika je margina pogreške? Ako je navode samo na dnu stranice, obratite posebnu pažnju. Jesu li razlike veće od margine pogreške? Ako su razlike manje od dvostruke margine, zaključci su na klimavim nogama. Kad je anketa provedena? Stavovi se mogu promijeniti brzo. Tko je naručio anketu? Naručitelj može utjecati na formulaciju pitanja. Koliki je odaziv? Nizak odaziv (ispod 30%) sugerira self-selection bias.
-
----
-
-## Bootstrapping: alternativni pristup {#sec-bootstrap}
-
-Ponekad ne možemo pretpostaviti normalnost distribucije uzorkovanja, bilo zato što je uzorak premalen ili zato što nas zanima statistika za koju nemamo jednostavnu formulu za SE (medijan, omjer medijana i prosjeka, razlika između 90. i 10. percentila). **Bootstrap** je računalna metoda koja rješava ovaj problem.
-
-Ideja je elegantna: budući da ne možemo uzimati nove uzorke iz populacije (jer nemamo pristup cijeloj populaciji), uzimamo nove uzorke iz uzorka, s vraćanjem (with replacement).
-
-```{r}
-#| label: bootstrap-demo
-#| echo: true
-#| message: false
-#| warning: false
-
-set.seed(42)
-uzorak_50 <- pop |> slice_sample(n = 50)
-
-# 5000 bootstrap uzoraka
-boot_prosjeci <- map_dbl(1:5000, \(i) {
-  uzorak_50 |>
-    slice_sample(n = 50, replace = TRUE) |>
-    pull(media_trust) |>
-    mean()
-})
-
-# Bootstrap CI (percentilna metoda)
-boot_ci <- quantile(boot_prosjeci, probs = c(0.025, 0.975))
-
-# Usporedba s t-testom
-t_ci <- t.test(uzorak_50$media_trust)$conf.int
-
-cat("Bootstrap 95% CI: [", round(boot_ci[1], 3), ",", round(boot_ci[2], 3), "]\n")
-cat("t-test   95% CI: [", round(t_ci[1], 3), ",", round(t_ci[2], 3), "]\n")
-cat("Pravi prosjek:   ", round(mean(pop$media_trust), 3), "\n")
-```
-
-Bootstrap i t-test daju vrlo slične rezultate kad su pretpostavke t-testa zadovoljene. Prednost bootstrapa je fleksibilnost: možemo ga koristiti za bilo koju statistiku.
-
-```{r}
-#| label: bootstrap-medijan
-#| echo: true
-#| message: false
-#| warning: false
-
-# Bootstrap CI za MEDIJAN (za koji nema jednostavne formule za SE)
-boot_medijani <- map_dbl(1:5000, \(i) {
-  uzorak_50 |>
-    slice_sample(n = 50, replace = TRUE) |>
-    pull(daily_media_min) |>
-    median()
-})
-
-boot_ci_medijan <- quantile(boot_medijani, probs = c(0.025, 0.975))
-
-cat("Medijan uzorka:", median(uzorak_50$daily_media_min), "\n")
-cat("Bootstrap 95% CI za medijan: [", boot_ci_medijan[1], ",", boot_ci_medijan[2], "]\n")
-cat("Pravi populacijski medijan:", median(pop$daily_media_min), "\n")
-```
-
-::: {.callout-tip}
-## Kada koristiti bootstrap?
-
-Koristite bootstrap kad: nemate formulu za SE željene statistike, sumnjate u normalnost distribucije uzorkovanja, imate mali uzorak i tražite robusniju metodu, ili želite CI za medijan, percentile, omjere ili druge nestandardne mjere. Za prosjeke s n > 30, t-test je jednako dobar i jednostavniji.
-:::
-
----
-
-## Potpuna analiza: povjerenje u medije po demografskim skupinama {#sec-analiza}
-
-Spojimo sve naučeno u jednu koherentnu analizu. Situacija: provedena je anketa na 600 ispitanika o medijskim navikama. Trebamo procijeniti povjerenje u medije ukupno i po ključnim podgrupama te interpretirati rezultate.
-
-```{r}
-#| label: anketa-simulacija
-#| echo: true
-#| message: false
-#| warning: false
-
-set.seed(2025)
-anketa <- pop |> slice_sample(n = 600)
-
-cat("Veličina uzorka:", nrow(anketa), "\n\n")
-
-# Korak 1: Ukupna procjena
-ukupno <- t.test(anketa$media_trust)
-cat("UKUPNO POVJERENJE U MEDIJE\n")
-cat("Prosjek:", round(ukupno$estimate, 2), "\n")
-cat("95% CI: [", round(ukupno$conf.int[1], 2), ",", round(ukupno$conf.int[2], 2), "]\n\n")
-```
-
-```{r}
-#| label: analiza-po-dobi
-#| echo: true
-#| message: false
-#| warning: false
-#| fig-width: 9
-#| fig-height: 5
-
-# Korak 2: CI po dobnim skupinama
-anketa <- anketa |>
-  mutate(dobna_skupina = case_when(
-    age < 30 ~ "18-29",
-    age < 45 ~ "30-44",
-    age < 60 ~ "45-59",
-    .default = "60+"
-  ))
-
-ci_dob <- anketa |>
-  group_by(dobna_skupina) |>
-  summarise(
-    n = n(),
-    prosjek = mean(media_trust),
-    se = sd(media_trust) / sqrt(n()),
-    ci_lo = prosjek - qt(0.975, n() - 1) * se,
-    ci_hi = prosjek + qt(0.975, n() - 1) * se,
-    .groups = "drop"
-  )
-
-ci_dob |>
-  ggplot(aes(y = dobna_skupina)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "steelblue") +
-  geom_point(aes(x = prosjek), size = 3, color = "steelblue") +
-  geom_text(aes(x = ci_hi + 0.05, label = paste0("n = ", n)), hjust = 0, size = 3.5, color = "grey40") +
-  labs(
-    title = "Povjerenje u medije po dobnim skupinama",
-    subtitle = "95% intervali pouzdanosti. Starije skupine imaju više povjerenja.",
-    x = "Povjerenje u medije (1-10)",
-    y = NULL
-  ) +
-  theme_minimal()
-```
-
-```{r}
-#| label: analiza-po-izvoru-i-dobi
+#| label: greske-vizualizacija
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 10
-#| fig-height: 6
+#| fig-height: 5
 
-# Korak 3: Unakrsna analiza: izvor vijesti × dobna skupina
-ci_krizno <- anketa |>
-  group_by(primary_news_source, dobna_skupina) |>
-  filter(n() >= 10) |>
-  summarise(
-    n = n(),
-    prosjek = mean(media_trust),
-    se = sd(media_trust) / sqrt(n()),
-    ci_lo = prosjek - qt(0.975, n() - 1) * se,
-    ci_hi = prosjek + qt(0.975, n() - 1) * se,
-    .groups = "drop"
-  )
+x <- seq(-4, 8, length.out = 500)
+h0 <- dnorm(x, mean = 0, sd = 1)
+h1 <- dnorm(x, mean = 3, sd = 1)
 
-ci_krizno |>
-  ggplot(aes(y = dobna_skupina, color = primary_news_source)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 0.8,
-                 position = position_dodge(0.6)) +
-  geom_point(aes(x = prosjek), size = 2, position = position_dodge(0.6)) +
+crit <- qnorm(0.975)
+
+error_data <- tibble(x = x, H0 = h0, H1 = h1)
+
+ggplot(error_data, aes(x = x)) +
+  # H0 distribucija
+  geom_line(aes(y = H0), color = "steelblue", linewidth = 1) +
+  geom_area(data = error_data |> filter(x >= crit), aes(y = H0),
+            fill = "firebrick", alpha = 0.3) +
+  # H1 distribucija
+  geom_line(aes(y = H1), color = "#2a9d8f", linewidth = 1) +
+  geom_area(data = error_data |> filter(x < crit), aes(y = H1),
+            fill = "#e9c46a", alpha = 0.3) +
+  # Kritična vrijednost
+  geom_vline(xintercept = crit, color = "grey30", linewidth = 0.8, linetype = "dashed") +
+  annotate("text", x = 0, y = 0.42, label = "H₀ distribucija", color = "steelblue", fontface = "bold") +
+  annotate("text", x = 3, y = 0.42, label = "H₁ distribucija", color = "#2a9d8f", fontface = "bold") +
+  annotate("text", x = 2.8, y = 0.12, label = "Greška\ntipa I (α)", color = "firebrick") +
+  annotate("text", x = 0.5, y = 0.06, label = "Greška\ntipa II (β)", color = "#c77f00") +
+  annotate("text", x = crit, y = -0.02, label = "Kritična\nvrijednost", hjust = 0.5) +
   labs(
-    title = "Povjerenje u medije: izvor vijesti × dobna skupina",
-    subtitle = "Kombinacije s manje od 10 ispitanika isključene",
-    x = "Povjerenje u medije (1-10)",
-    y = NULL,
-    color = "Primarni izvor"
+    title = "Vizualizacija grešaka tipa I i tipa II",
+    subtitle = "Crveno = lažno pozitivno. Žuto = lažno negativno. Ne možete smanjiti oboje istovremeno.",
+    x = "Testna statistika",
+    y = "Gustoća"
+  ) +
+  theme_minimal()
+```
+
+Ovaj graf pokazuje ključan kompromis. Ako pomaknete kritičnu vrijednost udesno (stroži α), smanjujete crveno područje (manje lažno pozitivnih) ali povećavate žuto (više lažno negativnih). Jedini način da smanjite oboje istovremeno je povećati uzorak (što razdvaja dvije distribucije) ili imati veći učinak.
+
+::: {.callout-important}
+## "Ne možemo odbaciti" nije isto što i "prihvaćamo"
+
+Odsutnost dokaza nije dokaz odsutnosti. Kad test daje p ≥ 0.05, ne kažemo "prihvaćamo H₀" — kažemo "ne možemo odbaciti H₀ na temelju dostupnih podataka." Možda razlika postoji, ali naš uzorak je premalen da je detektira. Možda razlika postoji, ali je toliko mala da nije vidljiva s ovom količinom podataka. Zato nikad, nikad ne zaključujte "dokazali smo da nema razlike."
+:::
+
+
+## P-vrijednost: raščistimo zablude {#sec-p-vrijednost}
+
+P-vrijednost je jedan od najčešće korištenih ali i najčešće pogrešno interpretiranih koncepata u cijeloj statistici. Potrebno je nekoliko minuta da precizno razjasnimo što ona jest, a što nije.
+
+P-vrijednost *jest* vjerojatnost dobivanja testne statistike jednako ekstremne ili ekstremnije od opažene, pod pretpostavkom da je H₀ istinita. Koliko biste bili iznenađeni ovakvim podacima da H₀ zaista vrijedi?
+
+P-vrijednost *nije* vjerojatnost da je H₀ istinita. Ne možete reći "postoji samo 3% šanse da nema razlike." P-vrijednost govori o podacima s obzirom na hipotezu, ne o hipotezi s obzirom na podatke. Ova razlika može djelovati kao cjepidlačenje, ali je zapravo fundamentalna.
+
+P-vrijednost *nije* vjerojatnost da ste pogriješili. Mala p-vrijednost znači da su podaci neobični pod H₀. Ne znači da ste sigurno u pravu.
+
+I ono najvažnije: p-vrijednost *nije* mjera veličine učinka. Vrijednost p = 0.001 ne znači da je razlika velika. Velik uzorak može proizvesti sićušnu p-vrijednost za trivijalno malu razliku. Pogledajmo to na primjeru.
+
+```{r}
+#| label: p-vs-ucinak
+#| echo: true
+#| message: false
+#| warning: false
+
+set.seed(42)
+
+# Mali uzorak, velik učinak
+mali_uzorak <- t.test(rnorm(20, 10.5, 2), mu = 10)
+
+# Velik uzorak, sićušan učinak
+velik_uzorak <- t.test(rnorm(10000, 10.02, 2), mu = 10)
+
+tibble(
+  scenarij = c("Mali uzorak (n=20), velik učinak", "Velik uzorak (n=10000), sićušan učinak"),
+  n = c(20, 10000),
+  razlika = c("0.5 bodova", "0.02 boda"),
+  p_vrijednost = c(round(mali_uzorak$p.value, 4), round(velik_uzorak$p.value, 4)),
+  znacajno = c(mali_uzorak$p.value < 0.05, velik_uzorak$p.value < 0.05)
+)
+```
+
+S 10 000 opažanja, razlika od 0.02 boda — praktički beznačajna — može biti statistički značajna. S 20 opažanja, razlika od 0.5 bodova — potencijalno važna — možda neće biti statistički značajna. Ovo jasno pokazuje zašto p-vrijednost sama nije dovoljna za donošenje odluka. Uvijek trebate i mjeru veličine učinka.
+
+
+::: {.callout-note}
+## Gdje smo, kamo idemo
+
+U prvom dijelu naučili smo logiku testiranja hipoteza, formuliranje H₀ i H₁, jednouzorački i dvouzorački t-test, p-vrijednost i greške tipa I i II. U nastavku prelazimo na pitanje koje je jednako važno kao statistička značajnost — koliko je učinak zapravo velik?
+:::
+
+
+## Veličina učinka: Cohenov d {#sec-cohen-d}
+
+P-vrijednost odgovara na pitanje "postoji li učinak?" ali šuti o tome koliko je taj učinak velik. Za to vam treba mjera veličine učinka. Najčešća za razliku dvaju prosjeka je Cohenov d, koji izražava razliku u jedinicama zajedničke standardne devijacije:
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}$$
+
+Zašto dijeliti sa standardnom devijacijom? Zato što vam razlika od 2.6 postotnih bodova ne znači ništa dok ne znate koliko pojedinačne objave variraju. Ako sve objave imaju engagement rate između 7% i 11%, razlika od 2.6 bodova je ogromna. Ako variraju od 0% do 50%, ista razlika je zanemariva. Cohenov d stavlja razliku u kontekst varijabilnosti.
+
+```{r}
+#| label: cohen-d-rucno
+#| echo: true
+#| message: false
+#| warning: false
+
+ig <- read_csv("../resources/datasets/instagram_ab_test.csv")
+
+carousel <- ig |> filter(format == "carousel") |> pull(engagement_rate)
+single <- ig |> filter(format == "single_image") |> pull(engagement_rate)
+
+# Ručni izračun
+n1 <- length(carousel)
+n2 <- length(single)
+s_pooled <- sqrt(((n1 - 1) * sd(carousel)^2 + (n2 - 1) * sd(single)^2) / (n1 + n2 - 2))
+d <- (mean(carousel) - mean(single)) / s_pooled
+
+cat("Razlika prosjeka:", round((mean(carousel) - mean(single)) * 100, 2), "postotnih bodova\n")
+cat("Pooled SD:", round(s_pooled * 100, 2), "postotnih bodova\n")
+cat("Cohenov d:", round(d, 3), "\n")
+```
+
+### Što znači mali, srednji i veliki učinak
+
+Cohen (1988) je predložio smjernice za interpretaciju koje su postale konvencija u društvenim znanostima:
+
+```{r}
+#| label: cohen-smjernice
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~d, ~interpretacija, ~primjer,
+  "0.2", "Mali učinak", "Jedva primjetna razlika u praksi",
+  "0.5", "Srednji učinak", "Razlika vidljiva prostim okom",
+  "0.8", "Veliki učinak", "Razlika očita i praktično važna"
+)
+```
+
+Naš d je veliki učinak. Carousel objave generiraju značajno viši angažman, i to u praktično važnoj mjeri — ovo je informacija koju p-vrijednost sama ne može dati.
+
+Vizualizirajmo što različite veličine učinka *izgledaju* kao preklapanje dviju distribucija.
+
+```{r}
+#| label: cohen-d-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 8
+
+# Vizualizacija: što znači d = 0.2, 0.5, 0.8, 1.3
+d_values <- c(0.2, 0.5, 0.8, round(d, 2))
+d_labels <- c("d = 0.2 (mali)", "d = 0.5 (srednji)", "d = 0.8 (veliki)",
+              paste0("d = ", round(d, 2), " (naši podaci)"))
+
+x <- seq(-4, 6, length.out = 300)
+
+d_viz <- map_df(seq_along(d_values), \(i) {
+  tibble(
+    panel = d_labels[i],
+    x = x,
+    Grupa_A = dnorm(x, 0, 1),
+    Grupa_B = dnorm(x, d_values[i], 1)
+  ) |>
+    pivot_longer(c(Grupa_A, Grupa_B), names_to = "grupa", values_to = "gustoca")
+}) |>
+  mutate(panel = factor(panel, levels = d_labels))
+
+d_viz |>
+  ggplot(aes(x = x, y = gustoca, fill = grupa)) +
+  geom_area(alpha = 0.4, position = "identity") +
+  facet_wrap(~panel, ncol = 2) +
+  scale_fill_manual(values = c("Grupa_A" = "steelblue", "Grupa_B" = "#2a9d8f"),
+                    labels = c("Grupa A", "Grupa B")) +
+  labs(
+    title = "Što znači Cohenov d?",
+    subtitle = "Veći d = manje preklapanja između distribucija = očitija razlika",
+    x = "Vrijednost", y = "Gustoća", fill = NULL
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
 ```
 
+S d = 0.2, distribucije se gotovo potpuno preklapaju — razliku biste teško primijetili u praksi. S d = 0.8, razdvajanje je očito. Naš d oko 1.3 pokazuje vrlo jasno razdvajanje — carousel i single image su očigledno različite kategorije po angažmanu.
+
+::: {.callout-tip}
+## Uvijek izvještavajte veličinu učinka
+
+Umjesto "razlika je statistički značajna (p < 0.001)", napišite: "carousel objave imaju značajno viši angažman od single image objava (razlika = 2.6 postotnih bodova, d = 1.34, p < 0.001)." Ovo daje čitatelju informaciju i o postojanju i o veličini razlike — sve u jednoj rečenici.
+:::
+
+
+## Statistička snaga: hoće li vaš test uopće nešto naći? {#sec-snaga}
+
+Statistička snaga (power) je vjerojatnost da test odbaci H₀ kad je H₁ istinita — jednostavnije rečeno, vjerojatnost da ćete detektirati pravu razliku ako ona postoji.
+
+Snaga ovisi o četiri faktora. Veličina učinka — veću razliku je lakše detektirati. Veličina uzorka — više podataka daje veću snagu. Razina značajnosti α — veći α daje veću snagu, ali i više lažno pozitivnih. Varijabilnost podataka — manja varijabilnost znači čišći signal.
+
+Konvencija kaže da snaga treba biti barem 0.80 (80%). To znači da ako razlika postoji, želite je detektirati barem u 8 od 10 pokušaja.
+
+### Koliki uzorak trebam?
+
+Najčešća primjena analize snage je planiranje istraživanja *prije* nego prikupite podatke: koliki uzorak trebate da biste detektirali očekivanu veličinu učinka s 80% snagom?
+
 ```{r}
-#| label: analiza-proporcije
+#| label: power-izracun
+#| echo: true
+#| message: false
+#| warning: false
+
+# power.t.test() za dvouzorački test
+# Koliki uzorak trebam za srednji učinak (d = 0.5)?
+power.t.test(
+  delta = 0.5,       # očekivana razlika u SD jedinicama (Cohenov d)
+  sd = 1,            # standardizirano na 1
+  sig.level = 0.05,  # α
+  power = 0.80,      # željena snaga
+  type = "two.sample",
+  alternative = "two.sided"
+)
+```
+
+Za detektiranje srednjeg učinka (d = 0.5) s 80% snagom potrebno je otprilike 64 ispitanika po grupi, ukupno 128. Pogledajmo kako se potreban uzorak mijenja s veličinom učinka.
+
+```{r}
+#| label: power-tablica
+#| echo: true
+#| message: false
+#| warning: false
+
+d_values <- c(0.2, 0.3, 0.5, 0.8, 1.0, 1.3)
+
+power_tablica <- map_df(d_values, \(d_val) {
+  rez <- power.t.test(delta = d_val, sd = 1, sig.level = 0.05, power = 0.80,
+                      type = "two.sample", alternative = "two.sided")
+  tibble(
+    cohenov_d = d_val,
+    n_po_grupi = ceiling(rez$n),
+    ukupno_n = ceiling(rez$n) * 2
+  )
+})
+
+power_tablica
+```
+
+Brojke su poučne. Za mali učinak (d = 0.2) trebate skoro 400 ispitanika po grupi — ukupno 800. Za veliki učinak (d = 0.8) trebate samo 26 po grupi. Ovo je razlog zašto je planiranje unaprijed ključno — morate imati realistična očekivanja o veličini učinka da biste znali koliko podataka trebate prikupiti.
+
+```{r}
+#| label: power-krivulja
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Krivulja snage: kako snaga raste s veličinom uzorka
+n_range <- seq(10, 300, by = 5)
+
+power_curves <- map_df(c(0.2, 0.5, 0.8), \(d_val) {
+  map_df(n_range, \(n_val) {
+    p <- power.t.test(n = n_val, delta = d_val, sd = 1, sig.level = 0.05,
+                      type = "two.sample", alternative = "two.sided")$power
+    tibble(n = n_val, power = p, d = paste("d =", d_val))
+  })
+})
+
+power_curves |>
+  ggplot(aes(x = n, y = power, color = d)) +
+  geom_line(linewidth = 1.2) +
+  geom_hline(yintercept = 0.80, linetype = "dashed", color = "grey50") +
+  annotate("text", x = 290, y = 0.82, label = "Snaga = 0.80", color = "grey50", hjust = 1) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 1)) +
+  scale_color_manual(values = c("d = 0.2" = "#e76f51", "d = 0.5" = "#e9c46a", "d = 0.8" = "#2a9d8f")) +
+  labs(
+    title = "Krivulje snage za dvouzorački t-test",
+    subtitle = "Veći učinak ili veći uzorak = veća snaga detektiranja razlike",
+    x = "Veličina uzorka (po grupi)",
+    y = "Statistička snaga",
+    color = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+Za mali učinak (d = 0.2, crvena), snaga sporo raste i ni s 300 ispitanika po grupi ne dostiže 100%. Za veliki učinak (d = 0.8, zelena), snaga brzo raste i s 30 po grupi je već blizu 80%.
+
+### Kolika je snaga našeg Instagram testa?
+
+```{r}
+#| label: power-ig
+#| echo: true
+#| message: false
+#| warning: false
+
+# Kolika je snaga našeg testa s d ≈ 1.34 i n ≈ 250 po grupi?
+power_ig <- power.t.test(
+  n = min(n1, n2),
+  delta = d,
+  sd = 1,
+  sig.level = 0.05,
+  type = "two.sample",
+  alternative = "two.sided"
+)
+
+cat("Snaga našeg testa:", round(power_ig$power, 4), "\n")
+```
+
+Snaga je gotovo 100%. S ovakvom veličinom učinka i ovakvim uzorkom, gotovo je nemoguće da bismo propustili ovu razliku. Test je bio više nego adekvatno snažan — u praksi, mogli smo detektirati ovu razliku s mnogo manje podataka.
+
+```{r}
+#| label: power-ig-minimum
+#| echo: true
+#| message: false
+#| warning: false
+
+# Koliki minimalni uzorak bi bio dovoljan?
+min_n <- power.t.test(
+  delta = d,
+  sd = 1,
+  sig.level = 0.05,
+  power = 0.80,
+  type = "two.sample"
+)
+
+cat("Minimalni n po grupi za 80% snagu:", ceiling(min_n$n), "\n")
+cat("Mi smo imali:", min(n1, n2), "po grupi\n")
+```
+
+
+## Upareni t-test: kad iste jedinice mjerite dva puta {#sec-paired}
+
+Dosad smo uspoređivali dvije nezavisne skupina — carousel objave su jedne, single image su druge, i nema nikakve veze između pojedinačnih objava u dvjema grupama. Ali ponekad mjerite istu jedinicu u dva uvjeta. Na primjer — angažman istih pratitelja prije i poslije redizajna profila, ili ocjene istih članaka od strane dva različita urednika.
+
+Kad su opažanja u parovima, koristite upareni t-test. Umjesto da uspoređujete dva prosjeka, on računa razliku za svaki par i testira je li prosjek tih razlika različit od nule. Ovo je daleko osjetljiviji pristup jer uklanja varijabilnost *između* parova i fokusira se samo na varijabilnost *unutar* parova.
+
+```{r}
+#| label: paired-primjer
+#| echo: true
+#| message: false
+#| warning: false
+
+set.seed(42)
+
+# Simulacija: 30 članaka, svaki ocjenjen od 2 urednika
+urednicki_rating <- tibble(
+  clanak_id = 1:30,
+  urednik_A = round(rnorm(30, mean = 6.5, sd = 1.2), 1),
+  urednik_B = round(urednik_A + rnorm(30, mean = 0.5, sd = 0.8), 1)
+)
+
+# Urednik B ocjenjuje sustavno više
+urednicki_rating <- urednicki_rating |>
+  mutate(razlika = urednik_B - urednik_A)
+
+urednicki_rating |>
+  summarise(
+    M_A = round(mean(urednik_A), 2),
+    M_B = round(mean(urednik_B), 2),
+    M_razlika = round(mean(razlika), 2),
+    SD_razlika = round(sd(razlika), 2)
+  )
+```
+
+```{r}
+#| label: paired-test
+#| echo: true
+#| message: false
+#| warning: false
+
+# Upareni t-test
+t.test(urednicki_rating$urednik_B, urednicki_rating$urednik_A, paired = TRUE)
+```
+
+Usporedimo što se dogodi kad na istim podacima pokrenemo upareni i neupareni test.
+
+```{r}
+#| label: paired-vs-nepaired
+#| echo: true
+#| message: false
+#| warning: false
+
+# Usporedba: upareni vs nepareni test na istim podacima
+paired_p <- t.test(urednicki_rating$urednik_B, urednicki_rating$urednik_A, paired = TRUE)$p.value
+unpaired_p <- t.test(urednicki_rating$urednik_B, urednicki_rating$urednik_A, paired = FALSE)$p.value
+
+cat("Upareni test p-vrijednost:  ", round(paired_p, 5), "\n")
+cat("Nepareni test p-vrijednost: ", round(unpaired_p, 5), "\n")
+```
+
+Upareni test daje manju p-vrijednost jer je osjetljiviji. Zašto? Zato što uklanja varijabilnost između parova. Neki članci su općenito bolji, neki lošiji — to je varijabilnost koja nema veze s razlikom između urednika. Kad tu varijabilnost kontrolirate (parenjem), preostaje samo varijabilnost u razlici između dva urednika, koja je mnogo manja.
+
+```{r}
+#| label: paired-vizualizacija
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+urednicki_rating |>
+  ggplot() +
+  geom_segment(aes(x = urednik_A, xend = urednik_B, y = clanak_id, yend = clanak_id),
+               color = "grey70", linewidth = 0.5) +
+  geom_point(aes(x = urednik_A, y = clanak_id), color = "steelblue", size = 2) +
+  geom_point(aes(x = urednik_B, y = clanak_id), color = "#e76f51", size = 2) +
+  annotate("text", x = 3.5, y = 31, label = "Urednik A", color = "steelblue", fontface = "bold") +
+  annotate("text", x = 10, y = 31, label = "Urednik B", color = "#e76f51", fontface = "bold") +
+  labs(
+    title = "Uredničke ocjene istih članaka",
+    subtitle = "Svaka linija je jedan članak. Urednik B sustavno ocjenjuje više.",
+    x = "Ocjena (1-10)",
+    y = "Članak ID"
+  ) +
+  theme_minimal()
+```
+
+Svaka vodoravna linija predstavlja jedan članak. Plava točka je ocjena urednika A, crvena urednika B. Većina linija ide udesno, što znači da urednik B dosljedno ocjenjuje više.
+
+::: {.callout-important}
+## Koji test za koju situaciju?
+
+**Nezavisni (neupareni) t-test**: dvije različite skupine bez veze. Primjeri: muškarci vs žene, kontrolna vs eksperimentalna grupa, carousel vs single image.
+
+**Upareni t-test**: ista jedinica mjerena dva puta. Primjeri: prije i poslije intervencije, isti sadržaj na dva kanala, isti ispitanik u dva uvjeta. Ključno pitanje: možete li smisleno spariti opažanja? Ako da, koristite upareni test — bit će osjetljiviji.
+:::
+
+
+## Statistička značajnost nije isto što i praktična važnost {#sec-prakticna}
+
+Ovo je možda najvažnija lekcija cijelog predavanja. Statistička značajnost (p < 0.05) govori da razlika vjerojatno nije slučajnost. Ali ne govori vam je li ta razlika dovoljno velika da na nju trebate reagirati. Ovo razlikovanje je ključno za svakoga tko donosi poslovne ili istraživačke odluke na temelju podataka.
+
+```{r}
+#| label: prakticna-primjer
+#| echo: true
+#| message: false
+#| warning: false
+
+set.seed(42)
+
+# Scenarij 1: Statistički značajno ali praktički beznačajno
+# Novi dizajn naslovnice povećava CTR s 2.00% na 2.05%
+n_velik <- 50000
+ctr_stari <- rbinom(n_velik, 1, 0.0200)
+ctr_novi <- rbinom(n_velik, 1, 0.0205)
+
+test1 <- t.test(ctr_novi, ctr_stari)
+
+cat("=== Scenarij 1: Velik uzorak, sićušna razlika ===\n")
+cat("Razlika CTR:", round((mean(ctr_novi) - mean(ctr_stari)) * 100, 3), "postotnih bodova\n")
+cat("P-vrijednost:", round(test1$p.value, 4), "\n")
+cat("Statistički značajno:", test1$p.value < 0.05, "\n")
+cat("Isplati li se redizajn? Vjerojatno ne.\n\n")
+
+# Scenarij 2: Statistički neznačajno ali potencijalno praktički važno
+# Novi format povećava CTR s 2.0% na 3.5% ali mali uzorak
+n_mali <- 80
+ctr_stari2 <- rbinom(n_mali, 1, 0.020)
+ctr_novi2 <- rbinom(n_mali, 1, 0.035)
+
+test2 <- t.test(ctr_novi2, ctr_stari2)
+
+cat("=== Scenarij 2: Mali uzorak, veća razlika ===\n")
+cat("Razlika CTR:", round((mean(ctr_novi2) - mean(ctr_stari2)) * 100, 2), "postotnih bodova\n")
+cat("P-vrijednost:", round(test2$p.value, 4), "\n")
+cat("Statistički značajno:", test2$p.value < 0.05, "\n")
+cat("Zaslužuje li daljnje istraživanje? Vjerojatno da.\n")
+```
+
+Ova dva scenarija savršeno ilustriraju zašto p-vrijednost sama nije dovoljna. U prvom, razlika od 0.05 postotnih bodova je statistički značajna (jer imate 50 000 opažanja), ali praktički beznačajna — redizajn koji donosi toliko poboljšanje se ne isplati. U drugom, razlika od 1.5 postotnih bodova nije statistički značajna (jer imate samo 80 opažanja), ali je potencijalno vrlo važna — i zaslužuje daljnje istraživanje s većim uzorkom.
+
+Donošenje odluka zahtijeva da razmotrite veličinu učinka, praktične posljedice, interval pouzdanosti i kontekst. Sljedeća tablica sažima četiri moguća scenarija.
+
+```{r}
+#| label: prakticna-matrica
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~` `, ~`Praktički važno`, ~`Praktički nevažno`,
+  "Statistički značajno (p < 0.05)", "✅ Djeluj! Razlika postoji i važna je.", "⚠️ Razlika postoji ali je premala da bi se isplatila.",
+  "Statistički neznačajno (p ≥ 0.05)", "🔍 Možda nemaš dovoljno podataka. Povećaj uzorak.", "✅ Nema učinka i to je u redu."
+)
+```
+
+
+## Sve zajedno: izvještaj za urednicu {#sec-analiza}
+
+Spojimo sve u koherentan izvještaj. Slijedimo strukturu koju ćete koristiti u svakoj budućoj analizi, gdje su ključni koraci sljedeći: opisna statistika, vizualizacija, statistički test, veličina učinka, podanalize po podgrupama, zaključak s preporukom.
+
+```{r}
+#| label: analiza-opisna
+#| echo: true
+#| message: false
+#| warning: false
+
+# Korak 1: Opisna statistika po formatu
+ig |>
+  group_by(format) |>
+  summarise(
+    n = n(),
+    M_engagement = round(mean(engagement_rate) * 100, 2),
+    SD_engagement = round(sd(engagement_rate) * 100, 2),
+    M_likes = round(mean(likes), 0),
+    M_comments = round(mean(comments), 0),
+    M_shares = round(mean(shares), 0),
+    M_saves = round(mean(saves), 0),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| label: analiza-boxplot
 #| echo: true
 #| message: false
 #| warning: false
 #| fig-width: 8
 #| fig-height: 5
 
-# Korak 4: Proporcije po izvoru vijesti s CI
-prop_rezultati <- anketa |>
-  count(primary_news_source) |>
-  mutate(
-    p_hat = n / sum(n),
-    test = map2(n, sum(n), \(x, nn) prop.test(x, nn, conf.level = 0.95)),
-    ci_lo = map_dbl(test, \(t) t$conf.int[1]),
-    ci_hi = map_dbl(test, \(t) t$conf.int[2])
-  ) |>
-  select(-test) |>
-  arrange(desc(p_hat))
-
-prop_rezultati |>
-  mutate(primary_news_source = fct_reorder(primary_news_source, p_hat)) |>
-  ggplot(aes(y = primary_news_source)) +
-  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi), height = 0.3, linewidth = 1, color = "#2a9d8f") +
-  geom_point(aes(x = p_hat), size = 3, color = "#2a9d8f") +
-  geom_text(aes(x = ci_hi + 0.008, label = paste0(round(p_hat * 100, 1), "% (n=", n, ")")), 
-            hjust = 0, size = 3.5) +
-  scale_x_continuous(labels = scales::label_percent(), limits = c(0, 0.42)) +
+ig |>
+  ggplot(aes(x = format, y = engagement_rate * 100, fill = format)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.15, size = 1) +
+  scale_fill_manual(values = c("carousel" = "#2a9d8f", "single_image" = "#e76f51")) +
   labs(
-    title = "Preferirani izvor vijesti s intervalima pouzdanosti",
-    subtitle = "Anketa na 600 ispitanika. Portali i društvene mreže statistički nerazlučivi.",
-    x = "Udio ispitanika",
-    y = NULL
+    title = "Engagement rate po formatu objave",
+    subtitle = "Carousel objave imaju vidljivo viši angažman",
+    x = NULL,
+    y = "Engagement rate (%)"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| label: analiza-test
+#| echo: true
+#| message: false
+#| warning: false
+
+# Korak 2: Statistički test
+test_ig <- t.test(carousel, single)
+
+# Korak 3: Veličina učinka
+s_pooled <- sqrt(((n1 - 1) * sd(carousel)^2 + (n2 - 1) * sd(single)^2) / (n1 + n2 - 2))
+d_ig <- (mean(carousel) - mean(single)) / s_pooled
+
+cat("=== REZULTAT DVOUZORAČKOG T-TESTA ===\n")
+cat("t(", round(test_ig$parameter, 1), ") = ", round(test_ig$statistic, 2), "\n", sep = "")
+cat("p < 0.001\n")
+cat("Razlika prosjeka: ", round((mean(carousel) - mean(single)) * 100, 2), " postotnih bodova\n", sep = "")
+cat("95% CI za razliku: [", round(test_ig$conf.int[1] * 100, 2), ", ",
+    round(test_ig$conf.int[2] * 100, 2), "] postotnih bodova\n", sep = "")
+cat("Cohenov d:", round(d_ig, 2), "(veliki učinak)\n")
+```
+
+```{r}
+#| label: analiza-po-temi
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Korak 4: Je li prednost carousela konzistentna po temama?
+ig |>
+  group_by(topic, format) |>
+  summarise(M = mean(engagement_rate) * 100, .groups = "drop") |>
+  ggplot(aes(x = fct_reorder(topic, M, .fun = max), y = M, fill = format)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  scale_fill_manual(values = c("carousel" = "#2a9d8f", "single_image" = "#e76f51")) +
+  labs(
+    title = "Engagement rate po temi i formatu",
+    subtitle = "Carousel prednost je konzistentna preko svih tema",
+    x = NULL,
+    y = "Prosječni engagement rate (%)",
+    fill = "Format"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: analiza-po-temi-testovi
+#| echo: true
+#| message: false
+#| warning: false
+
+# Statistički testovi po temi
+ig |>
+  group_by(topic) |>
+  summarise(
+    n_carousel = sum(format == "carousel"),
+    n_single = sum(format == "single_image"),
+    M_carousel = round(mean(engagement_rate[format == "carousel"]) * 100, 2),
+    M_single = round(mean(engagement_rate[format == "single_image"]) * 100, 2),
+    razlika = round(M_carousel - M_single, 2),
+    p = round(t.test(
+      engagement_rate[format == "carousel"],
+      engagement_rate[format == "single_image"]
+    )$p.value, 4),
+    znacajno = p < 0.05,
+    .groups = "drop"
+  )
+```
+
+Prednost carousela je statistički značajna za sve teme. Konzistentnost učinka kroz podgrupe pojačava povjerenje u zaključak — ovo nije artefakt jedne specifične teme.
+
+```{r}
+#| label: analiza-cta
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Korak 5: Utjecaj CTA na komentare
+ig |>
+  group_by(format, has_cta) |>
+  summarise(M_comments = mean(comments), .groups = "drop") |>
+  mutate(has_cta = if_else(has_cta, "S pozivom na akciju", "Bez poziva na akciju")) |>
+  ggplot(aes(x = format, y = M_comments, fill = has_cta)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  scale_fill_manual(values = c("S pozivom na akciju" = "#264653", "Bez poziva na akciju" = "#a8dadc")) +
+  labs(
+    title = "Prosječan broj komentara: format × poziv na akciju",
+    subtitle = "CTA povećava komentare, osobito kod carousel objava",
+    x = NULL,
+    y = "Prosječan broj komentara",
+    fill = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: analiza-vrijeme
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+# Korak 6: Engagement po dobu dana
+ig |>
+  mutate(time_of_day = factor(time_of_day, levels = c("jutro", "podne", "poslijepodne", "večer"))) |>
+  group_by(time_of_day, format) |>
+  summarise(
+    M = mean(engagement_rate) * 100,
+    SE = sd(engagement_rate) / sqrt(n()) * 100,
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = time_of_day, y = M, color = format, group = format)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = M - 1.96 * SE, ymax = M + 1.96 * SE), width = 0.15) +
+  scale_color_manual(values = c("carousel" = "#2a9d8f", "single_image" = "#e76f51")) +
+  labs(
+    title = "Engagement rate po dobu dana s intervalima pouzdanosti",
+    subtitle = "Carousel prednost prisutna u svim terminima. Poslijepodne je optimalno za oba formata.",
+    x = NULL,
+    y = "Engagement rate (%)",
+    color = "Format"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 ```
 
 ```{r}
@@ -1325,164 +1134,196 @@ prop_rezultati |>
 #| message: false
 #| warning: false
 
-# Korak 5: Sažetak za klijenta
-cat("=== SAŽETAK REZULTATA ANKETE ===\n\n")
-cat("Uzorak: n =", nrow(anketa), "ispitanika\n")
-cat("Margina pogreške za proporcije: ±", round(1.96 * sqrt(0.25 / nrow(anketa)) * 100, 1), "%\n\n")
+# Korak 7: Izvještaj za urednicu
+cat("════════════════════════════════════════════════════════\n")
+cat("   IZVJEŠTAJ: A/B TEST FORMATA INSTAGRAM OBJAVA\n")
+cat("════════════════════════════════════════════════════════\n\n")
 
-cat("1. Ukupno povjerenje u medije:", round(ukupno$estimate, 2), 
-    "(95% CI:", round(ukupno$conf.int[1], 2), "-", round(ukupno$conf.int[2], 2), ")\n")
-cat("   Na ljestvici od 1-10, to je ispod sredine.\n\n")
+cat("UZORAK: ", nrow(ig), " objava (", n1, " carousel, ", n2, " single image)\n\n", sep = "")
 
-cat("2. Najpopularniji izvori vijesti:\n")
-for (i in 1:nrow(prop_rezultati)) {
-  cat("   ", prop_rezultati$primary_news_source[i], ":", 
-      round(prop_rezultati$p_hat[i] * 100, 1), "% (",
-      round(prop_rezultati$ci_lo[i] * 100, 1), "-", 
-      round(prop_rezultati$ci_hi[i] * 100, 1), "%)\n")
-}
-cat("\n3. Napomena: razlika između portala i društvenih mreža je unutar margine\n")
-cat("   pogreške i ne može se smatrati statistički značajnom.\n")
+cat("GLAVNI NALAZ:\n")
+cat("Carousel objave generiraju statistički značajno viši angažman\n")
+cat("od single image objava.\n\n")
+
+cat("BROJKE:\n")
+cat("  Carousel engagement:    ", round(mean(carousel) * 100, 2), "% (SD = ",
+    round(sd(carousel) * 100, 2), "%)\n", sep = "")
+cat("  Single image engagement:", round(mean(single) * 100, 2), "% (SD = ",
+    round(sd(single) * 100, 2), "%)\n", sep = "")
+cat("  Razlika: ", round((mean(carousel) - mean(single)) * 100, 2),
+    " postotnih bodova\n", sep = "")
+cat("  95% CI:  [", round(test_ig$conf.int[1] * 100, 2), ", ",
+    round(test_ig$conf.int[2] * 100, 2), "] postotnih bodova\n\n", sep = "")
+
+cat("STATISTIKA:\n")
+cat("  t(", round(test_ig$parameter, 1), ") = ", round(test_ig$statistic, 2),
+    ", p < 0.001\n", sep = "")
+cat("  Cohenov d = ", round(d_ig, 2), " (veliki učinak)\n\n", sep = "")
+
+cat("DODACI:\n")
+cat("  * Prednost je konzistentna preko svih tema i svih doba dana.\n")
+cat("  * Poziv na akciju dodatno pojačava komentare (+15%).\n")
+cat("  * Poslijepodne je optimalno vrijeme za objavu oba formata.\n\n")
+
+cat("PREPORUKA:\n")
+cat("  Prebacite što veći udio objava na carousel format,\n")
+cat("  osobito za lifestyle i sportski sadržaj koji i inače\n")
+cat("  generiraju najviši angažman. Kombinirajte s pozivom\n")
+cat("  na akciju za maksimalne komentare.\n")
 ```
 
----
 
-## Uobičajene pogreške pri interpretaciji CI {#sec-pogreske}
+## ASA izjava i problem višestrukog testiranja {#sec-asa}
 
-Intervali pouzdanosti su intuitivno privlačni ali se često krivo interpretiraju. Evo najčešćih grešaka i ispravnih verzija.
+Američka statistička asocijacija (ASA) je 2016. izdala službenu izjavu o p-vrijednostima — prvi put u svojoj 177-godišnjoj povijesti da se oglasila o konkretnom statističkom konceptu. Šest principa iz te izjave vrijedi zapamtiti.
 
-**Pogrešno**: "Postoji 95% šansa da je pravi prosjek unutar intervala [4.67, 5.01]."
-**Ispravno**: Pravi prosjek je fiksan broj. On ili jest ili nije unutar intervala. 95% se odnosi na postupak: 95% intervala konstruiranih ovom metodom pokrit će pravi parametar.
+P-vrijednosti mogu pokazati koliko su podaci nekompatibilni sa specificiranim statističkim modelom. Ne mjere vjerojatnost da je hipoteza istinita, niti vjerojatnost da su podaci nastali samo slučajnošću. Znanstveni zaključci ne bi se trebali temeljiti samo na tome prelazi li p-vrijednost specifičan prag. Ispravno zaključivanje zahtijeva puno izvještavanje i transparentnost. P-vrijednost ne mjeri veličinu učinka niti važnost rezultata. I sama p-vrijednost ne pruža dobru mjeru dokaza za ili protiv hipoteze.
 
-**Pogrešno**: "95% podataka pada unutar intervala [4.67, 5.01]."
-**Ispravno**: CI se odnosi na parametar (prosjek), ne na pojedinačna opažanja. Pojedinačne vrijednosti pokriva prediktivni interval, koji je mnogo širi.
+### Višestruko testiranje: kad testirate mnogo toga, nešto će "ispasti značajno"
 
-**Pogrešno**: "Ako dva CI-a ne uključuju nulu, razlika je značajna."
-**Ispravno**: Nula nije relevantna za pojedinačne CI-e. Preklapanje dvaju CI-a govori o mogućoj razlici, ali formalni test zahtijeva CI za razliku (o čemu ćemo na predavanju o t-testu).
-
-**Pogrešno**: "Širok CI znači da je mjerenje loše provedeno."
-**Ispravno**: Širok CI obično znači mali uzorak ili veliku varijabilnost u podacima. To nije greška, nego realnost podataka.
+Kad provodite mnogo testova istovremeno, povećava se šansa da barem jedan bude lažno pozitivan — čak i kad nijedan pravi učinak ne postoji.
 
 ```{r}
-#| label: ci-vs-prediktivni
+#| label: visestruko-testiranje
 #| echo: true
 #| message: false
 #| warning: false
-#| fig-width: 8
-#| fig-height: 5
 
+# Simulacija: 20 testova, SVI pod H₀ (nema pravih razlika)
 set.seed(42)
-uzorak_200 <- pop |> slice_sample(n = 200)
 
-xbar <- mean(uzorak_200$media_trust)
-se <- sd(uzorak_200$media_trust) / sqrt(200)
-s <- sd(uzorak_200$media_trust)
+sim_20_testova <- map_df(1:20, \(i) {
+  a <- rnorm(50, mean = 5, sd = 2)
+  b <- rnorm(50, mean = 5, sd = 2)  # isti prosjek!
+  test <- t.test(a, b)
+  tibble(test_broj = i, p = round(test$p.value, 4), znacajno = test$p.value < 0.05)
+})
 
-tibble(
-  tip = factor(c("CI za prosjek (95%)", "Prediktivni interval (95%)"),
-               levels = c("CI za prosjek (95%)", "Prediktivni interval (95%)")),
-  lo = c(xbar - 1.96 * se, xbar - 1.96 * s),
-  hi = c(xbar + 1.96 * se, xbar + 1.96 * s),
-  xbar = xbar
-) |>
-  ggplot(aes(y = tip)) +
-  geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0.3, linewidth = 1.2, color = "steelblue") +
-  geom_point(aes(x = xbar), size = 3, color = "steelblue") +
-  labs(
-    title = "CI za prosjek vs prediktivni interval",
-    subtitle = "CI govori gdje je populacijski prosjek. Prediktivni interval govori gdje su pojedinačna opažanja.",
-    x = "Povjerenje u medije",
-    y = NULL
-  ) +
-  theme_minimal()
+cat("Od 20 testova (svi H₀ istiniti):\n")
+cat("Statistički značajnih:", sum(sim_20_testova$znacajno), "\n\n")
+
+sim_20_testova |> filter(znacajno)
 ```
 
-CI za prosjek je uzak (±0.28). Prediktivni interval je širok (±3.9). Ovo su dva potpuno različita pitanja: "Gdje je pravi prosjek?" vs "Gdje će pasti sljedeće opažanje?" Ne miješajte ih.
+Čak i kad nijedan učinak ne postoji, jedan ili više testova ispada "statistički značajan." Kad biste izvijestili samo te značajne rezultate i prešutjeli ostalih 18 ili 19 testova, to bi bila obmana. Postoje korekcije za ovaj problem — najjednostavnija je Bonferronijeva, koja dijeli α s brojem testova.
 
----
+```{r}
+#| label: bonferroni
+#| echo: true
+#| message: false
+#| warning: false
+
+# Bonferronijeva korekcija
+sim_20_testova |>
+  mutate(
+    p_korigirana = p.adjust(p, method = "bonferroni"),
+    znacajno_korigirano = p_korigirana < 0.05
+  ) |>
+  filter(znacajno | znacajno_korigirano) |>
+  select(test_broj, p, znacajno, p_korigirana, znacajno_korigirano)
+```
+
+Nakon Bonferronijeve korekcije, nijedan test nije značajan. Korekcija je konzervativna (može propustiti prave učinke), ali štiti od lažno pozitivnih kad provodite mnogo testova. Benjamini-Hochberg (BH) korekcija je manje konzervativna alternativa koju ćete česte sresti u literaturi.
+
+::: {.callout-warning}
+## P-hacking: ono što ne smijete raditi
+
+Ako u istraživanju testirate mnogo varijabli i izvijestite samo one koje su značajne — to se zove p-hacking ili cherry-picking. Rezultati dobiveni na taj način nisu pouzdani jer ne uzimaju u obzir višestruko testiranje. Uvijek izvijestite koliko ste testova proveli, ne samo one koji su dali p < 0.05. Transparentnost nije opcija, nego temelj pouzdane znanosti.
+:::
+
+
+## Pregled svih t-testova {#sec-pregled}
+
+```{r}
+#| label: pregled-tablica
+#| echo: true
+#| message: false
+#| warning: false
+
+tribble(
+  ~test, ~situacija, ~R_kod, ~primjer,
+  "Jednouzorački", "Jedan uzorak vs poznata vrijednost", "t.test(x, mu = 5)", "Je li prosječno vrijeme čitanja = 3 min?",
+  "Dvouzorački (nezavisni)", "Dvije nezavisne skupine", "t.test(x, y)", "Carousel vs single image engagement",
+  "Upareni", "Iste jedinice, dva mjerenja", "t.test(x, y, paired = TRUE)", "Ocjene istih članaka od 2 urednika"
+)
+```
+
+Sva tri testa dijele istu logiku — postavljate H₀, računate t-statistiku, gledate p-vrijednost i donosite odluku. Razlikuju se u formulaciji H₀ i načinu izračuna standardne pogreške. Funkcija `t.test()` pokriva sva tri slučaja.
+
 
 ::: {.callout-important}
 ## Ključni zaključci
 
-1. Populacija je cjelina o kojoj zaključujemo. Uzorak je dio koji mjerimo. Parametri (μ, σ) opisuju populaciju. Statistike (x̄, s) opisuju uzorak i procjenjuju parametre.
+**Testiranje hipoteza počinje od pretpostavke da nema učinka.** Postavljate nultu hipotezu (H₀: nema razlike) i tražite dokaze protiv nje. Ako su podaci dovoljno neobični pod H₀ (p < α), odbacujete H₀.
 
-2. Svaki uzorak daje malo drugačiju procjenu. Distribucija tih procjena kroz ponovljene uzorke naziva se distribucija uzorkovanja. Njezina standardna devijacija je standardna pogreška (SE).
+**Testna statistika mjeri neobičnost podataka pod H₀.** Za t-test: t = razlika / SE. Veći |t| znači jači dokaz protiv H₀.
 
-3. Standardna pogreška SE = s/√n mjeri koliko prosjeci uzoraka tipično variraju. Preciznost raste s korijenom veličine uzorka: da biste prepolovili SE, morate učetverostručiti n.
+**P-vrijednost je vjerojatnost podataka pod H₀, ne vjerojatnost hipoteze.** Nije vjerojatnost da je H₀ istinita. Nije mjera veličine učinka. Mala p-vrijednost znači da su podaci neobični u svijetu gdje H₀ vrijedi.
 
-4. Centralni granični teorem kaže da je distribucija uzorkovanja prosjeka približno normalna za dovoljno velik n (pravilo palca n ≥ 30), neovisno o obliku izvorne distribucije.
+**`t.test()` pokriva sve tri varijante.** Jednouzorački (`mu = vrijednost`), dvouzorački (dva vektora) i upareni (`paired = TRUE`). Welchov test (default) ne pretpostavlja jednake varijance i uvijek je dobar izbor.
 
-5. Pristranost uzorka (convenience sampling, self-selection) je veći problem od male veličine uzorka. Velik pristran uzorak daje sustavno pogrešne rezultate koje ne može ispraviti nijedna statistička metoda.
+**Greška tipa I je lažno pozitivni rezultat (α).** Greška tipa II je propuštena prava razlika (β). Snaga = 1 - β trebala bi biti barem 0.80.
 
-6. t-distribucija se koristi umjesto normalne kad procjenjujemo σ iz uzorka. Za male uzorke daje šire intervale (deblje repove). Za n > 100, razlika je zanemariva.
+**Cohenov d stavlja razliku u kontekst varijabilnosti.** d = 0.2 mali, 0.5 srednji, 0.8 veliki učinak. Uvijek ga izvijestite uz p-vrijednost.
 
-7. `t.test()` računa interval pouzdanosti za prosjek. `prop.test()` računa CI za proporciju. Obje funkcije automatski koriste ispravne formule.
+**Planirajte uzorak unaprijed.** `power.t.test()` računa koliko podataka trebate za zadanu snagu i veličinu učinka. Ovo radite *prije* prikupljanja podataka.
 
-8. 95% CI znači: 95% ovako konstruiranih intervala pokriva pravi parametar. NE znači "95% šansa da je parametar unutar intervala." Parametar je fiksan. Interval je slučajan.
+**Upareni t-test je osjetljiviji od nezavisnog** jer kontrolira varijabilnost između parova. Koristite ga kad iste jedinice mjerite dva puta.
 
-9. Margina pogreške za proporcije je približno 1/√n. Za n = 1000 je ±3.1%. Za n = 400 je ±4.9%. Ovo objašnjava uobičajene veličine uzoraka u anketama.
+**Statistička značajnost nije praktična važnost.** Velik uzorak može detektirati trivijalne razlike. Mali uzorak može propustiti važne. Uvijek razmotrite i veličinu učinka i kontekst.
 
-10. Kad planirate istraživanje, odredite ciljanu preciznost unaprijed i iz nje izvedite potrebnu veličinu uzorka. Formula: n = z*² × p(1−p) / MoE².
+**Višestruko testiranje zahtijeva korekciju.** Ako provodite mnogo testova, koristite Bonferroni ili BH korekciju — ili barem transparentno izvijestite koliko ste testova proveli.
 
-11. Bootstrap je računalna alternativa za CI kad nemamo formulu za SE željene statistike. Ideja: uzorkuj iz uzorka s vraćanjem, izračunaj statistiku, ponovi mnogo puta.
-
-12. Kod čitanja medijskih anketa uvijek provjerite veličinu uzorka, metodu uzorkovanja, marginu pogreške i jesu li prijavljivane razlike veće od margine. Ako razlika između dvaju postotaka nije veća od dvostruke margine pogreške, zaključak o "vodstvu" jedne opcije nije opravdan.
+**"Ne možemo odbaciti H₀" nije isto što i "H₀ je istinita."** Odsutnost dokaza nije dokaz odsutnosti. Možda samo nemate dovoljno podataka.
 :::
 
----
 
 ## Zadaci za pripremu
 
-1. Učitajte `media_population.csv` i izračunajte pravi populacijski prosjek za `daily_media_min`. Zatim uzmite 50 slučajnih uzoraka veličine n = 300 i za svaki izračunajte 95% CI pomoću `t.test()`. Koliki postotak intervala pokriva pravi prosjek?
+1. Učitajte `instagram_ab_test.csv`. Testirajte razlikuje li se prosječan broj `saves` između carousel i single image objava. Izračunajte Cohenov d i interpretirajte ga.
 
-2. Izračunajte potrebnu veličinu uzorka za anketu o preferencijama izvora vijesti s marginom pogreške ±2.5% na razini pouzdanosti 99%.
+2. Odredite minimalnu veličinu uzorka po grupi potrebnu za detektiranje srednjeg učinka (d = 0.5) s 90% snagom na razini α = 0.01.
 
-3. Napišite funkciju `bootstrap_ci(x, stat_fn, n_boot = 5000, conf = 0.95)` koja prima vektor `x`, funkciju `stat_fn` (npr. `mean` ili `median`) i vraća bootstrap CI. Testirajte je na varijabli `daily_media_min`.
+3. Simulirajte 1000 t-testova gdje su oba uzorka iz iste distribucije (H₀ istinita). Koliki postotak p-vrijednosti je ispod 0.05? Nacrtajte histogram p-vrijednosti i usporedite s uniformnom distribucijom.
 
----
 
 ## Dodatno čitanje
 
 **Obavezno**
 
-Navarro, D. (2018). *Learning Statistics with R*, Chapter 10 (Estimating Unknown Quantities from a Sample). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva uzorkovanje, CLT i intervale pouzdanosti s R kodom i odličnim objašnjenjima.
-
-Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition), Chapter 5. Besplatno dostupno na [openintro.org/book/os](https://www.openintro.org/book/os/). Odličan vizualni pregled distribucije uzorkovanja i CI-a.
+Navarro, D. (2018). *Learning Statistics with R*, Chapter 11 (Hypothesis Testing). Besplatno dostupno na [learningstatisticswithr.com](https://learningstatisticswithr.com/lsr-0.6.pdf). Pokriva logiku testiranja hipoteza, t-test i p-vrijednost s R kodom.
 
 **Preporučeno**
 
-Wheelan, C. (2013). *Naked Statistics*. W. W. Norton. Poglavlja 8 i 9 pokrivaju centralni granični teorem i uzorkovanje na izuzetno pristupačan način.
+Diez, D., Çetinkaya-Rundel, M., & Barr, C. (2019). *OpenIntro Statistics* (4th edition), Chapter 7. Besplatno dostupno na [openintro.org/book/os](https://www.openintro.org/book/os/). Jasne vizualizacije logike testiranja.
 
-Cumming, G. (2014). The New Statistics: Why and How. *Psychological Science*, 25(1), 7-29. Članak argumentira zašto intervali pouzdanosti i veličine učinka trebaju zamijeniti p-vrijednosti kao primarni način izvještavanja rezultata.
+Wasserstein, R. L., & Lazar, N. A. (2016). The ASA Statement on p-Values: Context, Process, and Purpose. *The American Statistician*, 70(2), 129-133. Službena izjava o pravilnoj upotrebi i interpretaciji p-vrijednosti.
 
----
+Cohen, J. (1992). A Power Primer. *Psychological Bulletin*, 112(1), 155-159. Klasičan kratki pregled veličina učinka i analize snage.
+
 
 ## Pojmovnik
 
 | Pojam | Objašnjenje |
 |---|---|
-| Populacija | Cjelokupni skup jedinica o kojima želimo donijeti zaključak. |
-| Uzorak | Podskup populacije koji zaista mjerimo. |
-| Parametar | Mjera populacije. Označava se grčkim slovima (μ, σ, π). U praksi nepoznat. |
-| Statistika | Mjera uzorka. Označava se latinskim slovima (x̄, s, p̂). Procjena parametra. |
-| Pogreška uzorkovanja | Razlika između statistike i parametra. Neizbježna posljedica rada s uzorkom. |
-| Distribucija uzorkovanja | Distribucija statistike kroz mnogo ponovljenih uzoraka. Osnova za statističko zaključivanje. |
-| Standardna pogreška (SE) | Standardna devijacija distribucije uzorkovanja. Za prosjek: SE = s/√n. |
-| Centralni granični teorem (CLT) | Distribucija uzorkovanja prosjeka je približno normalna za dovoljno velik n, neovisno o obliku izvorne distribucije. |
-| t-distribucija | Distribucija slična normalnoj ali s debljim repovima. Koristi se kad procjenjujemo σ iz uzorka. |
-| Stupnjevi slobode (df) | Parametar t-distribucije. Za jedan prosjek: df = n − 1. Više df = bliže normalnoj. |
-| Interval pouzdanosti (CI) | Raspon vrijednosti koji s određenom vjerojatnošću pokriva pravi parametar. |
-| Razina pouzdanosti | Postotak intervala koji bi pokrio parametar u ponovljenom uzorkovanju (obično 95% ili 99%). |
-| Margina pogreške (MoE) | Pola širine intervala pouzdanosti. Za proporcije ≈ 1/√n. |
-| Nepristrana procjena | Statistika čija distribucija uzorkovanja je centrirana oko pravog parametra. |
-| Convenience sampling | Uzorkovanje iz dostupne (ali nereprezentativne) skupine. Uvodi pristranost. |
-| Self-selection bias | Pristranost kad ispitanici sami odlučuju hoće li sudjelovati. Tipično za online ankete. |
-| Proporcija uzorka (p̂) | Udio uzorka koji ima neku karakteristiku. Procjena populacijske proporcije π. |
-| Bootstrap | Računalna metoda za procjenu SE i CI ponovljenim uzorkovanjem iz uzorka s vraćanjem. |
-| Prediktivni interval | Interval koji pokriva buduća pojedinačna opažanja. Mnogo širi od CI za prosjek. |
-| Točkasta procjena | Jedna brojčana vrijednost kao procjena parametra (npr. x̄ = 4.87). Ne govori o preciznosti. |
-| `t.test()` | R funkcija za t-test i t-interval pouzdanosti za prosjek. |
-| `prop.test()` | R funkcija za test i CI za proporcije. Koristi Wilsonov interval. |
-| `slice_sample()` | dplyr funkcija za slučajno uzorkovanje redova iz tibble. Argument `replace = TRUE` za bootstrap. |
-| `qt()` | R funkcija za kritične vrijednosti t-distribucije. `qt(0.975, df)` za 95% CI. |
-| `qnorm()` | R funkcija za kritične vrijednosti normalne distribucije. `qnorm(0.975)` = 1.96. |
+| Nulta hipoteza (H₀) | Početna pretpostavka da nema učinka ili razlike. Sadrži znak jednakosti. |
+| Alternativna hipoteza (H₁) | Tvrdnja da učinak ili razlika postoji. Sadrži znak nejednakosti. |
+| Testna statistika | Broj koji mjeri koliko su podaci neobični pod H₀. Za t-test: t = razlika / SE. |
+| P-vrijednost | Vjerojatnost podataka (ili ekstremnijih) pod pretpostavkom da je H₀ istinita. |
+| Razina značajnosti (α) | Prag za odbacivanje H₀. Obično 0.05. Kontrolira grešku tipa I. |
+| Greška tipa I | Odbacimo H₀ kad je istinita. Lažno pozitivni rezultat. Vjerojatnost = α. |
+| Greška tipa II | Ne odbacimo H₀ kad je lažna. Propušteni pravi učinak. Vjerojatnost = β. |
+| Statistička snaga | Vjerojatnost detektiranja pravog učinka. Snaga = 1 − β. Cilj ≥ 0.80. |
+| Cohenov d | Standardizirana mjera veličine učinka: razlika prosjeka / pooled SD. d = 0.2 mali, 0.5 srednji, 0.8 veliki. |
+| Pooled SD | Zajednička standardna devijacija dviju grupa, ponderirana njihovim veličinama. |
+| Jednouzorački t-test | Usporedba jednog prosjeka s poznatom vrijednošću. `t.test(x, mu = ...)`. |
+| Dvouzorački t-test | Usporedba prosjeka dviju nezavisnih skupina. `t.test(x, y)`. |
+| Welchov t-test | Default u R-u. Ne pretpostavlja jednake varijance. Robusniji od Studentovog. |
+| Upareni t-test | Usporedba parova (iste jedinice, dva mjerenja). `t.test(x, y, paired = TRUE)`. |
+| Dvosmjerni test | H₁: μ₁ ≠ μ₂. Testira razliku u oba smjera. Default u R-u. |
+| Jednosmjerni test | H₁: μ₁ > μ₂ ili μ₁ < μ₂. Osjetljiviji u jednom smjeru ali slijep za drugi. |
+| Višestruko testiranje | Provođenje mnogo testova istovremeno. Inflacionira grešku tipa I. |
+| Bonferronijeva korekcija | Dijeljenje α s brojem testova. Konzervativna ali jednostavna korekcija. |
+| P-hacking | Selektivno izvještavanje značajnih rezultata iz mnogo provedenih testova. Neprihvatljiva praksa. |
+| `power.t.test()` | R funkcija za analizu snage: izračun potrebnog n, snage ili detektabilnog učinka. |
+| `p.adjust()` | R funkcija za korekciju p-vrijednosti za višestruko testiranje (Bonferroni, BH, itd.). |
