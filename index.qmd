@@ -3,6 +3,8 @@ title: "Osnove statistike"
 subtitle: "Kolegij za studente komunikologije"
 ---
 
+![](assets/images/OStat.jpg){fig-align="center" width="50%"}
+
 ::: {.hero-section}
 Statistika je jezik podataka, a podaci su danas svugdje. Ovaj kolegij pruža temeljna znanja iz statistike prilagođena studentima komunikologije, s naglaskom na praktičnu primjenu u analizi medijskih podataka. Kroz 13 tjedana naučit ćete prikupljati, analizirati i interpretirati podatke koristeći programski jezik R i tidyverse ekosustav. Svi primjeri dolaze iz svijeta medija i komunikacija.
 :::

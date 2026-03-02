@@ -10,6 +10,7 @@ book:
   subtitle: "Kolegij za studente komunikologije"
   author: "doc. dr. sc. Luka Šikić"
   date: today
+  cover-image: assets/images/OStat.jpg
   chapters:
     - index.qmd
     - part: "Uvod i osnove programiranja"
